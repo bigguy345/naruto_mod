@@ -469,9 +469,6 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static boolean hasRinnesharingan(EntityPlayer player) {
-		//ItemStack stack1 = ProcedureUtils.getMatchingItemStack(player, helmet);
-		//ItemStack stack2 = ProcedureUtils.getMatchingItemStack(player, ItemTenseigan.helmet);
-		//return (stack1 != null && isRinnesharinganActivated(stack1)) || (stack2 != null && isRinnesharinganActivated(stack2));
 		for (ItemStack stack : ProcedureUtils.getAllItemsOfSubType(player, Base.class)) {
 			if (isRinnesharinganActivated(stack)) {
 				return true;
@@ -479,22 +476,7 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 		}
 		return false;
 	}
-
-	/*public class EventHook {
-		@SubscribeEvent
-		public void onTick(TickEvent.PlayerTickEvent event) {
-			if (event.phase == TickEvent.Phase.END) {
-				((Base)helmet).onPlayerTickEventPost(event.player);
-			}
-		}
-	}
-
-	@Override
-	public void init(FMLInitializationEvent event) {
-		MinecraftForge.EVENT_BUS.register(new EventHook());
-	}
-*/
-
+	
 	@SideOnly(Side.CLIENT)
 	public void registerModels(ModelRegistryEvent event) {
 		ModelLoader.setCustomModelResourceLocation(helmet, 0, new ModelResourceLocation("narutomod:rinneganhelmet", "inventory"));

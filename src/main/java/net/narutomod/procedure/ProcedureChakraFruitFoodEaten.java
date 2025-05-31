@@ -1,10 +1,6 @@
 package net.narutomod.procedure;
 
-import net.narutomod.item.ItemTenseigan;
-import net.narutomod.item.ItemSharingan;
-import net.narutomod.item.ItemRinnegan;
-import net.narutomod.item.ItemKekkeiMora;
-import net.narutomod.item.ItemByakugan;
+import net.narutomod.item.*;
 import net.narutomod.PlayerTracker;
 import net.narutomod.NarutomodModVariables;
 import net.narutomod.ElementsNarutomodMod;
@@ -49,20 +45,27 @@ public class ProcedureChakraFruitFoodEaten extends ElementsNarutomodMod.ModEleme
 		double d1 = 0;
 		ItemStack stack = ItemStack.EMPTY;
 		ItemStack onhead = ItemStack.EMPTY;
-		onhead = ((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.armorInventory.get(3) : ItemStack.EMPTY);
-		if (((entity instanceof EntityPlayer)
-				? ((EntityPlayer) entity).inventory.hasItemStack(new ItemStack(ItemRinnegan.helmet, (int) (1)))
-				: false)) {
-			stack = ProcedureUtils.getItemStackIgnoreDurability(((EntityPlayer) entity).inventory, new ItemStack(ItemRinnegan.helmet));
-			{
-				ItemStack _stack = (stack);
+		EntityPlayer player = (EntityPlayer) entity;
+		onhead = player.inventory.armorInventory.get(3);
+		boolean hasRinnegan = player.inventory.hasItemStack(new ItemStack(ItemRinnegan.helmet)) || player.inventory.hasItemStack(new ItemStack(ItemRinneganTomoe.helmet));
+		if (hasRinnegan) {
+			if (player.inventory.hasItemStack(new ItemStack(ItemRinnegan.helmet))) {
+				ItemStack _stack = ProcedureUtils.getItemStackIgnoreDurability(player.inventory, new ItemStack(ItemRinnegan.helmet));
 				if (!_stack.hasTagCompound())
 					_stack.setTagCompound(new NBTTagCompound());
 				_stack.getTagCompound().setBoolean((NarutomodModVariables.RINNESHARINGAN_ACTIVATED), (true));
 			}
+
+			if (player.inventory.hasItemStack(new ItemStack(ItemRinneganTomoe.helmet))) {
+				ItemStack _stack = ProcedureUtils.getItemStackIgnoreDurability(player.inventory, new ItemStack(ItemRinneganTomoe.helmet));
+				if (!_stack.hasTagCompound())
+					_stack.setTagCompound(new NBTTagCompound());
+				_stack.getTagCompound().setBoolean((NarutomodModVariables.RINNESHARINGAN_ACTIVATED), (true));
+			}
+
+
 			if (entity instanceof EntityPlayerMP) {
-				Advancement _adv = ((MinecraftServer) ((EntityPlayerMP) entity).mcServer).getAdvancementManager()
-						.getAdvancement(new ResourceLocation("narutomod:rinnesharinganactivated"));
+				Advancement _adv = ((MinecraftServer) ((EntityPlayerMP) entity).mcServer).getAdvancementManager().getAdvancement(new ResourceLocation("narutomod:rinnesharinganactivated"));
 				AdvancementProgress _ap = ((EntityPlayerMP) entity).getAdvancements().getProgress(_adv);
 				if (!_ap.isDone()) {
 					Iterator _iterator = _ap.getRemaningCriteria().iterator();
@@ -81,22 +84,14 @@ public class ProcedureChakraFruitFoodEaten extends ElementsNarutomodMod.ModEleme
 				_setstack.setCount(1);
 				ItemHandlerHelper.giveItemToPlayer(((EntityPlayer) entity), _setstack);
 			}
-		} else if (((entity instanceof EntityPlayer)
-				? ((EntityPlayer) entity).inventory.hasItemStack(new ItemStack(ItemTenseigan.helmet, (int) (1)))
-				: false)) {
-			stack = ProcedureUtils.getItemStackIgnoreDurability(((EntityPlayer) entity).inventory, new ItemStack(ItemTenseigan.helmet));
-			{
-				ItemStack _stack = (stack);
-				if (!_stack.hasTagCompound())
-					_stack.setTagCompound(new NBTTagCompound());
-				_stack.getTagCompound().setDouble("ByakuganCount", 5);
-			}
-			{
-				ItemStack _stack = (stack);
-				if (!_stack.hasTagCompound())
-					_stack.setTagCompound(new NBTTagCompound());
-				_stack.getTagCompound().setBoolean((NarutomodModVariables.RINNESHARINGAN_ACTIVATED), (true));
-			}
+		} else if (player.inventory.hasItemStack(new ItemStack(ItemTenseigan.helmet))) {
+			ItemStack _stack = ProcedureUtils.getItemStackIgnoreDurability(((EntityPlayer) entity).inventory, new ItemStack(ItemTenseigan.helmet));
+
+			if (!_stack.hasTagCompound())
+				_stack.setTagCompound(new NBTTagCompound());
+			_stack.getTagCompound().setDouble("ByakuganCount", 5);
+			_stack.getTagCompound().setBoolean((NarutomodModVariables.RINNESHARINGAN_ACTIVATED), (true));
+			
 			if (entity instanceof EntityPlayerMP) {
 				Advancement _adv = ((MinecraftServer) ((EntityPlayerMP) entity).mcServer).getAdvancementManager()
 						.getAdvancement(new ResourceLocation("narutomod:tensei_byakugan_activated"));
