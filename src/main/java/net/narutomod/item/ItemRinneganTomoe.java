@@ -38,7 +38,10 @@ import net.narutomod.NarutomodModVariables;
 import net.narutomod.PlayerTracker;
 import net.narutomod.creativetab.TabModTab;
 import net.narutomod.entity.EntityKingOfHell;
+import net.narutomod.entity.EntityPretaShield;
 import net.narutomod.entity.EntitySusanooBase;
+import net.narutomod.entity.EntityTenTails;
+import net.narutomod.gui.GuiNinjaScroll;
 import net.narutomod.procedure.*;
 import net.narutomod.world.WorldKamuiDimension;
 
@@ -47,6 +50,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static net.narutomod.item.ItemRinnegan.isRinnegan;
+import static net.narutomod.item.ItemRinnegan.isRinnesharinganActivated;
 
 @ElementsNarutomodMod.ModElement.Tag
 public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
@@ -71,8 +77,9 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
 
             public void onArmorTick(World world, EntityPlayer entity, ItemStack itemstack) {
                 super.onArmorTick(world, entity, itemstack);
-                if (!world.isRemote)
+                if (world.isRemote)
                     return;
+
                 entity.addPotionEffect(new PotionEffect(MobEffects.SPEED, 2, 2, false, false));
                 entity.capabilities.allowFlying = entity.isCreative() || entity.dimension == WorldKamuiDimension.DIMID;
                 entity.sendPlayerAbilities();
@@ -111,8 +118,13 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                     if (entity instanceof EntityPlayer) {
                         EntityPlayer player = (EntityPlayer) entity;
                         ItemStack helmetStack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-                        if (helmetStack.getItem() != ItemRinneganTomoe.helmet && helmetStack.getItem() != ItemTenseigan.helmet) {
-                            player.inventory.clearMatchingItems(ItemAsuraCanon.block, -1, -1, (NBTTagCompound) null);
+                        GuiNinjaScroll.enableJutsu(player, (ItemJutsu.Base) ItemYoton.block, ItemYoton.SEALING9D, isRinnegan(helmetStack));
+                        GuiNinjaScroll.enableJutsu(player, (ItemJutsu.Base) ItemYoton.block, ItemYoton.SEALING10, isRinnegan(helmetStack) && EntityTenTails.getBijuManager().isAddedToWorld(player.world));
+                        if (!(isRinnegan(helmetStack))) {
+                            player.inventory.clearMatchingItems(ItemAsuraCanon.block, -1, -1, null);
+                            if (player.getRidingEntity() instanceof EntityPretaShield.EntityCustom) {
+                                player.getRidingEntity().setDead();
+                            }
                         }
                     }
                 }
@@ -133,13 +145,14 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                 ItemDojutsu.ClientModel.ModelHelmetSnug model = (ItemDojutsu.ClientModel.ModelHelmetSnug) super.getArmorModel(living, stack, slot, defaultModel);
                 model.hornMiddle.showModel = false;
                 if (living.ticksExisted % 20 == 6) {
-                    model.foreheadHide = !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180.0;
+                    model.foreheadHide = !isRinnesharinganActivated(stack) || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180d;
                 }
-
                 return model;
             }
 
             public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
+                if (isRinnesharinganActivated(stack))
+                    return "narutomod:textures/rinnesharinganhelmet.png";
                 return "narutomod:textures/rinneems.png";
             }
 
@@ -318,8 +331,12 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
         return stack.hasTagCompound() && stack.getTagCompound().getBoolean("RinneganTomoeActivated");
     }
 
-    public static boolean wearingRinneganTomoe(EntityLivingBase player) {
-        return player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == helmet;
+    public static boolean isTomoe(ItemStack stack) {
+        return stack.getItem() == helmet;
+    }
+
+    public static boolean isWearing(EntityLivingBase player) {
+        return isTomoe(player.getItemStackFromSlot(EntityEquipmentSlot.HEAD));
     }
 
     @SideOnly(Side.CLIENT)

@@ -209,11 +209,8 @@ public class ProcedureRinneganHelmetTickEvent extends ElementsNarutomodMod.ModEl
 							ItemHandlerHelper.giveItemToPlayer(((EntityPlayer) entity), _setstack);
 						}
 					}
-					if (((!(((entity instanceof EntityLivingBase) ? ((EntityLivingBase) entity).getHeldItemMainhand() : ItemStack.EMPTY)
-							.getItem() == new ItemStack(ItemTenseiganChakraMode.block, (int) (1)).getItem()))
-							&& (((itemstack).hasTagCompound() ? (itemstack).getTagCompound().getDouble("which_path") : -1) == 1))) {
-						if ((!(((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.armorInventory.get(2) : ItemStack.EMPTY)
-								.getItem() == new ItemStack(ItemAsuraPathArmor.body, (int) (1)).getItem()))) {
+					if (((!(((entity instanceof EntityLivingBase) ? ((EntityLivingBase) entity).getHeldItemMainhand() : ItemStack.EMPTY).getItem() == new ItemStack(ItemTenseiganChakraMode.block, (int) (1)).getItem())) && (((itemstack).hasTagCompound() ? (itemstack).getTagCompound().getDouble("which_path") : -1) == 1))) {
+						if ((!(((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.armorInventory.get(2) : ItemStack.EMPTY).getItem() == new ItemStack(ItemAsuraPathArmor.body, (int) (1)).getItem()))) {
 							ProcedureUtils.swapItemToSlot((EntityPlayer) entity, EntityEquipmentSlot.CHEST, new ItemStack(ItemAsuraPathArmor.body));
 							ProcedureUtils.swapItemToSlot((EntityPlayer) entity, EntityEquipmentSlot.OFFHAND, new ItemStack(ItemAsuraCanon.block));
 						}

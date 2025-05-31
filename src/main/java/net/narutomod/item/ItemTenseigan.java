@@ -80,7 +80,7 @@ public class ItemTenseigan extends ElementsNarutomodMod.ModElement {
 					GuiNinjaScroll.enableJutsu(player, (ItemJutsu.Base)ItemYoton.block, ItemYoton.SEALING9D, helmetStack.getItem() == helmet);
 					GuiNinjaScroll.enableJutsu(player, (ItemJutsu.Base)ItemYoton.block,
 					 ItemYoton.SEALING10, helmetStack.getItem() == helmet && EntityTenTails.getBijuManager().isAddedToWorld(player.world));
-					if (!(helmetStack.getItem() instanceof ItemRinnegan.Base)) {
+					if (!(ItemRinnegan.isRinnegan(helmetStack))) {
 						player.inventory.clearMatchingItems(ItemAsuraCanon.block, -1, -1, null);
 						if (player.getRidingEntity() instanceof EntityPretaShield.EntityCustom) {
 							player.getRidingEntity().setDead();
@@ -200,10 +200,13 @@ public class ItemTenseigan extends ElementsNarutomodMod.ModElement {
 		}.setUnlocalizedName("tenseiganlegs").setRegistryName("tenseiganlegs").setCreativeTab(null));
 	}
 
-	public static boolean isWearing(EntityLivingBase player) {
-		return player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == helmet;
+	public static boolean isTenseigan(ItemStack stack) {
+		return stack.getItem() instanceof ItemRinnegan.Base && ((ItemRinnegan.Base) stack.getItem()).isTenseigan();
 	}
 
+	public static boolean isWearing(EntityLivingBase player) {
+		return isTenseigan(player.getItemStackFromSlot(EntityEquipmentSlot.HEAD));
+	}
 	public static boolean canUseChakraMode(ItemStack stack, EntityPlayer player) {
 		return stack.hasTagCompound() && stack.getTagCompound().getDouble("ByakuganCount") >= 5.0d;
 	}

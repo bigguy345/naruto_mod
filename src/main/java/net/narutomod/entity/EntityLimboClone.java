@@ -17,14 +17,11 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.entity.ai.EntityMoveHelper;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.pathfinding.PathNavigate;
@@ -34,7 +31,6 @@ import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.item.ItemSixPathSenjutsu;
 import net.narutomod.item.ItemRinnegan;
 import net.narutomod.item.ItemJutsu;
-import net.narutomod.Chakra;
 import net.narutomod.PlayerTracker;
 import net.narutomod.ElementsNarutomodMod;
 
@@ -135,7 +131,7 @@ public class EntityLimboClone extends ElementsNarutomodMod.ModElement {
 
 		private boolean canBeDetectedBy(Entity entity) {
 			return entity.equals(this.getSummoner())
-			 || (entity instanceof EntityLivingBase && ItemRinnegan.wearingRinnegan((EntityLivingBase)entity))
+			 || (entity instanceof EntityLivingBase && ItemRinnegan.isWearing((EntityLivingBase)entity))
 			 || (entity instanceof EntityPlayer && ProcedureUtils.hasItemInInventory((EntityPlayer)entity, ItemSixPathSenjutsu.block));
 		}
 
@@ -150,7 +146,8 @@ public class EntityLimboClone extends ElementsNarutomodMod.ModElement {
 			if (invisible) {
 				super.setInvisible(invisible);
 			}
-		}*/
+		}
+*/
 
 		@Override
 		public void onUpdate() {

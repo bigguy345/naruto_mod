@@ -38,10 +38,9 @@ public class ProcedureAsuraPathArmorBodyTickEvent extends ElementsNarutomodMod.M
 		ItemStack itemstack = (ItemStack) dependencies.get("itemstack");
 		World world = (World) dependencies.get("world");
 		double ticks_used = 0;
-		ItemStack helmet = ItemStack.EMPTY;
-		helmet = ((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.armorInventory.get(3) : ItemStack.EMPTY);
-		if ((!(((helmet).getItem() == new ItemStack(ItemRinnegan.helmet, (int) (1)).getItem())
-				|| ((helmet).getItem() == new ItemStack(ItemTenseigan.helmet, (int) (1)).getItem())))) {
+		ItemStack helmet = entity instanceof EntityPlayer ? ((EntityPlayer) entity).inventory.armorInventory.get(3) : ItemStack.EMPTY;
+
+		if (!(ItemRinnegan.isRinnegan(helmet) || ItemTenseigan.isTenseigan(helmet))) {
 			itemstack.shrink(1);
 			return;
 		}

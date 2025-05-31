@@ -23,7 +23,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.model.ModelBox;
-import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -35,13 +34,13 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.block.material.Material;
+
+import net.minecraft.block.material.Material;
 
 import net.narutomod.item.ItemJutsu;
 import net.narutomod.item.ItemRinnegan;
 import net.narutomod.item.ItemTenseigan;
 import net.narutomod.procedure.ProcedureUtils;
-import net.narutomod.NarutomodMod;
 import net.narutomod.ElementsNarutomodMod;
 
 import java.util.List;
@@ -253,7 +252,8 @@ public class EntityTenTails extends ElementsNarutomodMod.ModElement {
 				this.setDead();
 			}
 			if (this.getAge() == 1 && this.getSpawnSound() != null) {
-				this.playSound(this.getSpawnSound(), this.getSpawnSoundVolume(), this.rand.nextFloat() * 0.6f + 0.6f);
+				this.playSound(this.getSpawnSound(),
+ this.getSpawnSoundVolume(), this.rand.nextFloat() * 0.6f + 0.6f);
 			}
 			if (!this.world.isRemote && this.isFuuinInProgress()) {
 				this.setTransparency(1.0f - this.getFuuinProgress());
@@ -307,7 +307,7 @@ public class EntityTenTails extends ElementsNarutomodMod.ModElement {
 	public static class CoffinSealJutsu implements ItemJutsu.IJutsuCallback {
 		@Override
 		public boolean createJutsu(ItemStack stack, EntityLivingBase entity, float power) {
-			if (ItemRinnegan.wearingRinnegan(entity) || ItemTenseigan.isWearing(entity)) {
+			if (ItemRinnegan.isWearing(entity) || ItemTenseigan.isWearing(entity)) {
 				Entity entity1 = ProcedureUtils.objectEntityLookingAt(entity, 20d).entityHit;
 				if (entity1 instanceof EntityCustom) {
 					EntityCustom jubi = (EntityCustom)entity1;
