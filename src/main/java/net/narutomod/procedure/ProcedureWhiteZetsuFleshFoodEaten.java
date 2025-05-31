@@ -73,8 +73,7 @@ public class ProcedureWhiteZetsuFleshFoodEaten extends ElementsNarutomodMod.ModE
 											.getAdvancement(new ResourceLocation("narutomod:rinneganawakened")))
 									.isDone()
 							: false))
-							&& (!((entity instanceof EntityPlayer)
-									? ((EntityPlayer) entity).inventory.hasItemStack(new ItemStack(ItemRinnegan.helmet, (int) (1)))
+							&& (!((entity instanceof EntityPlayer) ? ItemRinnegan.hasRinnegan((EntityPlayer) entity)
 									: false)))
 							&& (Math.random() < 0.2)))) {
 				rinneganstack = new ItemStack(ItemRinnegan.helmet, (int) (1));

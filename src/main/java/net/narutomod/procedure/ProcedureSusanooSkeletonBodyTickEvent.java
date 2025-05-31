@@ -32,8 +32,7 @@ public class ProcedureSusanooSkeletonBodyTickEvent extends ElementsNarutomodMod.
 		ItemStack helmet = ItemStack.EMPTY;
 		entity.getEntityData().setDouble("susanoo_ticks", ((entity.getEntityData().getDouble("susanoo_ticks")) + 1));
 		if ((!(((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).capabilities.isCreativeMode : false) || ((entity instanceof EntityPlayer)
-				? ((EntityPlayer) entity).inventory.hasItemStack(new ItemStack(ItemRinnegan.helmet, (int) (1)))
-				: false)))) {
+				? ItemRinnegan.hasRinnegan((EntityPlayer) entity): false)))) {
 			if ((!(world.isRemote))) {
 				Entity entitySpawned = world.getEntityByID(ProcedureSusanoo.getSummonedSusanooId(entity));
 				if ((entitySpawned == null || !(entitySpawned instanceof EntitySusanooBase) || !entitySpawned.isEntityAlive()

@@ -444,6 +444,9 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 		}
 	}
 
+	public static boolean hasRinnegan(EntityPlayer player) {
+		return player.inventory.hasItemStack(new ItemStack(ItemRinnegan.helmet)) || player.inventory.hasItemStack(new ItemStack(ItemRinneganTomoe.helmet));
+	}
 	public static boolean isRinnegan(ItemStack stack) {
 		return stack.getItem() instanceof Base || stack.getItem() == ItemRinneganTomoe.helmet;
 	}

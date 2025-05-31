@@ -1,35 +1,6 @@
 package net.narutomod.procedure;
 
-import net.narutomod.item.ItemYoton;
-import net.narutomod.item.ItemYooton;
-import net.narutomod.item.ItemTenseigan;
-import net.narutomod.item.ItemSuiton;
-import net.narutomod.item.ItemShikotsumyaku;
-import net.narutomod.item.ItemSharingan;
-import net.narutomod.item.ItemShakuton;
-import net.narutomod.item.ItemSenjutsu;
-import net.narutomod.item.ItemRinnegan;
-import net.narutomod.item.ItemRanton;
-import net.narutomod.item.ItemRaiton;
-import net.narutomod.item.ItemNinjutsu;
-import net.narutomod.item.ItemMokuton;
-import net.narutomod.item.ItemMangekyoSharinganObito;
-import net.narutomod.item.ItemMangekyoSharinganEternal;
-import net.narutomod.item.ItemMangekyoSharingan;
-import net.narutomod.item.ItemKaton;
-import net.narutomod.item.ItemJiton;
-import net.narutomod.item.ItemJinton;
-import net.narutomod.item.ItemIryoJutsu;
-import net.narutomod.item.ItemInton;
-import net.narutomod.item.ItemHyoton;
-import net.narutomod.item.ItemGourd;
-import net.narutomod.item.ItemFutton;
-import net.narutomod.item.ItemFuton;
-import net.narutomod.item.ItemEightGates;
-import net.narutomod.item.ItemDoton;
-import net.narutomod.item.ItemByakugan;
-import net.narutomod.item.ItemBakuton;
-import net.narutomod.item.ItemAsuraPathArmor;
+import net.narutomod.item.*;
 import net.narutomod.entity.EntityBijuManager;
 import net.narutomod.PlayerTracker;
 import net.narutomod.NarutomodModVariables;
@@ -87,6 +58,25 @@ public class ProcedureOnPlayerDeath extends ElementsNarutomodMod.ModElement {
 					if (entity instanceof EntityPlayer)
 						((EntityPlayer) entity).inventory.clearMatchingItems(new ItemStack(ItemRinnegan.helmet, (int) (1)).getItem(), -1, (int) (-1),
 								null);
+				}
+			}
+			
+			if (((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.hasItemStack(new ItemStack(ItemRinneganTomoe.helmet, (int) (1))) : false)) {
+				stack = ProcedureUtils.getItemStackIgnoreDurability(((EntityPlayer) entity).inventory, new ItemStack(ItemRinneganTomoe.helmet));
+				if (stack.hasTagCompound() && stack.getTagCompound().hasUniqueId("KoH_id")) {
+					if (entity instanceof EntityLivingBase)
+						((EntityLivingBase) entity).setHealth((float) 2);
+					if (dependencies.get("event") != null) {
+						Object _obj = dependencies.get("event");
+						if (_obj instanceof net.minecraftforge.fml.common.eventhandler.Event) {
+							net.minecraftforge.fml.common.eventhandler.Event _evt = (net.minecraftforge.fml.common.eventhandler.Event) _obj;
+							if (_evt.isCancelable())
+								_evt.setCanceled(true);
+						}
+					}
+				} else if ((!(keepInventory))) {
+					if (entity instanceof EntityPlayer)
+						((EntityPlayer) entity).inventory.clearMatchingItems(new ItemStack(ItemRinneganTomoe.helmet, (int) (1)).getItem(), -1, (int) (-1), null);
 				}
 			}
 			if (((entity instanceof EntityPlayer)
