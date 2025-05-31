@@ -48,6 +48,7 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.nbt.NBTTagCompound;
 
+import net.narutomod.ModConfig;
 import net.narutomod.entity.EntityBijuManager;
 import net.narutomod.entity.EntityRendererRegister;
 import net.narutomod.entity.EntityRasengan;
@@ -397,7 +398,9 @@ public class ItemSenjutsu extends ElementsNarutomodMod.ModElement {
 				stack.getTagCompound().setDouble(SAGECHAKRADEPLETIONAMOUNT, cp.getAmount());
 				float f = stack.getItem() == block && ((RangedItem)stack.getItem()).getCurrentJutsu(stack) == SAGEMODE
 				 ? ((RangedItem)stack.getItem()).getCurrentJutsuXpModifier(stack, entity) : 1.0f;
-				cp.consume(-0.6f / f, true);
+
+				float chakraMulti = (float) (1 - ModConfig.TECHNIQUES.SAGE_MODE_CHAKRA_MULTIPLIER) / f;
+				cp.consume(chakraMulti, true);
 				//stack.getTagCompound().setBoolean(SAGEMODEACTIVATEDKEY, true);
 				if (entity instanceof EntityPlayerMP) {
 					OverlayChakraDisplay.ShowFlamesMessage.send((EntityPlayerMP)entity, true);
