@@ -194,7 +194,8 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 				this.armorModel.robeRightArm.showModel = show;
 				this.armorModel.robeLeftArm.showModel = show;
 				this.armorModel.backSpikes.showModel = !show;
-				this.armorModel.isSneak = living.isSneaking();
+
+				this.armorModel.isSneak = living.isSneaking();
 				this.armorModel.isRiding = living.isRiding();
 				this.armorModel.isChild = living.isChild();
 				return this.armorModel;
@@ -449,7 +450,8 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static boolean wearingRinnegan(EntityLivingBase player) {
-		return player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == helmet;
+		Item item = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem();
+		return item == helmet || item == ItemRinneganTomoe.helmet;
 	}
 	
 	public static boolean wearingRinnesharingan(EntityLivingBase player) {
@@ -489,7 +491,8 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 	@Override
 	public void init(FMLInitializationEvent event) {
 		MinecraftForge.EVENT_BUS.register(new EventHook());
-	}*/
+	}
+*/
 
 	@SideOnly(Side.CLIENT)
 	public void registerModels(ModelRegistryEvent event) {

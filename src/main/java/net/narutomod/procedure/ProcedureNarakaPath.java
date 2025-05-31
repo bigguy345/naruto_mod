@@ -33,7 +33,8 @@ public class ProcedureNarakaPath extends ElementsNarutomodMod.ModElement {
 		}
 		Entity entity = (Entity) dependencies.get("entity");
 		World world = (World) dependencies.get("world");
-		if (entity instanceof EntityLivingBase) {
+		if (entity instanceof EntityLivingBase)
+ {
 			((EntityLivingBase) entity).swingArm(EnumHand.MAIN_HAND);
 		}
 		if (!world.isRemote && entity instanceof EntityLivingBase) {
@@ -50,7 +51,7 @@ public class ProcedureNarakaPath extends ElementsNarutomodMod.ModElement {
 					}
 				} else {
 					Entity entitySpawned = ((WorldServer)entity.world).getEntityFromUuid(entity_id);
-					if (entitySpawned instanceof EntityKingOfHell.EntityCustom) {
+					if (entitySpawned instanceof EntityKingOfHell.EntityCustom) {
 						((EntityLivingBase) entitySpawned).setHealth(0.0F);
 					}
 					ProcedureUtils.removeUniqueIdTag(stack, "KoH_id");

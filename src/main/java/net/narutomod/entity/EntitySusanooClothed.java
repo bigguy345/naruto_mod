@@ -38,14 +38,11 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 
+import net.narutomod.item.*;
 import net.narutomod.procedure.ProcedureTotsukaSwordToolInHandTick;
 import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.procedure.ProcedureAoeCommand;
 import net.narutomod.potion.PotionAmaterasuFlame;
-import net.narutomod.item.ItemJutsu;
-import net.narutomod.item.ItemTotsukaSword;
-import net.narutomod.item.ItemMangekyoSharingan;
-import net.narutomod.item.ItemMangekyoSharinganEternal;
 import net.narutomod.Particles;
 import net.narutomod.ElementsNarutomodMod;
 
@@ -229,8 +226,7 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 		protected void collideWithEntity(Entity entity) {
 			if (!this.world.isRemote && entity instanceof EntityLivingBase && !entity.equals(this.getOwnerPlayer())) {
 				if (this.getOwnerPlayer() != null 
-				 && (this.getOwnerPlayer().getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == ItemMangekyoSharingan.helmet ||
-				     this.getOwnerPlayer().getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == ItemMangekyoSharinganEternal.helmet))
+				 && (this.getOwnerPlayer().getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == ItemMangekyoSharingan.helmet || ItemSharingan.isWearingEternal(getOwnerPlayer())))
 					((EntityLivingBase) entity).addPotionEffect(new PotionEffect(PotionAmaterasuFlame.potion, 200, this.hasLegs() ? 2 : 1, false, false));
 			}
 			super.collideWithEntity(entity);

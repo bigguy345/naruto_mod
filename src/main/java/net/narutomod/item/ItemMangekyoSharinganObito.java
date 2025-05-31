@@ -48,14 +48,14 @@ public class ItemMangekyoSharinganObito extends ElementsNarutomodMod.ModElement 
 
 	public static double getIntangibleChakraUsage(EntityLivingBase entity) {
 		ItemStack stack = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-		return stack.getItem() == helmet || stack.getItem() == ItemMangekyoSharinganEternal.helmet 
+		return stack.getItem() == helmet || ItemSharingan.isWearingEternal(entity)
 		 ? ((ItemDojutsu.Base)helmet).isOwner(stack, entity) ? INTANGIBLE_CHAKRA_USAGE 
 		 : INTANGIBLE_CHAKRA_USAGE * 3 : (Double.MAX_VALUE * 0.001d);
 	}
 
 	public static double getTeleportChakraUsage(EntityLivingBase entity) {
 		ItemStack stack = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-		return stack.getItem() == helmet || stack.getItem() == ItemMangekyoSharinganEternal.helmet
+		return stack.getItem() == helmet || ItemSharingan.isWearingEternal(entity)
 		 ? ((ItemDojutsu.Base)helmet).isOwner(stack, entity) ? TELEPORT_CHAKRA_USAGE 
 		 : TELEPORT_CHAKRA_USAGE * 3 : (Double.MAX_VALUE * 0.001d);
 	}
