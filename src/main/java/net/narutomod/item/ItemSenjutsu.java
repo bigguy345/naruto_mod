@@ -78,6 +78,7 @@ public class ItemSenjutsu extends ElementsNarutomodMod.ModElement {
 	public static final int ENTITYID = 355;
 	//private static final String SAGEMODEACTIVATEDKEY = "SageModeActivated";
 	private static final String SAGECHAKRADEPLETIONAMOUNT = "SageChakraDepletionAmount";
+	private static final String TIMESPENTINSAGEMODE = "TimeSpentInSageMode";
 	public static final ItemJutsu.JutsuEnum SAGEMODE = new ItemJutsu.JutsuEnum(0, "tooltip.senjutsu.sagemode", 'S', 10d, new SageMode());
 	public static final ItemJutsu.JutsuEnum RASENGAN = new ItemJutsu.JutsuEnum(1, "tooltip.senjutsu.rasengan", 'S', ItemNinjutsu.RASENGAN.chakraUsage, new EntityRasengan.EC.SageModeVariant());
 	public static final ItemJutsu.JutsuEnum RASENSHURIKEN = new ItemJutsu.JutsuEnum(2, "tooltip.senjutsu.rasenshuriken", 'S', ItemFuton.RASENSHURIKEN.chakraUsage, new EntityRasenshuriken.EC.SageModeVairant());
@@ -193,6 +194,8 @@ public class ItemSenjutsu extends ElementsNarutomodMod.ModElement {
 					} else if (living.ticksExisted % 20 == 10) {
 						living.addPotionEffect(new PotionEffect(MobEffects.SATURATION, 22, 0, false, false));
 						cp.consume(50d);
+
+						setTimeSpentInSageMode(itemstack, getTimeSpentInSageMode(itemstack) + 1);
 					}
 				}
 				if (entity.ticksExisted % 40 == 5 && entity instanceof EntityPlayer) {
@@ -333,6 +336,14 @@ public class ItemSenjutsu extends ElementsNarutomodMod.ModElement {
 		return stack.hasTagCompound() && stack.getTagCompound().hasKey(SAGECHAKRADEPLETIONAMOUNT, 6);
 	}
 
+	public static int getTimeSpentInSageMode(ItemStack stack) {
+		return stack.getTagCompound().getInteger(TIMESPENTINSAGEMODE);
+	}
+
+	public static void setTimeSpentInSageMode(ItemStack stack, int time) {
+		stack.getTagCompound().setInteger(TIMESPENTINSAGEMODE, time);
+	}
+
 	public static boolean isSageModeActivated(EntityLivingBase entity) {
 		if (entity instanceof EntityPlayer) {
 			ItemStack stack = ProcedureUtils.getMatchingItemStack(entity, block);
@@ -393,7 +404,7 @@ public class ItemSenjutsu extends ElementsNarutomodMod.ModElement {
 	public static class SageMode implements ItemJutsu.IJutsuCallback {
 		@Override
 		public boolean createJutsu(ItemStack stack, EntityLivingBase entity, float power) {
-			if (power >= 100.0f) {
+			if (power >= getMaxPower(stack,entity)) {
 				Chakra.Pathway cp = Chakra.pathway(entity);
 				stack.getTagCompound().setDouble(SAGECHAKRADEPLETIONAMOUNT, cp.getAmount());
 				float f = stack.getItem() == block && ((RangedItem)stack.getItem()).getCurrentJutsu(stack) == SAGEMODE
@@ -429,7 +440,11 @@ public class ItemSenjutsu extends ElementsNarutomodMod.ModElement {
 		public float getMaxPower() {
 			return 100.0f;
 		}
-		
+
+		public float getMaxPower(ItemStack stack, EntityLivingBase entity) {
+			int timeSpent = getTimeSpentInSageMode(stack);
+			return Math.max(this.getMaxPower() - timeSpent / 60, 5);
+		}
 		@Override
 		public void onUsingTick(ItemStack stack, EntityLivingBase player, float power) {
 			if (!(player.getRidingEntity() instanceof EntitySitPlatform)) {
