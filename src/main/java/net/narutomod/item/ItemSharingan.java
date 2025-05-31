@@ -32,7 +32,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.translation.I18n;
+
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.block.material.Material;
 
 import net.narutomod.procedure.ProcedureSharinganHelmetTickEvent;
@@ -222,10 +223,18 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		return stack.getItem() instanceof Base && ((Base)stack.getItem()).isMangekyo();
 	}
 
+	public static boolean isEternal(ItemStack stack) {
+		return stack.getItem() instanceof Base && ((Base) stack.getItem()).isEternal();
+	}
+
 	public static boolean isWearingMangekyo(EntityLivingBase entity) {
 		return isMangekyo(entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD));
 	}
 
+	public static boolean isWearingEternal(EntityLivingBase entity) {
+		return isEternal(entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD));
+	}
+	
 	public static boolean isBlinded(ItemStack stack) {
 		return stack.hasTagCompound() ? stack.getTagCompound().getBoolean("sharingan_blinded") : false;
 	}
