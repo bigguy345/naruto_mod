@@ -32,13 +32,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.client.Minecraft;
 
-import net.narutomod.ElementsNarutomodMod;
+import net.narutomod.*;
 import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.procedure.ProcedureOnLivingUpdate;
 import net.narutomod.procedure.ProcedureUpdateworldtick;
-import net.narutomod.Chakra;
-import net.narutomod.Particles;
-import net.narutomod.PlayerTracker;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -127,7 +124,7 @@ public class ItemJutsu extends ElementsNarutomodMod.ModElement {
 		if (stack.getItem() instanceof Base) {
 			Base baseitem = (Base)stack.getItem();
 			if (baseitem.getCurrentJutsuXp(stack) < baseitem.getCurrentJutsuRequiredXp(stack)) {
-				baseitem.addCurrentJutsuXp(stack, 1);
+				baseitem.addCurrentJutsuXp(stack, ModConfig.JUTSU_XP_GAIN);
 			}
 		}
 	}
@@ -539,7 +536,8 @@ public class ItemJutsu extends ElementsNarutomodMod.ModElement {
 			public void onEquipmentChange(LivingEquipmentChangeEvent event) {
 				EntityLivingBase entity = event.getEntityLiving();
 				ItemStack stack = event.getTo();
-				if (entity instanceof EntityPlayer && !entity.world.isRemote && stack.getItem() instanceof Base
+				if (entity instanceof EntityPlayer && !entity.world.isRemote
+ && stack.getItem() instanceof Base
 				 && event.getSlot().getSlotType() == EntityEquipmentSlot.Type.HAND && stack.getItem() != event.getFrom().getItem()) {
 					if (event.getSlot() == EntityEquipmentSlot.MAINHAND || !(entity.getHeldItemMainhand().getItem() instanceof Base)) {
 						ProcedureUtils.sendStatusMessage((EntityPlayer)entity, ItemJutsu.getCurrentJutsu(stack).getName(), true);
