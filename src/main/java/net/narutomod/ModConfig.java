@@ -12,6 +12,10 @@ public class ModConfig extends ElementsNarutomodMod.ModElement {
 		super(instance, 837);
 	}
 
+	@Config.RangeDouble(min = 1, max = 10000000)
+	@Config.Comment({"Maximum NINJA XP gainable."})
+	public static double MAX_NINJA_XP = 1000000;
+	
 	@Config.Comment("If enabled tailed beasts spawn naturally around the world.")
 	public static boolean SPAWN_TAILED_BEASTS = true;
 
