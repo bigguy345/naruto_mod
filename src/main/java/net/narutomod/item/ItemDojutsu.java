@@ -184,6 +184,23 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 				}
 			}
 		}
+
+		@SubscribeEvent
+		public void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
+			EntityPlayer player = event.getEntityPlayer();
+			if (player.world.isRemote)
+				return;
+			ItemStack item = event.getItemStack();
+
+			if (item.getItem() instanceof Base) {
+				ItemStack helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+				if (helmet.getItem() instanceof Base) {
+					int slot = player.inventory.getSlotFor(item);
+					player.inventory.armorInventory.set(3, item);
+					player.inventory.mainInventory.set(slot, helmet);
+				}
+			}
+		}
 	}
 
 	@Override
