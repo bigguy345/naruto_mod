@@ -1,6 +1,7 @@
 
 package net.narutomod.item;
 
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -9,18 +10,14 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.ResourceLocation;
+
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.translation.I18n;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.Item;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.SharedMonsterAttributes;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.Entity;
@@ -31,11 +28,10 @@ import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.util.ITooltipFlag;
 
-import net.narutomod.entity.EntityKingOfHell;
 import net.narutomod.entity.EntityPretaShield;
 import net.narutomod.entity.EntityTenTails;
+import net.narutomod.goatee.client.Sounds;
 import net.narutomod.gui.GuiNinjaScroll;
 import net.narutomod.procedure.*;
 import net.narutomod.creativetab.TabModTab;
@@ -43,11 +39,7 @@ import net.narutomod.ElementsNarutomodMod;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-import javax.annotation.Nullable;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Maps;
+
 
 @ElementsNarutomodMod.ModElement.Tag
 public class ItemTenseigan extends ElementsNarutomodMod.ModElement {
@@ -64,14 +56,18 @@ public class ItemTenseigan extends ElementsNarutomodMod.ModElement {
 
 	@Override
 	public void initElements() {
-		ItemArmor.ArmorMaterial enuma = EnumHelper.addArmorMaterial("TENSEIGAN", "narutomod:sasuke_", 5, new int[]{2, 75, 100, 15}, 0,
-		 net.minecraft.util.SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:dojutsu")), 2.0f);
+		ItemArmor.ArmorMaterial enuma = EnumHelper.addArmorMaterial("TENSEIGAN", "narutomod:sasuke_", 5, new int[]{2, 75, 100, 15}, 0, null, 2.0f);
 
 		elements.items.add(() -> new ItemRinnegan.Base(enuma) {
 			@Override
 			public boolean isTenseigan() {
 				return true;
 			}
+
+			public SoundEvent getSound() {
+				return Sounds.get("tenseigansfx");
+			}
+
 
 			@Override
 			public void onUpdatePost(EntityPlayer player) {

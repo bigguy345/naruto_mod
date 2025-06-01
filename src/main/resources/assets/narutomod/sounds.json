@@ -260,6 +260,24 @@
       }
     ]
   },
+    "rinnesharingansfx": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "narutomod:rinnesharingansfx",
+        "stream": false
+      }
+    ]
+  },
+    "tenseigansfx": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "narutomod:tenseigansfx",
+        "stream": false
+      }
+    ]
+  },
   "genjutsu": {
     "category": "master",
     "sounds": [

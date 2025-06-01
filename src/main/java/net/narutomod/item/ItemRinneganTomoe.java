@@ -39,6 +39,7 @@ import net.narutomod.entity.EntityKingOfHell;
 import net.narutomod.entity.EntityPretaShield;
 import net.narutomod.entity.EntitySusanooBase;
 import net.narutomod.entity.EntityTenTails;
+import net.narutomod.goatee.client.Sounds;
 import net.narutomod.gui.GuiNinjaScroll;
 import net.narutomod.potion.PotionSpaceInversion;
 import net.narutomod.procedure.*;
@@ -71,7 +72,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
     }
 
     public void initElements() {
-        ItemArmor.ArmorMaterial enuma = EnumHelper.addArmorMaterial("RINNEGANTOMOE", "narutomod:rinnegantomoe_", 25, new int[]{2, 5, 6, 15}, 0, (SoundEvent) SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:dojutsu")), 2.0F);
+        ItemArmor.ArmorMaterial enuma = EnumHelper.addArmorMaterial("RINNEGANTOMOE", "narutomod:rinnegantomoe_", 25, new int[]{2, 5, 6, 15}, 0, null, 2.0F);
         this.elements.items.add(() -> new ItemSharingan.Base(enuma) {
 
             public void onArmorTick(World world, EntityPlayer entity, ItemStack itemstack) {
@@ -195,6 +196,10 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
 
             public String getItemStackDisplayName(ItemStack stack) {
                 return TextFormatting.LIGHT_PURPLE + super.getItemStackDisplayName(stack) + TextFormatting.WHITE;
+            }
+
+            public SoundEvent getSound(){
+                return Sounds.get("rinnesharingansfx");
             }
 
             @Override

@@ -1,6 +1,14 @@
 
 package net.narutomod.item;
 
+import net.minecraft.init.Items;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -10,7 +18,6 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.model.ModelBox;
@@ -109,6 +116,10 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 
 		public abstract Type getType();
 
+		public SoundEvent getSound() {
+			return null;
+		}
+
 		public boolean onJutsuKey1(boolean is_pressed, ItemStack stack, EntityPlayer player) {
 			return false;
 		}
@@ -155,6 +166,32 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 		SHARINGAN,
 		RINNE_TENSEI;
 	}
+
+	public static class Hook {
+		@SubscribeEvent
+		public void onEquipmentChange(LivingEquipmentChangeEvent event) {
+			if (event.getEntity().world.isRemote)
+				return;
+			
+			if (event.getEntity() instanceof EntityLivingBase) {
+				EntityLivingBase entity = (EntityLivingBase) event.getEntity();
+				EntityEquipmentSlot slot = event.getSlot();
+				ItemStack to = event.getTo();
+				if (slot == EntityEquipmentSlot.HEAD && to.getItem() instanceof Base) {
+					SoundEvent sound = ((Base) to.getItem()).getSound();
+					if (sound != null)
+						entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, sound, SoundCategory.NEUTRAL, 1, 1);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void init(FMLInitializationEvent event) {
+		MinecraftForge.EVENT_BUS.register(new Hook());
+	}
+
+
 
 	public static class ClientModel {
 		@SideOnly(Side.CLIENT)

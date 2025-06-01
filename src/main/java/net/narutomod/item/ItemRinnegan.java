@@ -1,5 +1,6 @@
 package net.narutomod.item;
 
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
@@ -31,6 +32,7 @@ import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.entity.AbstractClientPlayer;
 
+import net.narutomod.goatee.client.Sounds;
 import net.narutomod.gui.GuiNinjaScroll;
 import net.narutomod.entity.EntityKingOfHell;
 import net.narutomod.entity.EntityPretaShield;
@@ -129,7 +131,7 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 
 	public void initElements() {
 		ItemArmor.ArmorMaterial enuma = EnumHelper.addArmorMaterial("RINNEGAN", "narutomod:rinnegan_", 25, new int[]{2, 5, 6, 15}, 0,
-		 net.minecraft.util.SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:dojutsu")), 2.0F);
+				null, 2.0F);
 
 		this.elements.items.add(() -> new Base(enuma).setUnlocalizedName("rinneganhelmet")
 		 .setRegistryName("rinneganhelmet").setCreativeTab(TabModTab.tab));
@@ -238,7 +240,11 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 		public boolean isTenseigan() {
 			return false;
 		}
-			
+
+		public SoundEvent getSound(){
+			return Sounds.get("rinnegansfx");
+		}
+		
 		@SideOnly(Side.CLIENT)
 		@Override
 		public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {

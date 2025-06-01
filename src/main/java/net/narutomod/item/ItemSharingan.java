@@ -1,5 +1,6 @@
 package net.narutomod.item;
 
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
@@ -36,6 +37,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.block.material.Material;
 
+import net.narutomod.goatee.client.Sounds;
 import net.narutomod.procedure.ProcedureSharinganHelmetTickEvent;
 import net.narutomod.procedure.ProcedureSync;
 import net.narutomod.procedure.ProcedureUtils;
@@ -169,6 +171,11 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			}
 			return itemDamage;
 		}
+
+		public SoundEvent getSound(){
+			return Sounds.get("sharingansfx");
+		}
+
 
 		@Override
 		public void setOwner(ItemStack stack, EntityLivingBase entityIn) {
