@@ -115,7 +115,7 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 		this.dataManager.set(OWNER_ID, Integer.valueOf(owner.getEntityId()));
 	}
 
-	protected void setFlameColor(int color) {
+	public void setFlameColor(int color) {
 		this.dataManager.set(FLAME_COLOR, Integer.valueOf(color));
 	}
 
@@ -385,9 +385,11 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 		
 		this.clampMotion(0.05D);
 
-		if (this.ticksExisted % 30 == 0) {
+		if (this.ticksExisted % 30 == 0)
+ {
 			this.playSound(net.minecraft.util.SoundEvent.REGISTRY
-			 .getObject(new ResourceLocation("block.fire.ambient")), 1.0F, this.rand.nextFloat() * 0.7F + 0.3F);
+			 .getObject(new ResourceLocation("block.fire.ambient")),
+ 1.0F, this.rand.nextFloat() * 0.7F + 0.3F);
 		}
 		for (int i = 0; i < (int) this.height; i++) {
 			double d0 = this.posX + (this.rand.nextFloat() - 0.5D) * this.width;
