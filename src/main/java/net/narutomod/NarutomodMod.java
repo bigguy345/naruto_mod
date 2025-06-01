@@ -39,6 +39,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.potion.Potion;
 import net.minecraft.item.Item;
 import net.minecraft.block.Block;
+import net.narutomod.goatee.proxy.CommonProxy;
 
 import java.util.function.Supplier;
 
@@ -49,6 +50,9 @@ public class NarutomodMod {
 	public static final SimpleNetworkWrapper PACKET_HANDLER = NetworkRegistry.INSTANCE.newSimpleChannel("narutomod:a");
 	@SidedProxy(clientSide = "net.narutomod.ClientProxyNarutomodMod", serverSide = "net.narutomod.ServerProxyNarutomodMod")
 	public static IProxyNarutomodMod proxy;
+
+	@SidedProxy(clientSide = "net.narutomod.goatee.proxy.ClientProxy", serverSide = "net.narutomod.goatee.proxy.CommonProxy")
+	public static CommonProxy goatProxy;
 	@Mod.Instance(MODID)
 	public static NarutomodMod instance;
 	public ElementsNarutomodMod elements = new ElementsNarutomodMod();
@@ -62,17 +66,20 @@ public class NarutomodMod {
 		MinecraftForge.EVENT_BUS.register(elements);
 		elements.getElements().forEach(element -> element.preInit(event));
 		proxy.preInit(event);
+		goatProxy.preInit(event);
 	}
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event) {
 		elements.getElements().forEach(element -> element.init(event));
 		proxy.init(event);
+		goatProxy.init(event);
 	}
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);
+		goatProxy.postInit(event);
 	}
 
 	@Mod.EventHandler
