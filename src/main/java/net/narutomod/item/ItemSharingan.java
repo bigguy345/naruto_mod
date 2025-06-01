@@ -135,7 +135,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 
 		// returns true if evaded, false if otherwise
 		public boolean onAttackEvent(LivingAttackEvent event, EntityLivingBase entity, EntityLivingBase attacker) {
-		 	if (entity.getRNG().nextFloat() <= 0.6f) {
+			if (isDodgeEnabled(entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD)) && entity.getRNG().nextFloat() <= 0.6f) {
 		 		Entity immediateSource = event.getSource().getImmediateSource();
 		    	List<BlockPos> list = ProcedureUtils.getAllAirBlocks(entity.world, entity.getEntityBoundingBox().grow(2.5d));
 		    	for (int i = 0; i < list.size(); i++) {
@@ -205,7 +205,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		@Override
 		public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 			super.addInformation(stack, worldIn, tooltip, flagIn);
-			tooltip.add(TextFormatting.DARK_GRAY + I18n.translateToLocal("tooltip.sharingan.descr") + TextFormatting.WHITE);
+			tooltip.add(TextFormatting.DARK_GRAY + I18n.translateToLocal("tooltip.sharingan.descr") + (isDodgeEnabled(stack) ? TextFormatting.GREEN + I18n.translateToLocal("tooltip.sharingan.dodge_on") : TextFormatting.RED + I18n.translateToLocal("tooltip.sharingan.dodge_off")) + TextFormatting.WHITE);
 		}
 	}
 
@@ -244,6 +244,14 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 	
 	public static boolean isBlinded(ItemStack stack) {
 		return stack.hasTagCompound() ? stack.getTagCompound().getBoolean("sharingan_blinded") : false;
+	}
+
+	public static boolean isDodgeEnabled(ItemStack stack) {
+		return stack.hasTagCompound() ? stack.getTagCompound().getBoolean("dodge_enabled") : false;
+	}
+
+	public static void setDodgeEnabled(ItemStack stack, boolean dodge) {
+		stack.getTagCompound().setBoolean("dodge_enabled", dodge);
 	}
 
 	public static boolean isBlinded(EntityPlayer entity) {

@@ -464,6 +464,10 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 		return (stack.hasTagCompound() && stack.getTagCompound().getBoolean(RINNESHARINGAN_KEY));
 	}
 
+	public static void setRinneSharinganActivated(ItemStack stack, boolean dodge) {
+		stack.getTagCompound().setBoolean(RINNESHARINGAN_KEY, dodge);
+	}
+
 	public static boolean wearingRinnesharingan(EntityLivingBase player) {
 		ItemStack itemstack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
 		return isRinnegan(itemstack) && isRinnesharinganActivated(itemstack);
