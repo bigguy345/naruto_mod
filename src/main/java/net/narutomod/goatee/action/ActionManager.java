@@ -1,0 +1,347 @@
+package net.narutomod.goatee.action;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.narutomod.NarutomodMod;
+import net.narutomod.goatee.action.api.IAction;
+import net.narutomod.goatee.action.api.IActionChain;
+import net.narutomod.goatee.action.api.IActionManager;
+import net.narutomod.goatee.action.api.IConditionalAction;
+
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+/**
+ * Full-featured ActionManager:
+ * - delayed start, max-duration, tick-interval
+ * - chaining (getNext, getPrevious, scheduleAfter/Before)
+ * - per-action data
+ * - conditional actions
+ * - cancellation & clearing
+ */
+@Mod.EventBusSubscriber
+public class ActionManager implements IActionManager {
+
+    @CapabilityInject(ActionManager.class)
+    public static final Capability<ActionManager> ACTION_MANAGER_CAPABILITY = null;
+    public static final ActionManager INSTANCE = new ActionManager();
+    private static int tick;
+
+    private boolean isWorking = false;
+
+    private final Deque<IAction> actionQueue = new ConcurrentLinkedDeque<>();
+    private final Deque<IAction> parallelActions = new ConcurrentLinkedDeque<>();
+    private final Deque<IConditionalAction> conditionalActions = new ConcurrentLinkedDeque<>();
+
+    @Override
+    public IAction create(String name) {
+        return new Action(this, name);
+    }
+
+    @Override
+    public IAction create(Consumer<IAction> t) {
+        return new Action(this, t);
+    }
+
+    @Override
+    public IAction create(String name, int maxDuration, int startAfterTicks, Consumer<IAction> task) {
+        return new Action(this, name, maxDuration, startAfterTicks, task);
+    }
+
+    @Override
+    public IAction create(String name, int delay, Consumer<IAction> t) {
+        return new Action(this, name, delay, t);
+    }
+
+    @Override
+    public IAction create(int delay, Consumer<IAction> t) {
+        return new Action(this, delay, t);
+    }
+
+    @Override
+    public IAction create(String name, Consumer<IAction> t) {
+        return new Action(this, name, t);
+    }
+
+    @Override
+    public IConditionalAction create(Supplier<Boolean> condition, Consumer<IAction> task) {
+        return new ConditionalAction(this, condition, task);
+    }
+
+    @Override
+    public IConditionalAction create(String name, Supplier<Boolean> condition, Consumer<IAction> task) {
+        return new ConditionalAction(this, name, condition, task);
+    }
+
+    @Override
+    public IConditionalAction create(Supplier<Boolean> condition, Consumer<IAction> task, Supplier<Boolean> terminateWhen) {
+        return new ConditionalAction(this, condition, task, terminateWhen);
+    }
+
+    @Override
+    public IConditionalAction create(String name, Supplier<Boolean> condition, Consumer<IAction> task, Supplier<Boolean> terminateWhen) {
+        return new ConditionalAction(this, name, condition, task, terminateWhen);
+    }
+
+    @Override
+    public IConditionalAction create(Supplier<Boolean> condition, Consumer<IAction> task, Supplier<Boolean> terminateWhen, Consumer<IAction> onTermination) {
+        return new ConditionalAction(this, condition, task, terminateWhen, onTermination);
+    }
+
+    @Override
+    public IConditionalAction create(String name, Supplier<Boolean> condition, Consumer<IAction> task, Supplier<Boolean> terminateWhen, Consumer<IAction> onTermination) {
+        return new ConditionalAction(this, name, condition, task, terminateWhen, onTermination);
+    }
+
+    @Override
+    public void start() {
+        isWorking = true;
+    }
+
+    @Override
+    public void stop() {
+        isWorking = false;
+    }
+
+    @Override
+    public IAction scheduleAction(IAction action) {
+        actionQueue.addLast(action);
+        return action;
+    }
+
+    @Override
+    public IAction scheduleAction(String name, int maxDuration, int startAfterTicks, Consumer<IAction> task) {
+        return scheduleAction(create(name, maxDuration, startAfterTicks, task));
+    }
+
+    @Override
+    public IAction scheduleActionAt(int index, IAction action) {
+        int size = actionQueue.size();
+        if (index <= 0) {
+            actionQueue.addFirst(action);
+        } else if (index >= size) {
+            actionQueue.addLast(action);
+        } else {
+            List<IAction> tmp = new ArrayList<>(actionQueue);
+            tmp.add(index, action);
+            actionQueue.clear();
+            actionQueue.addAll(tmp);
+        }
+        return action;
+    }
+
+    @Override
+    public int getIndex(IAction action) {
+        int i = 0;
+        for (IAction a : actionQueue) {
+            if (a.equals(action))
+                return i;
+            i++;
+        }
+        return -1;
+    }
+
+    @Override
+    public IAction getCurrentAction() {
+        return actionQueue.peekFirst();
+    }
+
+    @Override
+    public Queue<IAction> getActionQueue() {
+        return actionQueue;
+    }
+
+    @Override
+    public void clear() {
+        actionQueue.clear();
+        parallelActions.clear();
+        conditionalActions.clear();
+    }
+
+    @Override
+    public boolean cancelAction(String name) {
+        Iterator<IAction> acts = actionQueue.iterator();
+        while (acts.hasNext()) {
+            IAction act = acts.next();
+            if (act.getName().equals(name)) {
+                acts.remove();
+                return true;
+            }
+        }
+
+        Iterator<IAction> pit = parallelActions.iterator();
+        while (pit.hasNext()) {
+            if (pit.next().getName().equals(name)) {
+                pit.remove();
+                return true;
+            }
+        }
+
+        Iterator<IConditionalAction> cons = conditionalActions.iterator();
+        while (cons.hasNext()) {
+            IConditionalAction con = cons.next();
+            if (con.getName().equals(name)) {
+                cons.remove();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    ///////////////////////////////////////////////////
+    ///////////////////////////////////////////////////
+    // Conditionals
+    @Override
+    public IConditionalAction scheduleAction(String name, Supplier<Boolean> condition, Consumer<IAction> task) {
+        return scheduleAction(new ConditionalAction(this, name, condition, task));
+    }
+
+    @Override
+    public IConditionalAction scheduleAction(String name, Supplier<Boolean> condition, Consumer<IAction> task, Supplier<Boolean> terminateWhen) {
+        return scheduleAction(new ConditionalAction(this, name, condition, task, terminateWhen));
+    }
+
+    @Override
+    public IConditionalAction scheduleAction(String name, Supplier<Boolean> condition, Consumer<IAction> task, Supplier<Boolean> terminateWhen, Consumer<IAction> onTermination) {
+        return scheduleAction(new ConditionalAction(this, name, condition, task, terminateWhen, onTermination));
+    }
+
+    @Override
+    public IConditionalAction scheduleAction(IConditionalAction action) {
+        conditionalActions.add(action);
+        return action;
+    }
+
+    @Override
+    public List<IConditionalAction> getConditionalActions() {
+        return new ArrayList<>(conditionalActions);
+    }
+
+    @Override
+    public IAction scheduleParallelAction(IAction action) {
+        parallelActions.add(action);
+        return action;
+    }
+
+    /**
+     * Call once per tick from your main loop.
+     *
+     * @param ticksExisted the global tick count, used for modulo checks.
+     */
+    public void tick(int ticksExisted) {
+        if (!isWorking)
+            return;
+
+        // ─── Sequential (head only) ─────────────────────────────────
+        IAction current = getCurrentAction();
+        if (current instanceof Action) {
+            Action cab = (Action) current;
+            cab.tick(ticksExisted);
+            if (cab.isDone())
+                actionQueue.pollFirst();
+        }
+
+        // ─── Parallel (all) ───────────────────────────────────────
+        Iterator<IAction> pit = parallelActions.iterator();
+        while (pit.hasNext()) {
+            Action a = (Action) pit.next();
+            a.tick(ticksExisted);
+            if (a.isDone())
+                pit.remove();
+        }
+
+        // ─── Conditionals ─────────────────────────────────────────
+        Iterator<IConditionalAction> cit = conditionalActions.iterator();
+        while (cit.hasNext()) {
+            ConditionalAction con = (ConditionalAction) cit.next();
+            con.tick(ticksExisted);
+            if (con.isDone())
+                cit.remove();
+        }
+    }
+
+    @Override
+    public IActionChain chain() {
+        return new ActionChain(this);
+    }
+
+    @Override
+    public IActionChain parallelChain() {
+        return new ParallelActionChain(this);
+    }
+
+    public static class ActionManagerProvider implements ICapabilitySerializable<NBTTagCompound> {
+        private final ActionManager instance = new ActionManager();
+
+        @Override
+        public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+            return capability == ACTION_MANAGER_CAPABILITY;
+        }
+
+        @Override
+        public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+            return capability == ACTION_MANAGER_CAPABILITY ? ACTION_MANAGER_CAPABILITY.cast(instance) : null;
+        }
+
+        @Override
+        public NBTTagCompound serializeNBT() {
+            return new NBTTagCompound(); // implement if you want save support
+        }
+
+        @Override
+        public void deserializeNBT(NBTTagCompound nbt) {
+            // implement if you want load support
+        }
+    }
+
+    public static void registerCapability() {
+        CapabilityManager.INSTANCE.register(ActionManager.class, new Capability.IStorage<ActionManager>() {
+            @Nullable
+            @Override
+            public NBTBase writeNBT(Capability<ActionManager> capability, ActionManager instance, EnumFacing side) {
+                return null;
+            }
+
+            @Override
+            public void readNBT(Capability<ActionManager> capability, ActionManager instance, EnumFacing side, NBTBase nbt) {
+
+            }
+        }, ActionManager::new);
+    }
+
+    @SubscribeEvent
+    public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
+        if (event.getObject() instanceof EntityPlayer)
+            event.addCapability(new ResourceLocation(NarutomodMod.MODID, "action_manager"), new ActionManagerProvider());
+    }
+
+    @SubscribeEvent
+    public static void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            INSTANCE.tick(tick);
+            tick++;
+        }
+    }
+
+    public static ActionManager get(EntityPlayer player) {
+        return player.getCapability(ACTION_MANAGER_CAPABILITY, null);
+    }
+}
