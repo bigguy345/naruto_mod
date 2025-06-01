@@ -81,6 +81,10 @@ public class ModConfig extends ElementsNarutomodMod.ModElement {
 		@Config.RangeDouble(min = 1, max = 256)
 		@Config.Comment({"Maximum Amenotejikara teleportation range."})
 		public double AMENOTEJIKARA_RANGE = 40;
+		@Config.RangeDouble(min = 1, max = 256)
+		@Config.Comment({"Maximum Universal Pull range."})
+		public double UNIVERSAL_PULL_RANGE = 50;
+
 
 		@Config.RangeDouble(min = 1, max = 5)
 		@Config.Comment({"Player chakra multiplied by this number on Sage Mode entry."})

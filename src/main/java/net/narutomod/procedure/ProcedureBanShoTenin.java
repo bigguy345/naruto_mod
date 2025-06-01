@@ -20,6 +20,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.Entity;
 
+import net.narutomod.ModConfig;
 import net.narutomod.NarutomodModVariables;
 import net.narutomod.ElementsNarutomodMod;
 import net.narutomod.Chakra;
@@ -55,7 +56,7 @@ public class ProcedureBanShoTenin extends ElementsNarutomodMod.ModElement {
 		EntityLivingBase entity = (EntityLivingBase) dependencies.get("entity");
 		long cooldown = entity.getEntityData().getLong(BSTN_CD);
 		if (entity.world.getTotalWorldTime() > cooldown) {
-			RayTraceResult t = ProcedureUtils.objectEntityLookingAt(entity, 50d);
+			RayTraceResult t = ProcedureUtils.objectEntityLookingAt(entity, ModConfig.TECHNIQUES.UNIVERSAL_PULL_RANGE);
 			cooldown = execute(is_pressed, entity, t);
 			entity.getEntityData().setLong(BSTN_CD, cooldown);
 		} else {
