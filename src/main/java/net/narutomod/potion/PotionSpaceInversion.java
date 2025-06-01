@@ -4,12 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.MobEffects;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -22,11 +18,11 @@ import net.narutomod.ElementsNarutomodMod;
 import org.lwjgl.opengl.GL11;
 
 @ElementsNarutomodMod.ModElement.Tag
-public class PotionAmenotejikara extends ElementsNarutomodMod.ModElement {
-	@GameRegistry.ObjectHolder("narutomod:amenotejikara")
+public class PotionSpaceInversion extends ElementsNarutomodMod.ModElement {
+	@GameRegistry.ObjectHolder("narutomod:space_inversion")
 	public static final Potion potion = null;
 
-	public PotionAmenotejikara(ElementsNarutomodMod instance) {
+	public PotionSpaceInversion(ElementsNarutomodMod instance) {
 		super(instance, 529);
 	}
 
@@ -36,47 +32,16 @@ public class PotionAmenotejikara extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static class PotionCustom extends Potion {
-		private EntityLivingBase target;
-		private EntityLivingBase switchTargetWith;
-		private BlockPos blockPos;
 
 		public PotionCustom() {
 			super(false, 0x0033FFCC);
-			setRegistryName("amenotejikara");
-			setPotionName("effect.amenotejikara");
-		}
-
-		public PotionCustom(EntityLivingBase target, EntityLivingBase switchTargetWith, BlockPos blockPos) {
-			this();
-			this.target = target;
-			this.switchTargetWith = switchTargetWith;
-			this.blockPos = blockPos;
-
-			this.target.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 3, 20, false, false));
-			this.switchTargetWith.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 3, 20, false, false));
+			setRegistryName("space_inversion");
+			setPotionName("effect.space_inversion");
 		}
 
 		@Override
 		public boolean isReady(int duration, int amplifier) {
-			if (duration == 1)
-				switchTargets();
-
 			return true;
-		}
-
-		public void switchTargets() {
-			if (blockPos != null) {
-
-			} else {
-				double x = target.posX;
-				double y = target.posY;
-				double z = target.posZ;
-				target.setPositionAndUpdate(switchTargetWith.posX, switchTargetWith.posY, switchTargetWith.posZ);
-				switchTargetWith.setPositionAndUpdate(x, y, z);
-
-				target.world.playSound(null, target.posX, target.posY, target.posZ, SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:rinnegansfx")), SoundCategory.NEUTRAL, 0.8f, target.getRNG().nextFloat() * 0.4f + 0.8f);
-				target.world.playSound(null, switchTargetWith.posX, switchTargetWith.posY, switchTargetWith.posZ, SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:rinnegansfx")), SoundCategory.NEUTRAL, 0.8f, target.getRNG().nextFloat() * 0.4f + 0.8f);
-			}
 		}
 
 		@Override
@@ -94,26 +59,6 @@ public class PotionAmenotejikara extends ElementsNarutomodMod.ModElement {
 		}
 	}
 
-	public static class Effect extends PotionEffect {
-		private EntityLivingBase target;
-		private EntityLivingBase switchTargetWith;
-		private BlockPos blockPos;
-
-		public Effect(EntityLivingBase target, EntityLivingBase switchTargetWith, BlockPos blockPos) {
-			super(potion, 10, 0);
-			this.target = target;
-			this.switchTargetWith = switchTargetWith;
-			this.blockPos = blockPos;
-
-			this.target.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 3, 20, false, false));
-			this.switchTargetWith.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 3, 20, false, false));
-		}
-
-		public void switchTargets() {
-
-		}
-	}
-
 	public class EntityHook {
 		@SubscribeEvent
 		@SideOnly(Side.CLIENT)
@@ -121,7 +66,6 @@ public class PotionAmenotejikara extends ElementsNarutomodMod.ModElement {
 			if (event.getType() == RenderGameOverlayEvent.ElementType.POTION_ICONS && !event.isCancelable()) {
 				Minecraft mc = Minecraft.getMinecraft();
 				if (mc.player.isPotionActive(potion)) {
-					PotionEffect eff = mc.player.getActivePotionEffect(potion);
 					GL11.glPushMatrix();
 					int sWidth = event.getResolution().getScaledWidth();
 					int sHeight = event.getResolution().getScaledHeight();

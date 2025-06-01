@@ -1,8 +1,16 @@
 
 package net.narutomod.item;
 
+import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.math.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -20,7 +28,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
 import net.minecraft.world.World;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumParticleTypes;
@@ -28,10 +35,6 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Item;
@@ -45,9 +48,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 
 import net.narutomod.ModConfig;
+import net.narutomod.NarutomodMod;
 import net.narutomod.creativetab.TabModTab;
 import net.narutomod.ElementsNarutomodMod;
 import net.narutomod.entity.*;
+import net.narutomod.goatee.action.ActionManager;
+import net.narutomod.potion.PotionSpaceInversion;
 import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.procedure.ProcedureOnLivingUpdate;
 import net.narutomod.procedure.ProcedureOnLeftClickEmpty;
@@ -80,7 +86,7 @@ public class ItemNinjutsu extends ElementsNarutomodMod.ModElement {
 	public ItemNinjutsu(ElementsNarutomodMod instance) {
 		super(instance, 377);
 	}
-	
+
 	@Override
 	public void initElements() {
 		elements.items.add(() -> new RangedItem(REPLACEMENT, KAGEBUNSHIN, RASENGAN, LIMBOCLONE, AMENOTEJIKARA, PUPPET, BUGSWARM, INVISABILITY, TRANSFORM, HIRAISHIN, SHIKIGAMI, MULTICLONE));
@@ -115,7 +121,7 @@ public class ItemNinjutsu extends ElementsNarutomodMod.ModElement {
 		public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer entity, EnumHand hand) {
 			ActionResult<ItemStack> ares = super.onItemRightClick(world, entity, hand);
 			ItemStack stack = entity.getHeldItem(hand);
-			if (!world.isRemote && ares.getType() == EnumActionResult.SUCCESS && this.getCurrentJutsu(stack) == AMENOTEJIKARA && (!stack.getTagCompound().getBoolean("amenotejikaraStoreTarget"))) {
+			if (!world.isRemote && ares.getType() == EnumActionResult.SUCCESS && this.getCurrentJutsu(stack) == AMENOTEJIKARA && !entity.isPotionActive(PotionSpaceInversion.potion) && !stack.getTagCompound().getBoolean("amenotejikaraStoreTarget")) {
 				Entity hit = ProcedureUtils.objectEntityLookingAt(entity, ModConfig.TECHNIQUES.AMENOTEJIKARA_RANGE).entityHit;
 				Amenotejikara.setTarget(stack, hit);
 
@@ -332,7 +338,7 @@ public class ItemNinjutsu extends ElementsNarutomodMod.ModElement {
 	public static class Amenotejikara implements ItemJutsu.IJutsuCallback {
 		@Override
 		public boolean createJutsu(ItemStack stack, EntityLivingBase entity, float power) {
-			if (stack.getTagCompound().hasKey("amenotejikaraDisable")) //if the same click that stored the target, return as to not switch
+			if (stack.getTagCompound().hasKey("amenotejikaraDisable") || entity.isPotionActive(PotionSpaceInversion.potion)) //if the same click that stored the target, return as to not switch
 				return false;
 
 			RayTraceResult rtr = ProcedureUtils.objectEntityLookingAt(entity, ModConfig.TECHNIQUES.AMENOTEJIKARA_RANGE);
@@ -369,15 +375,34 @@ public class ItemNinjutsu extends ElementsNarutomodMod.ModElement {
 				double z = target.posZ;
 				ProcedureOnLivingUpdate.setUntargetable(target, 10);
 				ProcedureOnLivingUpdate.setUntargetable(switchTargetWith, 10);
-				target.setPositionAndUpdate(switchTargetWith.posX, switchTargetWith.posY, switchTargetWith.posZ);
-				switchTargetWith.setPositionAndUpdate(x, y, z);
+				Entity finalSwitchTargetWith = switchTargetWith;
+				Entity finalTarget = target;
 
-				entity.world.playSound(null, target.posX, target.posY, target.posZ, SoundEvent.REGISTRY
-						.getObject(new ResourceLocation("narutomod:rinnegansfx")), SoundCategory.NEUTRAL, 0.8f, entity.getRNG().nextFloat() * 0.4f + 0.8f);
-				entity.world.playSound(null, switchTargetWith.posX, switchTargetWith.posY, switchTargetWith.posZ, SoundEvent.REGISTRY
-						.getObject(new ResourceLocation("narutomod:rinnegansfx")), SoundCategory.NEUTRAL, 0.8f, entity.getRNG().nextFloat() * 0.4f + 0.8f);
+				if (finalTarget instanceof EntityLivingBase) {
+					((EntityLivingBase) finalTarget).addPotionEffect(new PotionEffect(PotionSpaceInversion.potion, 10, 0));
+					((EntityLivingBase) finalTarget).addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 7, 20, false, false));
+				}
+				if (finalSwitchTargetWith instanceof EntityLivingBase) {
+					((EntityLivingBase) finalSwitchTargetWith).addPotionEffect(new PotionEffect(PotionSpaceInversion.potion, 10, 0));
+					((EntityLivingBase) finalSwitchTargetWith).addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 7, 20, false, false));
+				}
 
-				setTarget(stack, null);
+				ActionManager.INSTANCE.scheduleAction(ActionManager.INSTANCE.create(5, (action) -> {
+					finalTarget.setPositionAndUpdate(finalSwitchTargetWith.posX, finalSwitchTargetWith.posY, finalSwitchTargetWith.posZ);
+					finalSwitchTargetWith.setPositionAndUpdate(x, y, z);
+
+
+					entity.world.playSound(null, finalTarget.posX, finalTarget.posY, finalTarget.posZ, SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:rinnegansfx")), SoundCategory.NEUTRAL, 0.8f, entity.getRNG().nextFloat() * 0.4f + 0.8f);
+					entity.world.playSound(null, finalSwitchTargetWith.posX, finalSwitchTargetWith.posY, finalSwitchTargetWith.posZ, SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:rinnegansfx")), SoundCategory.NEUTRAL, 0.8f, entity.getRNG().nextFloat() * 0.4f + 0.8f);
+
+					setTarget(stack, null);
+					action.markDone();
+				}));
+
+				if (finalTarget instanceof EntityPlayerMP)
+					NarutomodMod.PACKET_HANDLER.sendTo(new SwitchRotationsMessage(finalTarget, finalSwitchTargetWith), (EntityPlayerMP) finalTarget);
+				NarutomodMod.PACKET_HANDLER.sendToAllTracking(new SwitchRotationsMessage(finalTarget, finalSwitchTargetWith), finalTarget);
+
 				return true;
 			} else if (rtr.typeOfHit == RayTraceResult.Type.BLOCK) {
 				BlockPos pos = entity.world.isAirBlock(rtr.getBlockPos().up()) && entity.world.isAirBlock(rtr.getBlockPos().up(2)) ? rtr.getBlockPos().up() : rtr.getBlockPos().offset(rtr.sideHit);
@@ -385,10 +410,22 @@ public class ItemNinjutsu extends ElementsNarutomodMod.ModElement {
 					target = entity;
 				}
 				ProcedureOnLivingUpdate.setUntargetable(target, 10);
-				target.setPositionAndUpdate(0.5d + pos.getX(), pos.getY(), 0.5d + pos.getZ());
-				entity.world.playSound(null, 0.5d + pos.getX(), pos.getY(), 0.5d + pos.getZ(), SoundEvent.REGISTRY
-						.getObject(new ResourceLocation("narutomod:rinnegansfx")), SoundCategory.NEUTRAL, 0.8f, entity.getRNG().nextFloat() * 0.4f + 0.8f);
-				setTarget(stack, null);
+
+				if (target instanceof EntityLivingBase) {
+					((EntityLivingBase) target).addPotionEffect(new PotionEffect(PotionSpaceInversion.potion, 10, 0));
+					((EntityLivingBase) target).addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 7, 20, false, false));
+				}
+
+
+				Entity finalTarget1 = target;
+				ActionManager.INSTANCE.scheduleAction(ActionManager.INSTANCE.create(5, (action) -> {
+					finalTarget1.setPositionAndUpdate(0.5d + pos.getX(), pos.getY(), 0.5d + pos.getZ());
+					entity.world.playSound(null, 0.5d + pos.getX(), pos.getY(), 0.5d + pos.getZ(), SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:rinnegansfx")), SoundCategory.NEUTRAL, 0.8f, entity.getRNG().nextFloat() * 0.4f + 0.8f);
+
+					setTarget(stack, null);
+					action.markDone();
+				}));
+				
 				return true;
 			}
 			setTarget(stack, null);
@@ -415,6 +452,53 @@ public class ItemNinjutsu extends ElementsNarutomodMod.ModElement {
 		}
 	}
 
+	public static class SwitchRotationsMessage implements IMessage {
+		int id1, id2;
+
+		public SwitchRotationsMessage() {
+		}
+
+		public SwitchRotationsMessage(Entity e1, Entity e2) {
+			this.id1 = e1.getEntityId();
+			this.id2 = e2.getEntityId();
+		}
+
+		public void toBytes(ByteBuf buf) {
+			buf.writeInt(id1);
+			buf.writeInt(id2);
+		}
+
+		public void fromBytes(ByteBuf buf) {
+			this.id1 = buf.readInt();
+			this.id2 = buf.readInt();
+		}
+
+		public static class Handler implements IMessageHandler<SwitchRotationsMessage, IMessage> {
+			@SideOnly(Side.CLIENT)
+			@Override
+			public IMessage onMessage(SwitchRotationsMessage message, MessageContext ctx) {
+				Minecraft.getMinecraft().addScheduledTask(() -> {
+					Entity e1 = Minecraft.getMinecraft().world.getEntityByID(message.id1);
+					Entity e2 = Minecraft.getMinecraft().world.getEntityByID(message.id2);
+					if (e1 == null || e2 == null)
+						return;
+
+					float yaw = e1.getRotationYawHead(), pitch = e1.rotationPitch;
+					e1.rotationYaw = e2.getRotationYawHead();
+					e1.rotationPitch = e2.rotationPitch;
+
+					e2.rotationYaw = yaw;
+					e2.rotationPitch = pitch;
+				});
+				return null;
+			}
+		}
+	}
+
+	@Override
+	public void preInit(FMLPreInitializationEvent event) {
+		elements.addNetworkMessage(SwitchRotationsMessage.Handler.class, SwitchRotationsMessage.class, Side.CLIENT);
+	}
 	@Override
 	public void init(FMLInitializationEvent event) {
 		MinecraftForge.EVENT_BUS.register(new EntityReplacementClone.Jutsu.Hook());

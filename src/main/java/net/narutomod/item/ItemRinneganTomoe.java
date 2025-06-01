@@ -40,6 +40,7 @@ import net.narutomod.entity.EntityPretaShield;
 import net.narutomod.entity.EntitySusanooBase;
 import net.narutomod.entity.EntityTenTails;
 import net.narutomod.gui.GuiNinjaScroll;
+import net.narutomod.potion.PotionSpaceInversion;
 import net.narutomod.procedure.*;
 import net.narutomod.world.WorldKamuiDimension;
 
@@ -124,6 +125,14 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                                 player.getRidingEntity().setDead();
                             }
                         }
+                    }
+                }
+
+                if (itemstack.getTagCompound().hasKey("amenotejikaraDisable")) { //important as to not switch on the same shift click that stores target 
+                    int counter = itemstack.getTagCompound().getInteger("amenotejikaraDisable") - 1;
+                    itemstack.getTagCompound().setInteger("amenotejikaraDisable", counter);
+                    if (counter <= 0) {
+                        itemstack.getTagCompound().removeTag("amenotejikaraDisable");
                     }
                 }
             }
@@ -231,8 +240,24 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             }
 
             @Override
-            public boolean onJutsuKey4(boolean is_pressed, ItemStack stack, EntityPlayer entity) {
-                System.out.println("amenotejiakra!");
+            public boolean onJutsuKey4(byte pressType, ItemStack stack, EntityPlayer entity) {
+                if (pressType == 0) {
+                    if (!entity.world.isRemote && !stack.getTagCompound().getBoolean("amenotejikaraStoreTarget") && !entity.isPotionActive(PotionSpaceInversion.potion)) {
+                        Entity hit = ProcedureUtils.objectEntityLookingAt(entity, ModConfig.TECHNIQUES.AMENOTEJIKARA_RANGE).entityHit;
+                        ItemNinjutsu.Amenotejikara.setTarget(stack, hit);
+
+                        if (hit != null) {
+                            if (entity.isSneaking()) { //shift clicking stores the target, which can be switched to on the next click
+                                stack.getTagCompound().setBoolean("amenotejikaraStoreTarget", true);
+                                stack.getTagCompound().setInteger("amenotejikaraDisable", 5);
+                                entity.sendStatusMessage(new TextComponentTranslation("amenotejikara.target.next_switch", hit.getDisplayName()), true);
+                            } else
+                                entity.sendStatusMessage(new TextComponentTranslation("amenotejikara.target.switching", hit.getDisplayName()), true);
+                        }
+                    }
+                } else if (pressType == 2) {
+                    ItemNinjutsu.AMENOTEJIKARA.jutsu.createJutsu(stack, entity, 100);
+                }
                 return true;
             }
 
