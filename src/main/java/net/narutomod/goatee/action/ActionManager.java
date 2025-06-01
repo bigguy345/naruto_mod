@@ -39,12 +39,11 @@ import java.util.function.Supplier;
  */
 @Mod.EventBusSubscriber
 public class ActionManager implements IActionManager {
-
-    @CapabilityInject(ActionManager.class)
+    
     public static final ActionManager INSTANCE = new ActionManager();
     private static int tick;
 
-    private boolean isWorking = false;
+    private boolean isWorking = true;
 
     private final Deque<IAction> actionQueue = new ConcurrentLinkedDeque<>();
     private final Deque<IAction> parallelActions = new ConcurrentLinkedDeque<>();
