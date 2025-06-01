@@ -35,6 +35,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 
+import net.narutomod.ModConfig;
 import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.procedure.ProcedureTotsukaSwordToolInHandTick;
 import net.narutomod.procedure.ProcedureKagutsuchiSwordToolInUseTick;
@@ -52,7 +53,7 @@ import java.util.HashMap;
 public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 	public static final int ENTITYID = 42;
 	public static final int ENTITYID_RANGED = 43;
-	private static final float MODELSCALE = 8.0F;
+	private static float MODELSCALE = ModConfig.WingedSusanoo.MODEL_SCALE;
 	
 	public EntitySusanooWinged(ElementsNarutomodMod instance) {
 		super(instance, 232);
@@ -97,9 +98,11 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			this.wingSwingProgressInt = 0;
 			this.isWingDetracting = false;
 			this.isWingExtending = false;
-			this.getEntityAttribute(EntityPlayer.REACH_DISTANCE).applyModifier(new AttributeModifier("susanoo.reachExtension", 12.0D, 0));
+
+			double swordReach = player.getEntityData().hasKey("susanooReach") ? player.getEntityData().getDouble("susanooReach") : ModConfig.WingedSusanoo.SWORD_REACH;
+			this.getEntityAttribute(EntityPlayer.REACH_DISTANCE).applyModifier(new AttributeModifier("susanoo.reachExtension", swordReach, 0));
 			this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).applyModifier(new AttributeModifier("susanoo.speedboost", 0.5D, 0));
-			this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier("susanoo.maxhealth", 43d, 2));
+			this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier("susanoo.maxhealth", ModConfig.WingedSusanoo.MAX_HEALTH, 2));
 			this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(this.playerXp * 0.003d);
 			this.getEntityData().setDouble("entityModelScale", (double)MODELSCALE);
 			Item helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem();
@@ -107,11 +110,19 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 				if (((ItemSharingan.Base)helmet).isEternal() || ((ItemSharingan.Base)helmet).getSubType() == ItemSharingan.Type.AMATERASU) {
 					ItemHandlerHelper.giveItemToPlayer((EntityPlayer)player, kagutsuchi);
 				}
-				if (((ItemSharingan.Base)helmet).isEternal() || ((ItemSharingan.Base)helmet).getSubType() == ItemSharingan.Type.KAMUI) {
+				if (
+((ItemSharingan.Base)helmet).isEternal() || ((ItemSharingan.Base)helmet).getSubType() == ItemSharingan.Type.KAMUI) {
 					ItemHandlerHelper.giveItemToPlayer((EntityPlayer)player, kamuiShuriken);
 				}
 			}
 			this.setHealth(this.getMaxHealth());
+
+			if (player.getEntityData().hasKey("susanooModelScale"))
+				MODELSCALE = player.getEntityData().getFloat("susanooModelScale");
+			if (player.getEntityData().hasKey("susanooYOffset"))
+				customYOffset = player.getEntityData().getDouble("susanooYOffset");
+			
+		
 		}
 
 		@Override
@@ -170,9 +181,10 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 	    	return ((Float)this.dataManager.get(HEAD_YAW)).floatValue();
 	    }
 
+		private double customYOffset = -1;
 		@Override
 		public double getMountedYOffset() {
-			return 14.0D;
+			return customYOffset == -1 ? ModConfig.WingedSusanoo.PLAYER_Y_OFFSET : customYOffset;
 		}
 
 		protected int getWingSwingAnimationEnd() {
@@ -279,9 +291,11 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 				if ((!this.onGround || entity.rotationPitch < 0.0F) && entity.moveForward > 0.0F) {
 					this.motionY -= entity.rotationPitch / 45.0D;
 				}
-				if (!this.onGround) {
+				if (!this.onGround)
+ {
 					this.extendWings();
-				} else {
+				} else
+ {
 					this.detractWings();
 				}
 			}
@@ -291,7 +305,8 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 
 		@Override
 		protected void collideWithEntity(Entity entity) {
-			if (!this.world.isRemote && entity instanceof EntityLivingBase && !entity.equals(this.getOwnerPlayer())) {
+			if (!this.world.isRemote && entity instanceof EntityLivingBase && !entity.equals(this.getOwnerPlayer()))
+ {
 				if (this.getOwnerPlayer() != null 
 				 && this.getOwnerPlayer().getHeldItemMainhand().getItem() == ItemKagutsuchiSwordRanged.block)
 					((EntityLivingBase) entity).addPotionEffect(new PotionEffect(PotionAmaterasuFlame.potion, 200, 2, false, false));

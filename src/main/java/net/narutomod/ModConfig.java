@@ -90,4 +90,20 @@ public class ModConfig extends ElementsNarutomodMod.ModElement {
 		@Config.Comment({"Player chakra multiplied by this number on Sage Mode entry."})
 		public double SAGE_MODE_CHAKRA_MULTIPLIER = 1.6;
 	}
+
+	public static class WingedSusanoo {
+		@Config.RangeDouble(min = 1, max = 50)
+		public static float MODEL_SCALE = 8;
+
+		@Config.RangeDouble(min = 1, max = 200)
+		@Config.Comment({" Y Offset where player lies within Susanoo. (Adjust with MODEL_SCALE)"})
+		public static double PLAYER_Y_OFFSET = 14;
+		
+		@Config.RangeDouble(min = 1, max = 512)
+		public static float MAX_HEALTH = 43;
+
+		@Config.RangeDouble(min = 1, max = 100)
+		@Config.Comment({"Maximum Amenotejikara teleportation range."})
+		public static double SWORD_REACH = 12;
+	}
 }
