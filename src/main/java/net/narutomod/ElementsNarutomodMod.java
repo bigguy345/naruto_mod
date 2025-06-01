@@ -6,6 +6,7 @@
  */
 package net.narutomod;
 
+import net.narutomod.goatee.client.gui.GuiInventoryJutsu;
 import net.narutomod.gui.GuiTeamManager;
 import net.narutomod.gui.GuiScrollWindBladeGui;
 import net.narutomod.gui.GuiScrollWaterStreamGui;
@@ -503,6 +504,8 @@ public class ElementsNarutomodMod implements IFuelHandler, IWorldGenerator {
 				return new GuiScrollShikigamiGui.GuiContainerMod(world, x, y, z, player);
 			if (id == GuiScrollMultiCloneGui.GUIID)
 				return new GuiScrollMultiCloneGui.GuiContainerMod(world, x, y, z, player);
+			if (id == GuiInventoryJutsu.GUIID)
+				return new GuiInventoryJutsu.GuiContainerMod(world, x, y, z, player);
 			return null;
 		}
 
@@ -614,6 +617,8 @@ public class ElementsNarutomodMod implements IFuelHandler, IWorldGenerator {
 				return new GuiScrollShikigamiGui.GuiWindow(world, x, y, z, player);
 			if (id == GuiScrollMultiCloneGui.GUIID)
 				return new GuiScrollMultiCloneGui.GuiWindow(world, x, y, z, player);
+			if (id == GuiInventoryJutsu.GUIID)
+				return new GuiInventoryJutsu.GuiWindow(world, x, y, z, player);
 			return null;
 		}
 	}
