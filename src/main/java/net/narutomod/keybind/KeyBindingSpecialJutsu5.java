@@ -57,11 +57,14 @@ public class KeyBindingSpecialJutsu5 extends ElementsNarutomodMod.ModElement {
 	@SideOnly(Side.CLIENT)
 	private void processKeyBind() {
 		boolean isKeyDown = this.keys.isKeyDown();
+		//Pressed = 0, Held = 1, Released = 2
+		byte pressType = (byte) (!wasKeyDown && isKeyDown ? 0 : wasKeyDown && !isKeyDown ? 2 : 1);
+		
 		if (isKeyDown || this.wasKeyDown) {
-			NarutomodMod.PACKET_HANDLER.sendToServer(new KeyBindingPressedMessage(isKeyDown));
+			NarutomodMod.PACKET_HANDLER.sendToServer(new KeyBindingPressedMessage(pressType));
 			EntityPlayer player = Minecraft.getMinecraft().player;
 			if (player != null) {
-				pressAction(player, isKeyDown);
+				pressAction(player, pressType);
 			}
 		}
 		this.wasKeyDown = isKeyDown;
@@ -72,32 +75,32 @@ public class KeyBindingSpecialJutsu5 extends ElementsNarutomodMod.ModElement {
 		public IMessage onMessage(KeyBindingPressedMessage message, MessageContext context) {
 			EntityPlayerMP entity = context.getServerHandler().player;
 			entity.getServerWorld().addScheduledTask(() -> {
-				pressAction(entity, message.is_pressed);
+				pressAction(entity, message.pressType);
 			});
 			return null;
 		}
 	}
 
 	public static class KeyBindingPressedMessage implements IMessage {
-		boolean is_pressed;
+		byte pressType;
 
 		public KeyBindingPressedMessage() {
 		}
 
-		public KeyBindingPressedMessage(boolean is_pressed) {
-			this.is_pressed = is_pressed;
+		public KeyBindingPressedMessage(byte is_pressed) {
+			this.pressType = is_pressed;
 		}
 
 		public void toBytes(ByteBuf buf) {
-			buf.writeBoolean(this.is_pressed);
+			buf.writeByte(this.pressType);
 		}
 
 		public void fromBytes(ByteBuf buf) {
-			this.is_pressed = buf.readBoolean();
+			this.pressType = buf.readByte();
 		}
 	}
 
-	private static void pressAction(EntityPlayer entity, boolean is_pressed) {
+	private static void pressAction(EntityPlayer entity, byte pressType) {
 		World world = entity.world;
 
 		// security measure to prevent arbitrary chunk generation
@@ -106,6 +109,6 @@ public class KeyBindingSpecialJutsu5 extends ElementsNarutomodMod.ModElement {
 
 		ItemStack helmet = entity.inventory.armorInventory.get(3);
 		if ((helmet.getItem() instanceof ItemDojutsu.Base))
-			((ItemDojutsu.Base) helmet.getItem()).onJutsuKey5(is_pressed, helmet, entity);
+			((ItemDojutsu.Base) helmet.getItem()).onJutsuKey5(pressType, helmet, entity);
 	}
 }

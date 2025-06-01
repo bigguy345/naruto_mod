@@ -22,6 +22,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
@@ -32,10 +33,7 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.narutomod.Chakra;
-import net.narutomod.ElementsNarutomodMod;
-import net.narutomod.NarutomodModVariables;
-import net.narutomod.PlayerTracker;
+import net.narutomod.*;
 import net.narutomod.creativetab.TabModTab;
 import net.narutomod.entity.EntityKingOfHell;
 import net.narutomod.entity.EntityPretaShield;
@@ -239,11 +237,11 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             }
 
             @Override
-            public boolean onJutsuKey5(boolean is_pressed, ItemStack stack, EntityPlayer entity) {
+            public boolean onJutsuKey5(byte pressType, ItemStack stack, EntityPlayer entity) {
                 int which_path = stack.hasTagCompound() ? (int) stack.getTagCompound().getDouble("which_path") : -1;
-                if (!is_pressed) {
+                if (pressType == 2) {
                     Map<String, Object> $_dependencies = Maps.newHashMap();
-                    $_dependencies.put("is_pressed", is_pressed);
+                    $_dependencies.put("is_pressed", pressType == 0);
                     $_dependencies.put("entity", entity);
                     $_dependencies.put("world", entity.world);
                     switch (which_path) {
@@ -282,9 +280,9 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                             ProcedureOuterPath.executeProcedure($_dependencies);
                             break;
                     }
-                } else if (which_path == 2) {
+                } else if (pressType == 0 && which_path == 2) {
                     Map<String, Object> $_dependencies = Maps.newHashMap();
-                    $_dependencies.put("is_pressed", is_pressed);
+                    $_dependencies.put("is_pressed", pressType == 0);
                     $_dependencies.put("entity", entity);
                     $_dependencies.put("world", entity.world);
                     ProcedureAnimalPath.executeProcedure($_dependencies);
@@ -293,9 +291,9 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             }
 
             @Override
-            public boolean onJutsuKey6(boolean is_pressed, ItemStack stack, EntityPlayer entity) {
+            public boolean onJutsuKey6(byte pressType, ItemStack stack, EntityPlayer entity) {
                 Map<String, Object> $_dependencies = Maps.newHashMap();
-                $_dependencies.put("is_pressed", is_pressed);
+                $_dependencies.put("is_pressed", pressType == 0);
                 $_dependencies.put("entity", entity);
                 ProcedureBanShoTenin.executeProcedure($_dependencies);
                 return true;
