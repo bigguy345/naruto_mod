@@ -9,7 +9,6 @@ import net.narutomod.goatee.action.ActionManager;
 public class ServerProxyNarutomodMod implements IProxyNarutomodMod {
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
-		ActionManager.registerCapability();
 	}
 
 	@Override

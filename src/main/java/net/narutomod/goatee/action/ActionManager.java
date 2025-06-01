@@ -41,7 +41,6 @@ import java.util.function.Supplier;
 public class ActionManager implements IActionManager {
 
     @CapabilityInject(ActionManager.class)
-    public static final Capability<ActionManager> ACTION_MANAGER_CAPABILITY = null;
     public static final ActionManager INSTANCE = new ActionManager();
     private static int tick;
 
@@ -288,50 +287,6 @@ public class ActionManager implements IActionManager {
         return new ParallelActionChain(this);
     }
 
-    public static class ActionManagerProvider implements ICapabilitySerializable<NBTTagCompound> {
-        private final ActionManager instance = new ActionManager();
-
-        @Override
-        public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-            return capability == ACTION_MANAGER_CAPABILITY;
-        }
-
-        @Override
-        public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-            return capability == ACTION_MANAGER_CAPABILITY ? ACTION_MANAGER_CAPABILITY.cast(instance) : null;
-        }
-
-        @Override
-        public NBTTagCompound serializeNBT() {
-            return new NBTTagCompound(); // implement if you want save support
-        }
-
-        @Override
-        public void deserializeNBT(NBTTagCompound nbt) {
-            // implement if you want load support
-        }
-    }
-
-    public static void registerCapability() {
-        CapabilityManager.INSTANCE.register(ActionManager.class, new Capability.IStorage<ActionManager>() {
-            @Nullable
-            @Override
-            public NBTBase writeNBT(Capability<ActionManager> capability, ActionManager instance, EnumFacing side) {
-                return null;
-            }
-
-            @Override
-            public void readNBT(Capability<ActionManager> capability, ActionManager instance, EnumFacing side, NBTBase nbt) {
-
-            }
-        }, ActionManager::new);
-    }
-
-    @SubscribeEvent
-    public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof EntityPlayer)
-            event.addCapability(new ResourceLocation(NarutomodMod.MODID, "action_manager"), new ActionManagerProvider());
-    }
 
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
@@ -341,7 +296,5 @@ public class ActionManager implements IActionManager {
         }
     }
 
-    public static ActionManager get(EntityPlayer player) {
-        return player.getCapability(ACTION_MANAGER_CAPABILITY, null);
-    }
+  
 }
