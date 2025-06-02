@@ -9,11 +9,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
 import net.narutomod.NarutomodMod;
 import net.narutomod.goatee.data.NarutoData;
+import net.narutomod.goatee.network.packets.NarutoSyncData;
 
 @Mod.EventBusSubscriber
 public class NarutoCapabilities {
@@ -24,7 +28,7 @@ public class NarutoCapabilities {
         CapabilityManager.INSTANCE.register(NarutoData.class, new Capability.IStorage<NarutoData>() {
             @Override
             public NBTBase writeNBT(Capability<NarutoData> capability, NarutoData instance, EnumFacing side) {
-                return instance.writeToNBT(new NBTTagCompound());
+                return instance.writeToNBT();
             }
 
             @Override
@@ -37,6 +41,19 @@ public class NarutoCapabilities {
     @SubscribeEvent
     public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof EntityPlayer)
-            event.addCapability(new ResourceLocation(NarutomodMod.MODID, "naruto_data"), new NarutoData.CapProvider());
+            event.addCapability(new ResourceLocation(NarutomodMod.MODID, "naruto_data"), new NarutoData.CapProvider((EntityPlayer) event.getObject()));
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.player.world == null || event.player.world.isRemote || event.player instanceof FakePlayer)
+            return;
+
+        EntityPlayer player = event.player;
+        if (event.side == Side.SERVER && event.phase == TickEvent.Phase.START) {
+            if (player.ticksExisted % 10 == 0) {
+                NarutoSyncData.syncTrackingClients(NarutoData.get(player));
+            }
+        }
     }
 }

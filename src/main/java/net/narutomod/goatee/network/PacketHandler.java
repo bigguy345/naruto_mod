@@ -2,6 +2,7 @@ package net.narutomod.goatee.network;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityTracker;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.world.WorldServer;
@@ -13,7 +14,8 @@ import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraftforge.fml.relauncher.Side;
 
 import net.narutomod.NarutomodMod;
-import net.narutomod.goatee.network.packets.SaveWheelDataPacket;
+import net.narutomod.goatee.network.packets.NarutoSyncData;
+import net.narutomod.goatee.network.packets.NarutoWheelData;
 import net.narutomod.goatee.proxy.CommonProxy;
 
 import java.util.Hashtable;
@@ -27,7 +29,8 @@ public final class PacketHandler {
 
     public PacketHandler() {
 
-        map.put(SaveWheelDataPacket.packetName, new SaveWheelDataPacket());
+        map.put(NarutoWheelData.packetName, new NarutoWheelData());
+        map.put(NarutoSyncData.packetName, new NarutoSyncData());
         //  map.put(SyncMaintainerGUIPacket.packetName, new SyncMaintainerGUIPacket());
         //  map.put(JEIGhostSlotPacket.packetName, new JEIGhostSlotPacket());
         // map.put(OpenCraftingGUI.packetName, new OpenCraftingGUI());
@@ -62,10 +65,10 @@ public final class PacketHandler {
         }
     }
 
-    public void sendToPlayer(AbstractPacket pr, EntityPlayerMP player) {
+    public void sendToPlayer(EntityPlayer player, AbstractPacket pr) {
         FMLProxyPacket packet = pr.generatePacket();
         if (packet != null && CommonProxy.side() == Side.SERVER) {
-            channels.get(packet.channel()).sendTo(packet, player);
+            channels.get(packet.channel()).sendTo(packet, (EntityPlayerMP) player);
         }
     }
 
@@ -77,22 +80,25 @@ public final class PacketHandler {
         }
     }
 
-    public void sendToTrackingPlayers(Entity entity, FMLProxyPacket packet) {
-        if (packet != null && CommonProxy.side() == Side.SERVER) {
+    public void sendToTrackingPlayers(Entity entity, AbstractPacket packet) {
+        FMLProxyPacket pr = packet.generatePacket();
+        if (pr != null && CommonProxy.side() == Side.SERVER) {
             EntityTracker tracker = ((WorldServer) entity.world).getEntityTracker();
-            tracker.sendToTracking(entity, packet); // Send packet to tracking players
+            tracker.sendToTracking(entity, pr); // Send packet to tracking players
         }
     }
 
-    public void sendAround(Entity entity, double range, FMLProxyPacket packet) {
-        if (packet != null && CommonProxy.side() == Side.SERVER) {
-            channels.get(packet.channel()).sendToAllAround(packet, new NetworkRegistry.TargetPoint(entity.dimension, entity.posX, entity.posY, entity.posZ, range));
+    public void sendAround(Entity entity, double range, AbstractPacket packet) {
+        FMLProxyPacket pr = packet.generatePacket();
+        if (pr != null && CommonProxy.side() == Side.SERVER) {
+            channels.get(pr.channel()).sendToAllAround(pr, new NetworkRegistry.TargetPoint(entity.dimension, entity.posX, entity.posY, entity.posZ, range));
         }
     }
 
-    public void sendToAll(FMLProxyPacket packet) {
-        if (packet != null && CommonProxy.side() == Side.SERVER) {
-            channels.get(packet.channel()).sendToAll(packet);
+    public void sendToAll(AbstractPacket packet) {
+        FMLProxyPacket pr = packet.generatePacket();
+        if (pr != null && CommonProxy.side() == Side.SERVER) {
+            channels.get(pr.channel()).sendToAll(pr);
         }
     }
 }

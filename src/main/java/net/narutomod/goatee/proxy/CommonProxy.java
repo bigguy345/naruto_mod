@@ -14,7 +14,6 @@ public class CommonProxy {
 
     public void preInit(FMLPreInitializationEvent event) {
         NarutoCapabilities.registerCapability();
-     //   MinecraftForge.EVENT_BUS.register(new NarutoCapabilities());
     }
 
     public void init(FMLInitializationEvent event) {
@@ -31,4 +30,9 @@ public class CommonProxy {
     public static Side side() {
         return FMLCommonHandler.instance().getEffectiveSide();
     }
+
+    public static boolean isServer() {
+        return FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER;
+    }
+
 }
