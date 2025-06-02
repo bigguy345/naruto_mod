@@ -303,7 +303,7 @@ public class HUDItemStackWheel extends GuiScreen {
         }
 
         EntityPlayer entity = mc.player;
-        IS_OPEN = true;
+        IS_OPEN = hoveredSlot != -1;
 
         int l = this.width / 2;
         int i1 = this.height / 2 + 60;
@@ -344,14 +344,13 @@ public class HUDItemStackWheel extends GuiScreen {
         if (hoveredSlot != -1) {
             ItemStack eye = wheelSlot[hoveredSlot].data.stack;
             entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, eye);
-            if (ItemRinnegan.isRinnesharinganActivated(eye)) {
-                if (ItemTenseigan.isTenseigan(eye)) {
+
+            if (ItemTenseigan.isTenseigan(eye)) {
                     entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ItemTenseigan.body));
                     entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ItemTenseigan.legs));
-                } else {
+            } else if (ItemRinnegan.isRinnesharinganActivated(eye)) {
                     entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ItemRinnegan.body));
                     entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ItemRinnegan.legs));
-                }
             } else {
                 if (oldChest.getItem() == ItemRinnegan.body || oldChest.getItem() == ItemTenseigan.body)
                     entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStack.EMPTY);
