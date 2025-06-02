@@ -109,6 +109,8 @@ public class ItemTenseigan extends ElementsNarutomodMod.ModElement {
 
 			@Override
 			public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
+				if (ItemRinnegan.isRinnesharinganActivated(stack))
+					return "narutomod:textures/tenseigan_rinnesharinganhelmet.png";
 				return "narutomod:textures/tenseiganhelmet.png";
 			}
 
