@@ -39,7 +39,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.UUID;
-import com.google.common.collect.Multimap;
+
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Maps;
 
 @ElementsNarutomodMod.ModElement.Tag
@@ -86,7 +87,8 @@ public class ItemByakugan extends ElementsNarutomodMod.ModElement {
 	public void initElements() {
 		ItemArmor.ArmorMaterial enuma = EnumHelper.addArmorMaterial("BYAKUGAN", "narutomod:byakugan_", 25, new int[]{2, 5, 6, 15}, 0, null, 0.0F);
 		
-		this.elements.items.add(() -> new ItemDojutsu.Base(enuma) {
+		this.elements.items.add(() -> new ItemDojutsu.Base(enuma) {
+
 			@Override
 			public ItemDojutsu.Type getType() {
 				return ItemDojutsu.Type.BYAKUGAN;
@@ -99,7 +101,6 @@ public class ItemByakugan extends ElementsNarutomodMod.ModElement {
 				armorModel.headwearHide = true;
 				armorModel.onface.showModel = living.getEntityData().getBoolean("byakugan_activated") || EntityEightTrigrams.EntityCustom.isActivated(living)
 				 || living.getRidingEntity() instanceof EntityHakkeshoKeiten.EntityCustom;
-				armorModel.highlightHide = !armorModel.onface.showModel;
 				return armorModel;
 			}
 
@@ -175,7 +176,8 @@ public class ItemByakugan extends ElementsNarutomodMod.ModElement {
 			@Override
 			public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 				super.addInformation(stack, worldIn, tooltip, flagIn);
-				if (isRinnesharinganActivated(stack)) {
+				if (isRinnesharinganActivated(stack))
+ {
 					tooltip.add(TextFormatting.RED + I18n.translateToLocal("advancements.rinnesharinganactivated.title") + TextFormatting.WHITE);
 					tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu1") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.byakugan.jutsu1") + " (NXP:500)");
 					tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu2") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.byakurinnesharingan.jutsu2"));
