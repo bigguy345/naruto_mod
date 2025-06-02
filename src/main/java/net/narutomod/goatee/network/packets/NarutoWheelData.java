@@ -10,7 +10,7 @@ import net.narutomod.goatee.data.NarutoData;
 import net.narutomod.goatee.data.WheelData;
 import net.narutomod.goatee.network.AbstractPacket;
 import net.narutomod.item.ItemDojutsu;
-import net.narutomod.item.ItemSharingan;
+import net.narutomod.item.ItemRinnegan;
 
 import java.io.IOException;
 
@@ -59,16 +59,21 @@ public final class NarutoWheelData extends AbstractPacket {
                 player.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStack.EMPTY);
             }
         } else if (wheel.stack.getItem() instanceof ItemDojutsu.Base) {
+            if (wheel.stack.getItem() instanceof ItemRinnegan.Base)
+                ItemRinnegan.giveClothes(wheel.stack, player);
+            
             player.setItemStackToSlot(EntityEquipmentSlot.HEAD, wheel.stack);
-            wheel.stack = ItemStack.EMPTY;
+            wheel.stack = helmet;
 
-            boolean addedToInv = player.inventory.addItemStackToInventory(helmet);
-            if (!addedToInv) {
-                if (helmet.getItem() instanceof ItemDojutsu.Base)
-                    wheel.stack = helmet;
-                else
-                    player.dropItem(helmet, false);
-            }
+            //            boolean addedToInv = player.inventory.addItemStackToInventory(helmet);
+            //            if (!addedToInv) {
+            //                if (helmet.getItem() instanceof ItemDojutsu.Base)
+            //                    wheel.stack = helmet;
+            //                else
+            //                    player.dropItem(helmet, false);
+            //            }
+
         }
+        NarutoSyncData.syncTrackingClients(NarutoData.get(player));
     }
 }

@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.settings.KeyConflictContext;
@@ -53,7 +52,7 @@ public class HUDItemStackWheel extends GuiScreen {
     public static boolean IS_OPEN;
 
     public static final int OPEN_TIME = 3000;
-
+    public ItemStack selectedItem;
     public double easeOutExpo(double x) {
         return x == 1 ? 1 :  1 - Math.pow(2, -10 * x);
     }
@@ -67,6 +66,7 @@ public class HUDItemStackWheel extends GuiScreen {
             wheelSlot[i].setItem(wheelData.get(i), false);
         }
         NarutoSyncData.requestSync(data);
+        
         // Stops the GUI from un-pressing all keys for you.
         mc.inGameHasFocus = false;
         mc.mouseHelper.ungrabMouseCursor();
@@ -134,27 +134,6 @@ public class HUDItemStackWheel extends GuiScreen {
         mc.gameSettings.keyBindSprint.setKeyConflictContext(KeyConflictContext.UNIVERSAL);
     }
 
-    public void calculateHoveredSlot(float HALF_WIDTH, float HALF_HEIGHT, boolean configureEnabled) {
-        if (isClosing)
-            return;
-        final float deltaX = HALF_WIDTH - mouseX;
-        final float deltaY = HALF_HEIGHT - mouseY;
-        float radius = 98;
-        radius *= undoMCScaling;
-        if (Math.sqrt(deltaX * deltaX + deltaY * deltaY) > radius) {
-            final float radians = (float) Math.atan2(deltaY, deltaX);
-            final float degree = Math.round(radians * (180 / Math.PI));
-
-            int tempHoveredSlot = (int) ((degree - 180) / -60) - 1;
-            if (tempHoveredSlot == -1)
-                tempHoveredSlot = 5;
-
-            boolean justOpened = Minecraft.getSystemTime() - timeOpened < 50;
-            if (!justOpened && tempHoveredSlot != hoveredSlot && !configureEnabled)
-                selectSlot(tempHoveredSlot);
-        }
-    }
-
     public void selectSlot(int slotID) {
         if (hoveredSlot == slotID)
             return;
@@ -166,54 +145,40 @@ public class HUDItemStackWheel extends GuiScreen {
         hoveredSlot = slotID;
     }
 
-    @Override
-    public void updateScreen() {
-        if (Mouse.isButtonDown(1))
-            selectSlot(-1);
-        if (Mouse.isButtonDown(0))
-            if (hoveredSlot != -1)
-                wheelSlot[hoveredSlot].selectItem();
-        int code = KeyBindingGui.key.getKeyCode();
-        keyDown = isMouseButton() ? Mouse.isButtonDown(code + 100) : Keyboard.isKeyDown(code);
-        if (!keyDown && !configureEnabled && !isClosing) {
-            if (hoveredSlot != -1)
-                wheelSlot[hoveredSlot].selectItem();
+    public void calculateHoveredSlot(float HALF_WIDTH, float HALF_HEIGHT, boolean configureEnabled) {
+        if (isClosing)
+            return;
+        final float deltaX = HALF_WIDTH - mouseX;
+        final float deltaY = HALF_HEIGHT - mouseY;
+        float radius = 98;
+        radius *= undoMCScaling * guiAnimationScale;
+        if (Math.sqrt(deltaX * deltaX + deltaY * deltaY) > radius) {
+            final float radians = (float) Math.atan2(deltaY, deltaX);
+            final float degree = Math.round(radians * (180 / Math.PI));
 
-            mc.inGameHasFocus = true;
-            mc.mouseHelper.grabMouseCursor();
-            isClosing = true;
+            int hoveredSlot = (int) ((degree - 180) / -60) - 1;
+            if (hoveredSlot == -1)
+                hoveredSlot = 5;
+
+            boolean justOpened = Minecraft.getSystemTime() - timeOpened < 50;
+            if (!justOpened && hoveredSlot != this.hoveredSlot && !configureEnabled) {
+                selectSlot(hoveredSlot);
+
+                if (!isClosing)
+                    selectedItem = wheelSlot[hoveredSlot].data.stack;
+            }
         }
     }
 
-    protected void drawGradientRectWithFade(int left, int top, int right, int bottom, int startColor, int endColor, float fade) {
-        int red = (startColor >> 16) & 0xFF;
-        int green = (startColor >> 8) & 0xFF;
-        int blue = (startColor) & 0xFF;
-        int alpha = (startColor >> 24 & 255);
-        int newAlpha = Math.min(255, Math.max(0, (int) (alpha * fade)));
-        int newStart = (newAlpha << 24) | (red << 16) | (green << 8) | blue;
-
-        red = (endColor >> 16) & 0xFF;
-        green = (endColor >> 8) & 0xFF;
-        blue = (endColor) & 0xFF;
-        alpha = (endColor >> 24 & 255);
-        newAlpha = Math.min(255, Math.max(0, (int) (alpha * fade)));
-        int newEnd = (newAlpha << 24) | (red << 16) | (green << 8) | blue;
-
-        drawGradientRect(left, top, right, bottom, newStart, newEnd);
-    }
-
-    @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-
-        this.mouseX = mouseX;
-        this.mouseY = mouseY;
+    public void update() {
+        if (Mouse.isButtonDown(1))
+            selectSlot(-1);
 
         if (isClosing && guiAnimationScale >= 0) {
             guiAnimationScale -= 0.015f;
             if (guiAnimationScale <= 0) {
                 guiAnimationScale = 0;
-                close();
+                onClose(POST_CLOSE);
             }
         } else if (guiAnimationScale < 1) {
             float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / 2500;
@@ -222,13 +187,28 @@ public class HUDItemStackWheel extends GuiScreen {
             guiAnimationScale = (float) easeOutExpo(updateTime);
         }
 
+        calculateHoveredSlot((float) this.width / 2, (float) this.height / 2, configureEnabled);
+        
+        int code = KeyBindingGui.key.getKeyCode();
+        keyDown = KeyBindingGui.key.getKeyCode() < 0 ? Mouse.isButtonDown(code + 100) : Keyboard.isKeyDown(code);
+        if (!keyDown && !configureEnabled && !isClosing)
+            onClose(PRE_CLOSE);
+        
+    }
+
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        this.mouseX = mouseX;
+        this.mouseY = mouseY;
+
+        update();
+
         int gradientColor = ((int) (255 * 0.2f * guiAnimationScale) << 24);
         this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
-        drawGradientRectWithFade(0, 0, width, height, 0xaa000000, 0xfa000000, guiAnimationScale);
+        drawGradientRectWithFade(0, 0, width, height, 0x66000000, 0xff000000, guiAnimationScale);
 
         final float HALF_WIDTH = (float) this.width / 2;
         final float HALF_HEIGHT = (float) this.height / 2;
-        calculateHoveredSlot(HALF_WIDTH, HALF_HEIGHT, configureEnabled);
 
         glPushMatrix();
 
@@ -277,17 +257,12 @@ public class HUDItemStackWheel extends GuiScreen {
 
             glPopMatrix();
         }
-
         glPopMatrix();
-
-
         glPopMatrix();
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
-    public void drawDefaultBackground() {
-    }
 
     public boolean isMouseOverRenderer(int x, int y) {
         int width = this.width / 2;
@@ -314,7 +289,6 @@ public class HUDItemStackWheel extends GuiScreen {
 
         entity.capabilities.isFlying = true;
         entity.setSneaking(false);
-        ;
         try {
             Field field = Entity.class.getDeclaredField("isImmuneToFire");
             field.setAccessible(true);
@@ -340,13 +314,12 @@ public class HUDItemStackWheel extends GuiScreen {
         
 
         if (hoveredSlot != -1) {
-            ItemStack eye = wheelSlot[hoveredSlot].data.stack;
-            entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, eye);
+            entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, selectedItem);
 
-            if (ItemTenseigan.isTenseigan(eye)) {
+            if (ItemTenseigan.isTenseigan(selectedItem)) {
                     entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ItemTenseigan.body));
                     entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ItemTenseigan.legs));
-            } else if (ItemRinnegan.isRinnesharinganActivated(eye)) {
+            } else if (ItemRinnegan.isRinnesharinganActivated(selectedItem)) {
                     entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ItemRinnegan.body));
                     entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ItemRinnegan.legs));
             } else {
@@ -356,7 +329,6 @@ public class HUDItemStackWheel extends GuiScreen {
                     entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStack.EMPTY);
             }
         }
-
 
         boolean oldRun = ModConfig.NARUTO_RUN;
         ModConfig.NARUTO_RUN = false;
@@ -407,11 +379,6 @@ public class HUDItemStackWheel extends GuiScreen {
         entity.capabilities.isFlying = oldFlying;
         entity.setSneaking(oldSneaking);
 
-        entity.inventory.mainInventory.set(entity.inventory.currentItem, oldItem);
-        entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, oldHelmet);
-        entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, oldChest);
-        entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, oldLegs);
-
         try {
             Field field = Entity.class.getDeclaredField("isImmuneToFire");
             field.setAccessible(true);
@@ -424,7 +391,33 @@ public class HUDItemStackWheel extends GuiScreen {
             e.printStackTrace();
         }
 
+        entity.inventory.mainInventory.set(entity.inventory.currentItem, oldItem);
+        entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, oldHelmet);
+        entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, oldChest);
+        entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, oldLegs);
+
         IS_OPEN = false;
+    }
+
+    public void drawDefaultBackground() {
+    }
+
+    protected void drawGradientRectWithFade(int left, int top, int right, int bottom, int startColor, int endColor, float fade) {
+        int red = (startColor >> 16) & 0xFF;
+        int green = (startColor >> 8) & 0xFF;
+        int blue = (startColor) & 0xFF;
+        int alpha = (startColor >> 24 & 255);
+        int newAlpha = Math.min(255, Math.max(0, (int) (alpha * fade)));
+        int newStart = (newAlpha << 24) | (red << 16) | (green << 8) | blue;
+
+        red = (endColor >> 16) & 0xFF;
+        green = (endColor >> 8) & 0xFF;
+        blue = (endColor) & 0xFF;
+        alpha = (endColor >> 24 & 255);
+        newAlpha = Math.min(255, Math.max(0, (int) (alpha * fade)));
+        int newEnd = (newAlpha << 24) | (red << 16) | (green << 8) | blue;
+
+        drawGradientRect(left, top, right, bottom, newStart, newEnd);
     }
 
     @Override
@@ -432,21 +425,30 @@ public class HUDItemStackWheel extends GuiScreen {
         return false;
     }
 
-    public static boolean isMouseButton() {
-        return KeyBindingGui.key.getKeyCode() < 0;
-    }
+    protected final int PRE_CLOSE = 0, POST_CLOSE = 1;
 
-    public void close() {
-        Keyboard.enableRepeatEvents(false);
-        mc.displayGuiScreen(null);
-        this.mc.setIngameFocus();
+    public void onClose(int closeType) {
+        if (closeType == PRE_CLOSE) {
+            if (hoveredSlot != -1) {
+                wheelSlot[hoveredSlot].selectItem();
+                selectedItem = wheelSlot[hoveredSlot].data.stack;
+            }
 
-        mc.gameSettings.keyBindForward.setKeyConflictContext(KeyConflictContext.IN_GAME);
-        mc.gameSettings.keyBindBack.setKeyConflictContext(KeyConflictContext.IN_GAME);
-        mc.gameSettings.keyBindLeft.setKeyConflictContext(KeyConflictContext.IN_GAME);
-        mc.gameSettings.keyBindRight.setKeyConflictContext(KeyConflictContext.IN_GAME);
-        mc.gameSettings.keyBindJump.setKeyConflictContext(KeyConflictContext.IN_GAME);
-        mc.gameSettings.keyBindSprint.setKeyConflictContext(KeyConflictContext.IN_GAME);
+            mc.inGameHasFocus = true;
+            mc.mouseHelper.grabMouseCursor();
+            isClosing = true;
+        } else {
+            Keyboard.enableRepeatEvents(false);
+            mc.displayGuiScreen(null);
+            this.mc.setIngameFocus();
+
+            mc.gameSettings.keyBindForward.setKeyConflictContext(KeyConflictContext.IN_GAME);
+            mc.gameSettings.keyBindBack.setKeyConflictContext(KeyConflictContext.IN_GAME);
+            mc.gameSettings.keyBindLeft.setKeyConflictContext(KeyConflictContext.IN_GAME);
+            mc.gameSettings.keyBindRight.setKeyConflictContext(KeyConflictContext.IN_GAME);
+            mc.gameSettings.keyBindJump.setKeyConflictContext(KeyConflictContext.IN_GAME);
+            mc.gameSettings.keyBindSprint.setKeyConflictContext(KeyConflictContext.IN_GAME);
+        }
     }
 
     public void handleInput() throws IOException {

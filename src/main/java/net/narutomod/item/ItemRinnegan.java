@@ -14,7 +14,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.item.ItemStack;
@@ -173,7 +172,7 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 			public void onUpdate(ItemStack itemstack, World world, Entity entity, int par4, boolean par5) {
 				super.onUpdate(itemstack, world, entity, par4, par5);
 				if (entity instanceof EntityPlayerMP && !wearingRinnesharingan((EntityPlayer)entity)) {
-					((EntityPlayer)entity).inventory.clearMatchingItems(itemstack.getItem(), -1, -1, null);
+					((EntityPlayer) entity).inventory.clearMatchingItems(itemstack.getItem(), -1, -1, null);
 				}
 			}
 
@@ -491,6 +490,16 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 			}
 		}
 		return false;
+	}
+
+	public static void giveClothes(ItemStack stack, EntityPlayer entity) {
+		if (ItemTenseigan.isTenseigan(stack)) {
+			ProcedureUtils.swapItemToSlot(entity, EntityEquipmentSlot.CHEST, new ItemStack(ItemTenseigan.body));
+			ProcedureUtils.swapItemToSlot(entity, EntityEquipmentSlot.LEGS, new ItemStack(ItemTenseigan.legs));
+		} else if (ItemRinnegan.isRinnesharinganActivated(stack)) {
+			ProcedureUtils.swapItemToSlot(entity, EntityEquipmentSlot.CHEST, new ItemStack(ItemRinnegan.body));
+			ProcedureUtils.swapItemToSlot(entity, EntityEquipmentSlot.LEGS, new ItemStack(ItemRinnegan.legs));
+		}
 	}
 	
 	@SideOnly(Side.CLIENT)
