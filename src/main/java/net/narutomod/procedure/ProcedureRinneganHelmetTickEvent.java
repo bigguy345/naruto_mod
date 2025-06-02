@@ -143,6 +143,8 @@ public class ProcedureRinneganHelmetTickEvent extends ElementsNarutomodMod.ModEl
 				if (((entity.ticksExisted % 20) == 2)) {
 					if (entity instanceof EntityLivingBase)
 						((EntityLivingBase) entity).addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, (int) 22, (int) 2, (false), (false)));
+					if (((EntityLivingBase) entity).isPotionActive(MobEffects.BLINDNESS))
+						((EntityLivingBase) entity).removePotionEffect(MobEffects.BLINDNESS);
 				}
 				if (entity.equals(EntityTenTails.getBijuManager().getJinchurikiPlayer())) {
 					{
