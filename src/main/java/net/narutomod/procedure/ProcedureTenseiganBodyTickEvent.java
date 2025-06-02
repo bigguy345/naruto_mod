@@ -1,5 +1,6 @@
 package net.narutomod.procedure;
 
+import net.narutomod.item.ItemTenseigan;
 import net.narutomod.item.ItemTenseiganChakraMode;
 import net.narutomod.item.ItemBijuCloak;
 import net.narutomod.Particles;
@@ -28,7 +29,7 @@ public class ProcedureTenseiganBodyTickEvent extends ElementsNarutomodMod.ModEle
 		}
 		Entity entity = (Entity) dependencies.get("entity");
 		ItemStack itemstack = (ItemStack) dependencies.get("itemstack");
-		if ((!(((entity instanceof EntityLivingBase) ? ((EntityLivingBase) entity).getHeldItemMainhand() : ItemStack.EMPTY)
+		if ((!(((entity instanceof EntityLivingBase) ? ItemTenseigan.getHeldChakraCloak((EntityLivingBase) entity) : ItemStack.EMPTY)
 				.getItem() == new ItemStack(ItemTenseiganChakraMode.block, (int) (1)).getItem()))) {
 			((itemstack)).shrink((int) 1);
 		} else {

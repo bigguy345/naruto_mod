@@ -112,7 +112,7 @@ public class ItemTenseiganChakraMode extends ElementsNarutomodMod.ModElement {
 							stack2.shrink(1);
 						}
 						itemstack.shrink(1);
-					} else if (livingEntity.getHeldItemMainhand().equals(itemstack)) {
+					} else if (ItemTenseigan.getHeldChakraCloak(livingEntity).equals(itemstack)) {
 						livingEntity.addPotionEffect(new PotionEffect(PotionFlight.potion, 2, 0, false, false));
 						if (!livingEntity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).equals(eyestack)) {
 							ProcedureUtils.swapItemToSlot(livingEntity, EntityEquipmentSlot.HEAD, eyestack);

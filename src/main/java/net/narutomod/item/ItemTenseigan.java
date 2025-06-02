@@ -90,16 +90,19 @@ public class ItemTenseigan extends ElementsNarutomodMod.ModElement {
 			@Override
 			public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {
 				ItemDojutsu.ClientModel.ModelHelmetSnug armorModel = (ItemDojutsu.ClientModel.ModelHelmetSnug)super.getArmorModel(living, stack, slot, defaultModel);
-				boolean isS06p = ItemRinnegan.isRinnesharinganActivated(stack);
-				armorModel.headwearShine = true;
-				armorModel.isSo6 = armorModel.onface.showModel = isS06p;
-				armorModel.foreheadHide = !isS06p;
 				ItemStack item = getHeldChakraCloak(living);
-				boolean isHolding = !item.isEmpty();
+				boolean inTenseiganCloak = !item.isEmpty();
+				
+				//boolean isS06p = ItemRinnegan.isRinnesharinganActivated(stack) || inTenseiganCloak;
+				armorModel.headwearShine = true;
+				armorModel.isSo6 =  false;
+				armorModel.onface.showModel = false;
+				armorModel.foreheadHide = !ItemRinnegan.isRinnesharinganActivated(stack);
 
-				armorModel.headwearHide = !(isHolding && !((ItemTenseiganChakraMode.RangedItem) item.getItem()).isOnCooldown(living) || HUDItemStackWheel.IS_OPEN && isS06p);
+				armorModel.headwearHide = !(inTenseiganCloak && !((ItemTenseiganChakraMode.RangedItem) item.getItem()).isOnCooldown(living) || HUDItemStackWheel.IS_OPEN );//&& isS06p);
+				//armorModel.foreheadHide = false;
 				armorModel.headHide = !armorModel.headwearHide;
-				armorModel.hornMiddle.showModel = true;
+				armorModel.hornMiddle.showModel = false;
 				armorModel.hornLeft.showModel = armorModel.hornRight.showModel = false;
 				return armorModel;
 			}
