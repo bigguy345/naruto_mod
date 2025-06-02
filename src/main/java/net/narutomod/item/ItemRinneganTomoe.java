@@ -162,8 +162,8 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
 
             public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
                 if (isRinnesharinganActivated(stack))
-                    return "narutomod:textures/rinnesharinganhelmet.png";
-                return "narutomod:textures/rinneems.png";
+                    return "narutomod:textures/rinnesharingantomoehelmet.png";
+                return "narutomod:textures/rinnegantomoehelmet.png";
             }
 
             public int getMaxDamage() {
