@@ -20,11 +20,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.narutomod.ElementsNarutomodMod;
 import net.narutomod.NarutomodMod;
+import net.narutomod.goatee.client.hud.formWheel.HUDItemStackWheel;
+import net.narutomod.goatee.data.NarutoData;
 import org.lwjgl.input.Keyboard;
 
 @ElementsNarutomodMod.ModElement.Tag
 public class KeyBindingGui extends ElementsNarutomodMod.ModElement {
-	private KeyBinding keys;
+	public static KeyBinding key;
 	private boolean wasKeyDown;
 
 	public KeyBindingGui(ElementsNarutomodMod instance) {
@@ -39,8 +41,8 @@ public class KeyBindingGui extends ElementsNarutomodMod.ModElement {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void init(FMLInitializationEvent event) {
-		keys = new KeyBinding("key.jutsu_inventory", Keyboard.KEY_C, "Jutsu Inventory");
-		ClientRegistry.registerKeyBinding(keys);
+		key = new KeyBinding("key.jutsu_inventory", Keyboard.KEY_C, "Jutsu Inventory");
+		ClientRegistry.registerKeyBinding(key);
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -54,11 +56,14 @@ public class KeyBindingGui extends ElementsNarutomodMod.ModElement {
 
 	@SideOnly(Side.CLIENT)
 	private void processKeyBind() {
-		boolean isKeyDown = this.keys.isKeyDown();
+		boolean isKeyDown = this.key.isKeyDown();
 		//Pressed = 0, Held = 1, Released = 2
 		byte pressType = (byte) (!wasKeyDown && isKeyDown ? 0 : wasKeyDown && !isKeyDown ? 2 : 1);
 
 		if (isKeyDown || this.wasKeyDown) {
+			if (pressType == 0)
+				Minecraft.getMinecraft().displayGuiScreen(new HUDItemStackWheel(NarutoData.getClient().dojutsuWheel));
+			
 			NarutomodMod.PACKET_HANDLER.sendToServer(new KeyBindingPressedMessage(pressType));
 			EntityPlayer player = Minecraft.getMinecraft().player;
 			if (player != null) {
@@ -105,7 +110,10 @@ public class KeyBindingGui extends ElementsNarutomodMod.ModElement {
 		if (!world.isBlockLoaded(new BlockPos(entity.posX, entity.posY, entity.posZ)) || world.isRemote || entity.isSpectator())
 			return;
 
-		if (pressType == 0)
-			entity.openGui(NarutomodMod.MODID, GuiInventoryJutsu.GUIID, entity.getEntityWorld(), 1, 0, 0);
+		//if (pressType == 0)
+		//	entity.openGui(NarutomodMod.MODID, GuiInventoryJutsu.GUIID, entity.getEntityWorld(), 1, 0, 0);
+
+		
+
 	}
 }

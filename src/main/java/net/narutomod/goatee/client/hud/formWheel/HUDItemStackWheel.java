@@ -14,10 +14,12 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.settings.KeyConflictContext;
+import net.narutomod.ModConfig;
 import net.narutomod.goatee.client.gui.KeyBindingGui;
 import net.narutomod.goatee.data.NarutoData;
 import net.narutomod.goatee.data.WheelData;
 import net.narutomod.goatee.network.packets.NarutoSyncData;
+import net.narutomod.item.ItemJutsu;
 import net.narutomod.item.ItemRinnegan;
 import net.narutomod.item.ItemTenseigan;
 import org.lwjgl.input.Keyboard;
@@ -166,8 +168,8 @@ public class HUDItemStackWheel extends GuiScreen {
 
     @Override
     public void updateScreen() {
-        if (Mouse.isButtonDown(1))
-            selectSlot(-1);
+        //        if (Mouse.isButtonDown(1))
+        //            selectSlot(-1);
         if (Mouse.isButtonDown(0))
             if (hoveredSlot != -1)
                 wheelSlot[hoveredSlot].selectItem();
@@ -240,7 +242,9 @@ public class HUDItemStackWheel extends GuiScreen {
         renderPlayer(mouseX, mouseY, partialTicks);
 
         glPopMatrix();
-        calculateHoveredSlot(HALF_WIDTH, HALF_HEIGHT, configureEnabled);
+
+        if (Mouse.isButtonDown(1))
+            calculateHoveredSlot(HALF_WIDTH, HALF_HEIGHT, configureEnabled);
 
         glPushMatrix();
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
@@ -328,12 +332,15 @@ public class HUDItemStackWheel extends GuiScreen {
         }
 
 
-        InventoryPlayer inv = ((EntityPlayer) entity).inventory;
-        ItemStack oldItem = inv.mainInventory.get(inv.currentItem);
-        inv.mainInventory.set(inv.currentItem, ItemStack.EMPTY); //Removes held item
+        ItemStack oldItem = entity.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
         ItemStack oldHelmet = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
         ItemStack oldChest = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
         ItemStack oldLegs = entity.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
+
+        if (!(oldItem.getItem() instanceof ItemJutsu.Base))
+            entity.inventory.mainInventory.set(entity.inventory.currentItem, ItemStack.EMPTY);
+        
+
         if (hoveredSlot != -1) {
             ItemStack eye = wheelSlot[hoveredSlot].data.stack;
             entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, eye);
@@ -351,10 +358,11 @@ public class HUDItemStackWheel extends GuiScreen {
                 if (oldLegs.getItem() == ItemRinnegan.legs || oldLegs.getItem() == ItemTenseigan.legs)
                     entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStack.EMPTY);
             }
-            //entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, eye);
-
         }
 
+
+        boolean oldRun = ModConfig.NARUTO_RUN;
+        ModConfig.NARUTO_RUN = false;
 
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
         glPushMatrix();
@@ -396,12 +404,13 @@ public class HUDItemStackWheel extends GuiScreen {
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         glPopMatrix();
 
-
+        ModConfig.NARUTO_RUN = oldRun;
         entity.limbSwingAmount = entity.prevLimbSwingAmount = oldLimbSwing;
         entity.setInvisible(isInvisible);
         entity.capabilities.isFlying = oldFlying;
         entity.setSneaking(oldSneaking);
-        inv.mainInventory.set(inv.currentItem, oldItem);
+
+        entity.inventory.mainInventory.set(entity.inventory.currentItem, oldItem);
         entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, oldHelmet);
         entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, oldChest);
         entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, oldLegs);

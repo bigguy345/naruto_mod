@@ -31,9 +31,6 @@ public final class PacketHandler {
 
         map.put(NarutoWheelData.packetName, new NarutoWheelData());
         map.put(NarutoSyncData.packetName, new NarutoSyncData());
-        //  map.put(SyncMaintainerGUIPacket.packetName, new SyncMaintainerGUIPacket());
-        //  map.put(JEIGhostSlotPacket.packetName, new JEIGhostSlotPacket());
-        // map.put(OpenCraftingGUI.packetName, new OpenCraftingGUI());
 
         this.register();
     }
