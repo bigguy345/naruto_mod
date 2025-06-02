@@ -50,7 +50,8 @@ import net.minecraft.block.Block;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.init.Items;
-import net.minecraft.potion.Potion;
+
+import net.minecraft.potion.Potion;
 
 import net.narutomod.entity.EntityNinjaMob;
 import net.narutomod.item.ItemJutsu;
@@ -539,6 +540,9 @@ public class ProcedureUtils extends ElementsNarutomodMod.ModElement {
 		for (PotionEffect effect : list) {
 			entity.removePotionEffect(effect.getPotion());
 		}
+
+		if (entity instanceof EntityPlayer)
+			((EntityPlayer) entity).sendPlayerAbilities();
 		return list.isEmpty();
 	}
 
