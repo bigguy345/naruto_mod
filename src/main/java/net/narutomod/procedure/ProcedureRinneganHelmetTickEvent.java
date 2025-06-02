@@ -65,7 +65,7 @@ public class ProcedureRinneganHelmetTickEvent extends ElementsNarutomodMod.ModEl
 		isRinnesharingan = (boolean) ((itemstack).hasTagCompound()
 				&& (itemstack).getTagCompound().getBoolean((NarutomodModVariables.RINNESHARINGAN_ACTIVATED)));
 		if ((!(world.isRemote))) {
-			if (((isRinnesharingan) && (!(((entity instanceof EntityLivingBase) ? ((EntityLivingBase) entity).getHeldItemMainhand() : ItemStack.EMPTY)
+			if (((isRinnesharingan) && (!(((entity instanceof EntityLivingBase) ? ItemTenseigan.getHeldChakraCloak((EntityLivingBase) entity) : ItemStack.EMPTY)
 					.getItem() == new ItemStack(ItemTenseiganChakraMode.block, (int) (1)).getItem())))) {
 				ProcedureUtils.purgeHarmfulEffects((EntityLivingBase) entity);
 				ProcedureWhenPlayerAttcked.setExtraDamageReduction(entity, 0.9f);

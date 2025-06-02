@@ -100,7 +100,7 @@ public class ItemTenseiganChakraMode extends ElementsNarutomodMod.ModElement {
 			super.onUpdate(itemstack, world, entity, par4, par5);
 			if (!world.isRemote && entity instanceof EntityPlayer) {
 				EntityPlayer livingEntity = (EntityPlayer) entity;
-				if (!livingEntity.isCreative() && !livingEntity.getCooldownTracker().hasCooldown(block)) {
+				if (!livingEntity.getCooldownTracker().hasCooldown(block)) {
 					ItemStack eyestack = ProcedureUtils.getMatchingItemStack(livingEntity, ItemTenseigan.helmet);
 					ItemStack stack1 = livingEntity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 					ItemStack stack2 = livingEntity.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
