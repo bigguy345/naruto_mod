@@ -92,12 +92,13 @@ public class ItemTenseigan extends ElementsNarutomodMod.ModElement {
 				ItemDojutsu.ClientModel.ModelHelmetSnug armorModel = (ItemDojutsu.ClientModel.ModelHelmetSnug)super.getArmorModel(living, stack, slot, defaultModel);
 				boolean isS06p = ItemRinnegan.isRinnesharinganActivated(stack);
 				armorModel.headwearShine = true;
-				armorModel.isSo6 = isS06p;
+				armorModel.isSo6 = armorModel.onface.showModel = isS06p;
 				armorModel.foreheadHide = !isS06p;
 				ItemStack item = getHeldChakraCloak(living);
 				boolean isHolding = !item.isEmpty();
-				armorModel.headwearHide = (!isHolding || ((ItemTenseiganChakraMode.RangedItem) item.getItem()).isOnCooldown(living)) && !HUDItemStackWheel.IS_OPEN;
-				armorModel.headHide = armorModel.onface.showModel = !armorModel.headwearHide;
+
+				armorModel.headwearHide = !(isHolding && !((ItemTenseiganChakraMode.RangedItem) item.getItem()).isOnCooldown(living) || HUDItemStackWheel.IS_OPEN && isS06p);
+				armorModel.headHide = !armorModel.headwearHide;
 				armorModel.hornMiddle.showModel = true;
 				armorModel.hornLeft.showModel = armorModel.hornRight.showModel = false;
 				return armorModel;
