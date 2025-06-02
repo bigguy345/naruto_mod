@@ -32,6 +32,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.narutomod.entity.EntityPretaShield;
 import net.narutomod.entity.EntityTenTails;
 import net.narutomod.goatee.client.Sounds;
+import net.narutomod.goatee.client.hud.formWheel.HUDItemStackWheel;
 import net.narutomod.gui.GuiNinjaScroll;
 import net.narutomod.procedure.*;
 import net.narutomod.creativetab.TabModTab;
@@ -89,13 +90,15 @@ public class ItemTenseigan extends ElementsNarutomodMod.ModElement {
 			@Override
 			public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {
 				ItemDojutsu.ClientModel.ModelHelmetSnug armorModel = (ItemDojutsu.ClientModel.ModelHelmetSnug)super.getArmorModel(living, stack, slot, defaultModel);
+				boolean isS06p = ItemRinnegan.isRinnesharinganActivated(stack);
 				armorModel.headwearShine = true;
-				armorModel.foreheadHide = !ItemRinnegan.isRinnesharinganActivated(stack);
+				armorModel.isSo6 = isS06p;
+				armorModel.foreheadHide = !isS06p;
 				Item item = living.getHeldItemMainhand().getItem();
-				armorModel.headwearHide = item != ItemTenseiganChakraMode.block || ((ItemTenseiganChakraMode.RangedItem)item).isOnCooldown(living);
-				armorModel.headHide = !armorModel.headwearHide;
-				armorModel.onface.showModel = false;
-				armorModel.hornRight.showModel = armorModel.hornLeft.showModel = false;
+				armorModel.headwearHide = (item != ItemTenseiganChakraMode.block || ((ItemTenseiganChakraMode.RangedItem) item).isOnCooldown(living)) && !HUDItemStackWheel.IS_OPEN;
+				armorModel.headHide = armorModel.onface.showModel = !armorModel.headwearHide;
+				armorModel.hornMiddle.showModel = true;
+				armorModel.hornLeft.showModel = armorModel.hornRight.showModel = false;
 				return armorModel;
 			}
 

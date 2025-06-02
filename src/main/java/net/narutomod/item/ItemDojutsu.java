@@ -1,6 +1,8 @@
 
 package net.narutomod.item;
 
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.init.Items;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -217,13 +219,14 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 			protected final ModelRenderer hornRight;
 			protected final ModelRenderer hornLeft;
 			protected final ModelRenderer hornMiddle;
-			private final ModelRenderer highlight;
-			private final ModelRenderer forehead;
+			private final ModelRenderer highlight; //actual eyes
+			private final ModelRenderer forehead; //kekkei mora rinnesharin
 			protected boolean headHide;
 			protected boolean headwearHide;
 			protected boolean headwearShine;
 			protected boolean highlightHide;
 			protected boolean foreheadHide;
+			protected boolean isSo6;
 	
 			public ModelHelmetSnug() {
 				this.textureWidth = 64;
@@ -236,7 +239,7 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 				onface = new ModelRenderer(this);
 				onface.setRotationPoint(0.0F, 0.0F, 0.0F);
 				bipedHead.addChild(onface);
-				onface.cubeList.add(new ModelBox(onface, 32, 0, -4.0F, -8.0F, -4.0F, 8, 8, 8, 0.1F, false));
+				onface.cubeList.add(new ModelBox(onface, 32, 0, -4.0F, -8.0F, -4.0F, 8, 8, 8, 0.01F, false));
 
 				hornRight = new ModelRenderer(this);
 				hornRight.setRotationPoint(-2.5F, -6.0F, -4.0F);
@@ -350,6 +353,34 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 				if (entityIn.isSneaking()) {
 					GlStateManager.translate(0.0F, 0.2F, 0.0F);
 				}
+
+				if (isSo6) {
+					if (this.headwearShine) {
+						GlStateManager.disableLighting();
+						OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
+					}
+					
+					this.bipedHead.render(scale);
+
+					if (!this.foreheadHide) {
+						this.copyModelAngles(this.bipedHead, this.forehead);
+						this.forehead.render(scale);
+					}
+
+					if (!this.highlightHide) {
+						this.copyModelAngles(this.bipedHead, this.highlight);
+						this.highlight.render(scale);
+					}
+					if (!this.headwearHide) {
+						this.copyModelAngles(this.bipedHead, this.bipedHeadwear);
+						this.bipedHeadwear.render(scale);
+					}
+					if (this.headwearShine) {
+						int i = entityIn.getBrightnessForRender();
+						OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) (i % 65536), (float) (i / 65536));
+						GlStateManager.enableLighting();
+					}
+				} else {
 				if (!this.headHide) {
 					this.bipedHead.render(scale);
 				}
@@ -379,6 +410,7 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 						this.copyModelAngles(this.bipedHead, this.forehead);
 						this.forehead.render(scale);
 					}
+				}
 				}
 				GlStateManager.alphaFunc(0x204, 0.1f);
 				GlStateManager.disableBlend();

@@ -1,5 +1,7 @@
 package net.narutomod.item;
 
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
@@ -249,11 +251,12 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 		@Override
 		public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {
 			ItemDojutsu.ClientModel.ModelHelmetSnug model = (ItemDojutsu.ClientModel.ModelHelmetSnug)super.getArmorModel(living, stack, slot, defaultModel);
+			boolean isS06p = isRinnesharinganActivated(stack);
+			model.isSo6 = isS06p;
 			model.hornMiddle.showModel = false;
-			model.onface.showModel = false;
-			if (living.ticksExisted % 20 == 6) {
-				model.foreheadHide = !isRinnesharinganActivated(stack) || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer)living) < 180d;
-			}
+			model.onface.showModel = model.headwearShine = true;
+			model.foreheadHide = !isS06p || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180d;
+
 			return model;
 		}
 			
@@ -1392,7 +1395,16 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 					ball[i].rotateAngleZ = f2 + (float)i;
 				}
 			}*/
+			if (this.bipedBody.showModel || this.bipedLeftLeg.showModel) {
+				GlStateManager.disableLighting();
+				OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
+			}
 			super.render(entity, f, f1, f2, f3, f4, f5);
+			if (this.bipedBody.showModel || this.bipedLeftLeg.showModel) {
+				int i = entity.getBrightnessForRender();
+				OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) (i % 65536), (float) (i / 65536));
+				GlStateManager.enableLighting();
+			}
 		}
 	
 		public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
