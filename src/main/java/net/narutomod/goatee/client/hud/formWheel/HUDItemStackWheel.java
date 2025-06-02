@@ -55,7 +55,7 @@ public class HUDItemStackWheel extends GuiScreen {
     public static final int OPEN_TIME = 3000;
 
     public double easeOutExpo(double x) {
-        return x == 1 ? 1 : 1 - Math.pow(1 - x, 4);
+        return x == 1 ? 1 :  1 - Math.pow(2, -10 * x);
     }
 
     public HUDItemStackWheel(WheelData wheelData) {
@@ -168,20 +168,20 @@ public class HUDItemStackWheel extends GuiScreen {
 
     @Override
     public void updateScreen() {
-        //        if (Mouse.isButtonDown(1))
-        //            selectSlot(-1);
+        if (Mouse.isButtonDown(1))
+            selectSlot(-1);
         if (Mouse.isButtonDown(0))
             if (hoveredSlot != -1)
                 wheelSlot[hoveredSlot].selectItem();
         int code = KeyBindingGui.key.getKeyCode();
         keyDown = isMouseButton() ? Mouse.isButtonDown(code + 100) : Keyboard.isKeyDown(code);
         if (!keyDown && !configureEnabled && !isClosing) {
-            //            if (hoveredSlot != -1)
-            //                wheelSlot[hoveredSlot].selectEye();
-            //
-            //            mc.inGameHasFocus = true;
-            //            mc.mouseHelper.grabMouseCursor();
-            //            isClosing = true;
+            if (hoveredSlot != -1)
+                wheelSlot[hoveredSlot].selectItem();
+
+            mc.inGameHasFocus = true;
+            mc.mouseHelper.grabMouseCursor();
+            isClosing = true;
         }
     }
 
@@ -226,12 +226,13 @@ public class HUDItemStackWheel extends GuiScreen {
         this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
         drawGradientRectWithFade(0, 0, width, height, 0xaa000000, 0xfa000000, guiAnimationScale);
 
-
-        glPushMatrix();
         final float HALF_WIDTH = (float) this.width / 2;
         final float HALF_HEIGHT = (float) this.height / 2;
-        GL11.glDisable(GL11.GL_BLEND);
+        calculateHoveredSlot(HALF_WIDTH, HALF_HEIGHT, configureEnabled);
 
+        glPushMatrix();
+
+        GL11.glDisable(GL11.GL_BLEND);
         glPushMatrix();
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
         GL11.glScalef(undoMCScaling, undoMCScaling, undoMCScaling);
@@ -240,11 +241,8 @@ public class HUDItemStackWheel extends GuiScreen {
         GL11.glScalef(playerScale, playerScale, playerScale);
         GL11.glTranslatef(-HALF_WIDTH, -HALF_HEIGHT + (8), 0);
         renderPlayer(mouseX, mouseY, partialTicks);
-
         glPopMatrix();
 
-        if (Mouse.isButtonDown(1))
-            calculateHoveredSlot(HALF_WIDTH, HALF_HEIGHT, configureEnabled);
 
         glPushMatrix();
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
