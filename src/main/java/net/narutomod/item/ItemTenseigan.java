@@ -94,8 +94,9 @@ public class ItemTenseigan extends ElementsNarutomodMod.ModElement {
 				armorModel.headwearShine = true;
 				armorModel.isSo6 = isS06p;
 				armorModel.foreheadHide = !isS06p;
-				Item item = living.getHeldItemMainhand().getItem();
-				armorModel.headwearHide = (item != ItemTenseiganChakraMode.block || ((ItemTenseiganChakraMode.RangedItem) item).isOnCooldown(living)) && !HUDItemStackWheel.IS_OPEN;
+				ItemStack item = getHeldChakraCloak(living);
+				boolean isHolding = !item.isEmpty();
+				armorModel.headwearHide = (!isHolding || ((ItemTenseiganChakraMode.RangedItem) item.getItem()).isOnCooldown(living)) && !HUDItemStackWheel.IS_OPEN;
 				armorModel.headHide = armorModel.onface.showModel = !armorModel.headwearHide;
 				armorModel.hornMiddle.showModel = true;
 				armorModel.hornLeft.showModel = armorModel.hornRight.showModel = false;
@@ -205,6 +206,15 @@ public class ItemTenseigan extends ElementsNarutomodMod.ModElement {
 
 	public static boolean isWearing(EntityLivingBase player) {
 		return isTenseigan(player.getItemStackFromSlot(EntityEquipmentSlot.HEAD));
+	}
+
+	public static ItemStack getHeldChakraCloak(EntityLivingBase player) {
+		if (player.getHeldItemMainhand().getItem() == ItemTenseiganChakraMode.block)
+			return player.getHeldItemMainhand();
+		else if (player.getHeldItemOffhand().getItem() == ItemTenseiganChakraMode.block) {
+			return player.getHeldItemOffhand();
+		}
+		return ItemStack.EMPTY;
 	}
 	public static boolean canUseChakraMode(ItemStack stack, EntityPlayer player) {
 		return stack.hasTagCompound() && stack.getTagCompound().getDouble("ByakuganCount") >= 5.0d;
