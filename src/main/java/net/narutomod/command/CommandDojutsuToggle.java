@@ -3,7 +3,6 @@ package net.narutomod.command;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.command.*;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -77,18 +76,26 @@ public class CommandDojutsuToggle extends ElementsNarutomodMod.ModElement {
 
             if (args.length == 0)
                 throw new WrongUsageException(getUsage(sender));
-            EntityPlayer player = args.length > 1 ? getPlayer(server, sender, args[1]) : getCommandSenderAsPlayer(sender);
+            EntityPlayerMP player = args.length > 1 ? getPlayer(server, sender, args[1]) : getCommandSenderAsPlayer(sender);
+            boolean isOp = server.getPlayerList().canSendCommands(player.getGameProfile());
 
             if (args[0].equals(Level1.DODGE.toString())) {
                 ItemStack helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-                if (helmet.getItem() instanceof ItemSharingan.Base)
-                    ItemSharingan.setDodgeEnabled(helmet, !ItemSharingan.isDodgeEnabled(helmet));
+                ItemStack sharingan = player.getHeldItemMainhand().getItem() instanceof ItemSharingan.Base ? player.getHeldItemMainhand() : helmet.getItem() instanceof ItemSharingan.Base ? helmet : ItemStack.EMPTY;
+                if (sharingan.isEmpty())
+                    return;
+                
+                ItemSharingan.setDodgeEnabled(sharingan, !ItemSharingan.isDodgeEnabled(sharingan));
             } else if (args[0].equals(Level1.RINNESHARINGAN.toString())) {
                 ItemStack helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-                if (ItemRinnegan.isRinnesharinganActivated(helmet))
-                    ItemRinnegan.setRinneSharinganActivated(helmet, false);
-                else if (ItemRinnegan.isRinnegan(helmet) && AdvancementUtil.has((EntityPlayerMP) player, "narutomod:rinnesharinganactivated") || ItemTenseigan.isTenseigan(helmet) && AdvancementUtil.has((EntityPlayerMP) player, "narutomod:tensei_byakugan_activated"))
-                    ItemRinnegan.setRinneSharinganActivated(helmet, true);
+                ItemStack rinnegan = ItemRinnegan.isRinnegan(player.getHeldItemMainhand()) ? player.getHeldItemMainhand() : ItemRinnegan.isRinnegan(helmet) ? helmet : ItemStack.EMPTY;
+                if (rinnegan.isEmpty())
+                    return;
+
+                if (ItemRinnegan.isRinnesharinganActivated(rinnegan))
+                    ItemRinnegan.setRinneSharinganActivated(rinnegan, false);
+                else if (ItemRinnegan.isRinnegan(rinnegan) && (isOp || AdvancementUtil.has(player, "narutomod:rinnesharinganactivated")) || ItemTenseigan.isTenseigan(rinnegan) && (isOp || AdvancementUtil.has(player, "narutomod:tensei_byakugan_activated")))
+                    ItemRinnegan.setRinneSharinganActivated(rinnegan, true);
             }
         }
 
@@ -123,7 +130,7 @@ public class CommandDojutsuToggle extends ElementsNarutomodMod.ModElement {
             }
 
             public static List<String> getAllCommands() {
-                List<String> list = Lists.<String>newArrayList();
+                List<String> list = Lists.newArrayList();
                 list.addAll(COMMANDS.keySet());
                 return list;
             }
