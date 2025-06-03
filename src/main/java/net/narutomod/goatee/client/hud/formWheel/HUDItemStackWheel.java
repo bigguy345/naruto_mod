@@ -7,11 +7,13 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.narutomod.ModConfig;
 import net.narutomod.goatee.client.gui.KeyBindingGui;
@@ -259,6 +261,21 @@ public class HUDItemStackWheel extends GuiScreen {
         }
         glPopMatrix();
         glPopMatrix();
+
+
+        int interpolatedAlpha = (int) MathHelper.clamp(255 * guiAnimationScale, 0, 255);
+        if (interpolatedAlpha < 5)
+            return;
+
+        int color = (interpolatedAlpha << 24) | (0xff << 16) | (0xff << 8) | 0xff;
+        if (!GuiScreen.isShiftKeyDown())
+            fontRenderer.drawString(I18n.format("dojutsuwheel.gui.display_info"), 4, height - 15, color);
+        else {
+            fontRenderer.drawString(I18n.format("dojutsuwheel.gui.how_to_insert"), 4, height - 45, color);
+            fontRenderer.drawString(I18n.format("dojutsuwheel.gui.insert_info"), 4, height - 35, color);
+            fontRenderer.drawString(I18n.format("dojutsuwheel.gui.extract_info"), 4, height - 25, color);
+            fontRenderer.drawString(I18n.format("dojutsuwheel.gui.deselect_slot"), 4, height - 15, color);
+        }
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
