@@ -51,7 +51,7 @@ public class HUDItemStackWheel extends GuiScreen {
     public int mouseY;
     public static boolean IS_OPEN;
 
-    public static final int OPEN_TIME = 3000;
+    public static final int OPEN_TIME = 2500;
     public ItemStack selectedItem;
     public double easeOutExpo(double x) {
         return x == 1 ? 1 :  1 - Math.pow(2, -10 * x);
@@ -63,7 +63,7 @@ public class HUDItemStackWheel extends GuiScreen {
 
         for (int i = 0; i < 6; i++) {
             wheelSlot[i] = new ItemStackWheelSegment(this, i);
-            wheelSlot[i].setItem(wheelData.get(i), false);
+            wheelSlot[i].setItem(wheelData.get(i));
         }
         NarutoSyncData.requestSync(data);
         
@@ -181,7 +181,7 @@ public class HUDItemStackWheel extends GuiScreen {
                 onClose(POST_CLOSE);
             }
         } else if (guiAnimationScale < 1) {
-            float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / 2500;
+            float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / OPEN_TIME;
             updateTime = Math.min(1, updateTime);
 
             guiAnimationScale = (float) easeOutExpo(updateTime);

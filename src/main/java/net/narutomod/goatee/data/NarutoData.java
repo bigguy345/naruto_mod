@@ -21,7 +21,7 @@ public class NarutoData {
     }
 
     public NarutoData(EntityPlayer player) {
-        this.player = player;
+        this.player = dojutsuWheel.player = player;
     }
 
     public NBTTagCompound writeToNBT() {

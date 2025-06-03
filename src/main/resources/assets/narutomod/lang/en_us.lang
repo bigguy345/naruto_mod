@@ -815,4 +815,7 @@ key.mcreator.specialjutsu4=Jutsu 4
 key.mcreator.specialjutsu5=Jutsu 5
 key.mcreator.specialjutsu6=Jutsu 6
 item.rinnegantomoehelmet.name=Rinnegan Tomoe
-
+dojutsuwheel.saved=§aAssigned %s §ato slot %s!
+dojutsuwheel.removed=§cUnassigned %s §cfrom slot %s!
+dojutsuwheel.slot_is_occupied=%s §cis already assigned to this slot! SHIFT-Extract to unassign! 
+dojutsuwheel.not_assigned=%s §cis not assigned! Insert into an empty slot!

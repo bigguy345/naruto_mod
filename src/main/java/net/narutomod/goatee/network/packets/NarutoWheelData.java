@@ -1,6 +1,7 @@
 package net.narutomod.goatee.network.packets;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -22,6 +23,7 @@ public final class NarutoWheelData extends AbstractPacket {
     public static final String packetName = "SaveWheelData";
     private int wheelSlot;
     private String wheelName;
+    private boolean unassignSavedSlot;
 
     public NarutoWheelData() {
     }
@@ -29,6 +31,7 @@ public final class NarutoWheelData extends AbstractPacket {
     public NarutoWheelData(int wheelSlot, String wheelName) {
         this.wheelSlot = wheelSlot;
         this.wheelName = wheelName;
+        this.unassignSavedSlot = GuiScreen.isShiftKeyDown();
     }
 
     @Override
@@ -39,40 +42,54 @@ public final class NarutoWheelData extends AbstractPacket {
     @Override
     public void sendData(ByteBuf out) throws IOException {
         out.writeInt(this.wheelSlot);
+        out.writeBoolean(unassignSavedSlot);
+
         ByteBufUtils.writeUTF8String(out, wheelName);
     }
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
         int slot = in.readInt();
+        boolean removeSavedSlot = in.readBoolean();
         String name = ByteBufUtils.readUTF8String(in);
 
-        WheelData.Segment wheel = NarutoData.get(player).dojutsuWheel.get(slot);
+        WheelData.Segment seg = NarutoData.get(player).dojutsuWheel.get(slot);
         ItemStack helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
 
-        if (wheel.stack.isEmpty()) {
-            if (player.inventory.getCurrentItem().getItem() instanceof ItemDojutsu.Base) {
-                wheel.stack = player.inventory.getCurrentItem();
-                player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
-            } else if (helmet.getItem() instanceof ItemDojutsu.Base) {
-                wheel.stack = helmet;
-                player.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStack.EMPTY);
+        if (seg.stack.isEmpty()) {
+            boolean swapWithHelmet = false;
+            ItemStack toSwapWith = player.getHeldItemMainhand().getItem() instanceof ItemDojutsu.Base ? player.getHeldItemMainhand() : (swapWithHelmet = helmet.getItem() instanceof ItemDojutsu.Base) ? helmet : ItemStack.EMPTY;
+
+            if (!toSwapWith.isEmpty()) {
+                seg.putAndSave(toSwapWith, slot);
+
+                if (swapWithHelmet)
+                    player.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStack.EMPTY);
+                else
+                    player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
             }
-        } else if (wheel.stack.getItem() instanceof ItemDojutsu.Base) {
-            if (wheel.stack.getItem() instanceof ItemRinnegan.Base)
-                ItemRinnegan.giveClothes(wheel.stack, player);
-            
-            player.setItemStackToSlot(EntityEquipmentSlot.HEAD, wheel.stack);
-            wheel.stack = helmet;
+        } else if (seg.stack.getItem() instanceof ItemDojutsu.Base) {
+            if (removeSavedSlot)
+                seg.removeSavedSlot();
 
-            //            boolean addedToInv = player.inventory.addItemStackToInventory(helmet);
-            //            if (!addedToInv) {
-            //                if (helmet.getItem() instanceof ItemDojutsu.Base)
-            //                    wheel.stack = helmet;
-            //                else
-            //                    player.dropItem(helmet, false);
-            //            }
+            ItemStack removedItem = seg.stack;
+            seg.stack = ItemStack.EMPTY;
 
+            if (seg.stack.getItem() instanceof ItemRinnegan.Base)
+                ItemRinnegan.giveClothes(removedItem, player);
+            player.setItemStackToSlot(EntityEquipmentSlot.HEAD, removedItem);
+
+            if (helmet.getItem() instanceof ItemDojutsu.Base)
+                seg.putToSaved(helmet, removedItem);
+            else {
+                boolean addedToInv = player.inventory.addItemStackToInventory(helmet);
+                if (!addedToInv) {
+                    if (helmet.getItem() instanceof ItemDojutsu.Base)
+                        seg.put(helmet);
+                    else
+                        player.dropItem(helmet, false);
+                }
+            }
         }
         NarutoSyncData.syncTrackingClients(NarutoData.get(player));
     }

@@ -3,7 +3,6 @@ package net.narutomod.goatee.client.hud.formWheel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.narutomod.goatee.client.hud.WheelSegment;
 import net.narutomod.goatee.data.WheelData;
 import net.narutomod.goatee.network.PacketHandler;
@@ -29,14 +28,11 @@ class ItemStackWheelSegment extends WheelSegment {
     }
 
     public void selectItem() {
-        PacketHandler.Instance.sendToServer(new NarutoWheelData(index, ""));
-        parent.mc.player.setItemStackToSlot(EntityEquipmentSlot.HEAD, data.stack);
+        PacketHandler.Instance.sendToServer(new NarutoWheelData(index, data.parent.NAME));
     }
 
-    public void setItem(WheelData.Segment data, boolean updateServer) {
+    public void setItem(WheelData.Segment data) {
         this.data = data;
-        if (updateServer)
-            PacketHandler.Instance.sendToServer(new NarutoWheelData(index, ""));
     }
 
     @Override

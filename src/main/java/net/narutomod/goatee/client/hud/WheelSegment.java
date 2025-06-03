@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
@@ -79,19 +80,21 @@ public abstract class WheelSegment extends Gui {
     }
 
     public void draw(FontRenderer fontRenderer) {
+        GlStateManager.depthFunc(GL11.GL_LESS); // draw wheel textures at the very bottom
         currentColor = Color.lerpRGBA(NOT_HOVERED, HOVERED, hoverScale);
         currentColor.glColor();
         drawIndexedTexture();
+        GlStateManager.depthFunc(GL11.GL_LEQUAL);
+        
+        GlStateManager.depthMask(true);
         drawWheelItem(fontRenderer);
     }
 
     protected abstract void drawWheelItem(FontRenderer fontRenderer);
 
     private void drawIndexedTexture() {
-
-
         Minecraft.getMinecraft().getTextureManager().bindTexture(variant2);
-
+        
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
