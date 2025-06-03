@@ -21,17 +21,17 @@ public final class NarutoWheelData extends AbstractPacket {
     }
 
     public static final String packetName = "SaveWheelData";
-    private int wheelSlot;
-    private String wheelName;
-    private boolean unassignSavedSlot;
+    private int slot;
+    private String name;
+    private boolean defaultSlotOperation;
 
     public NarutoWheelData() {
     }
 
     public NarutoWheelData(int wheelSlot, String wheelName) {
-        this.wheelSlot = wheelSlot;
-        this.wheelName = wheelName;
-        this.unassignSavedSlot = GuiScreen.isShiftKeyDown();
+        this.slot = wheelSlot;
+        this.name = wheelName;
+        this.defaultSlotOperation = GuiScreen.isShiftKeyDown();
     }
 
     @Override
@@ -41,17 +41,17 @@ public final class NarutoWheelData extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        out.writeInt(this.wheelSlot);
-        out.writeBoolean(unassignSavedSlot);
+        out.writeInt(this.slot);
+        out.writeBoolean(defaultSlotOperation);
 
-        ByteBufUtils.writeUTF8String(out, wheelName);
+        ByteBufUtils.writeUTF8String(out, name);
     }
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        int slot = in.readInt();
-        boolean removeSavedSlot = in.readBoolean();
-        String name = ByteBufUtils.readUTF8String(in);
+        slot = in.readInt();
+        defaultSlotOperation = in.readBoolean();
+        name = ByteBufUtils.readUTF8String(in);
 
         WheelData.Segment seg = NarutoData.get(player).dojutsuWheel.get(slot);
         ItemStack helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
@@ -61,7 +61,10 @@ public final class NarutoWheelData extends AbstractPacket {
             ItemStack toSwapWith = player.getHeldItemMainhand().getItem() instanceof ItemDojutsu.Base ? player.getHeldItemMainhand() : (swapWithHelmet = helmet.getItem() instanceof ItemDojutsu.Base) ? helmet : ItemStack.EMPTY;
 
             if (!toSwapWith.isEmpty()) {
-                seg.putAndSave(toSwapWith, slot);
+                seg.putToSaved(toSwapWith, seg.stack);
+
+                if (defaultSlotOperation)
+                    seg.setDefaultSlot(slot);
 
                 if (swapWithHelmet)
                     player.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStack.EMPTY);
@@ -69,7 +72,7 @@ public final class NarutoWheelData extends AbstractPacket {
                     player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
             }
         } else if (seg.stack.getItem() instanceof ItemDojutsu.Base) {
-            if (removeSavedSlot)
+            if (defaultSlotOperation)
                 seg.removeDefaultSlot();
 
             ItemStack removedItem = seg.stack;
