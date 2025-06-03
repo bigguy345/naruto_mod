@@ -65,14 +65,14 @@ public class WheelData {
         }
     }
 
-    public void putToSavedSlot(Segment seg) {
-        int savedSlot = seg.getSavedSlot();
+    public void putToDefaultSlot(Segment seg) {
+        int savedSlot = seg.getDefaultSlot();
         Segment target = wheelSegments[savedSlot];
         if (seg == target)
             return;
 
         if (!target.stack.isEmpty()) {
-            if (target.getSavedSlot() == savedSlot) {
+            if (target.getDefaultSlot() == savedSlot) {
                 if (player != null)
                     player.sendMessage(new TextComponentTranslation("dojutsuwheel.slot_is_occupied", target.stack.getItem().getItemStackDisplayName(target.stack)));
             } else
@@ -105,14 +105,14 @@ public class WheelData {
             stack = new ItemStack(compound);
         }
 
-        public static boolean hasSavedSlot(ItemStack stack, String wheelName) {
+        public static boolean hasDefaultSlot(ItemStack stack, String wheelName) {
             if (stack.isEmpty())
                 return false;
 
             return stack.getTagCompound().hasKey(wheelName + "Slot");
         }
 
-        public static int getSavedSlot(ItemStack stack, String wheelName) {
+        public static int getDefaultSlot(ItemStack stack, String wheelName) {
             return stack.getTagCompound().getByte(wheelName + "Slot");
         }
 
@@ -120,29 +120,29 @@ public class WheelData {
             stack = null;
         }
 
-        public boolean hasSavedSlot() {
-            return hasSavedSlot(stack, parent.NAME);
+        public boolean hasDefaultSlot() {
+            return hasDefaultSlot(stack, parent.NAME);
         }
 
-        public int getSavedSlot() {
-            return getSavedSlot(stack, parent.NAME);
+        public int getDefaultSlot() {
+            return getDefaultSlot(stack, parent.NAME);
         }
 
-        public void setSavedSlot(int slot) {
+        public void setDefaultSlot(int slot) {
             stack.getTagCompound().setByte(parent.NAME + "Slot", (byte) slot);
 
             if (parent.player != null)
                 parent.player.sendMessage(new TextComponentTranslation("dojutsuwheel.saved", stack.getItem().getItemStackDisplayName(stack), TextFormatting.GREEN + "" + slot));
         }
 
-        public void removeSavedSlot() {
-            if (!hasSavedSlot()){
+        public void removeDefaultSlot() {
+            if (!hasDefaultSlot()){
                 parent.player.sendMessage(new TextComponentTranslation("dojutsuwheel.not_assigned", stack.getItem().getItemStackDisplayName(stack)));
                 return;
             }
                 
             
-            int saveSlot = getSavedSlot();
+            int saveSlot = getDefaultSlot();
             stack.getTagCompound().removeTag(parent.NAME + "Slot");
 
             if (parent.player != null)
@@ -153,20 +153,20 @@ public class WheelData {
             if (!put(stack))
                 return;
 
-            if (!hasSavedSlot())
-                setSavedSlot(defaultSlot);
+            if (!hasDefaultSlot())
+                setDefaultSlot(defaultSlot);
 
-            parent.putToSavedSlot(this);
+            parent.putToDefaultSlot(this);
         }
 
         public void putToSaved(ItemStack stack, ItemStack removed) {
             if (!put(stack))
                 return;
 
-            if (hasSavedSlot())
-                parent.putToSavedSlot(this);
-            else if (hasSavedSlot(removed, parent.NAME)) {
-                int savedSlot = getSavedSlot(removed, parent.NAME);
+            if (hasDefaultSlot())
+                parent.putToDefaultSlot(this);
+            else if (hasDefaultSlot(removed, parent.NAME)) {
+                int savedSlot = getDefaultSlot(removed, parent.NAME);
                 if (savedSlot == slot) {
                     int emptySlot = parent.getEmptySlot();
                     if (emptySlot != -1)

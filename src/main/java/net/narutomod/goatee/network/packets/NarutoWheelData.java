@@ -70,7 +70,7 @@ public final class NarutoWheelData extends AbstractPacket {
             }
         } else if (seg.stack.getItem() instanceof ItemDojutsu.Base) {
             if (removeSavedSlot)
-                seg.removeSavedSlot();
+                seg.removeDefaultSlot();
 
             ItemStack removedItem = seg.stack;
             seg.stack = ItemStack.EMPTY;
