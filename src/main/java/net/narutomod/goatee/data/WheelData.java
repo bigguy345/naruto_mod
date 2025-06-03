@@ -74,7 +74,7 @@ public class WheelData {
         if (!target.stack.isEmpty()) {
             if (target.getDefaultSlot() == savedSlot) {
                 if (player != null)
-                    player.sendMessage(new TextComponentTranslation("dojutsuwheel.slot_is_occupied", target.stack.getItem().getItemStackDisplayName(target.stack)));
+                    player.sendMessage(new TextComponentTranslation("dojutsuwheel.slot_is_occupied", TextFormatting.RED + "" + savedSlot, target.stack.getItem().getItemStackDisplayName(target.stack)));
             } else
                 swapSlots(seg, target);
             return;
@@ -132,7 +132,7 @@ public class WheelData {
             stack.getTagCompound().setByte(parent.NAME + "Slot", (byte) slot);
 
             if (parent.player != null)
-                parent.player.sendMessage(new TextComponentTranslation("dojutsuwheel.saved", stack.getItem().getItemStackDisplayName(stack), TextFormatting.GREEN + "" + slot));
+                parent.player.sendMessage(new TextComponentTranslation("dojutsuwheel.set_default", stack.getItem().getItemStackDisplayName(stack), TextFormatting.GREEN + "" + slot));
         }
 
         public void removeDefaultSlot() {
@@ -146,7 +146,7 @@ public class WheelData {
             stack.getTagCompound().removeTag(parent.NAME + "Slot");
 
             if (parent.player != null)
-                parent.player.sendMessage(new TextComponentTranslation("dojutsuwheel.removed", stack.getItem().getItemStackDisplayName(stack), TextFormatting.RED + "" + saveSlot));
+                parent.player.sendMessage(new TextComponentTranslation("dojutsuwheel.remove_default", stack.getItem().getItemStackDisplayName(stack), TextFormatting.RED + "" + saveSlot));
         }
 
         public void putAndSave(ItemStack stack, int defaultSlot) {
@@ -165,14 +165,6 @@ public class WheelData {
 
             if (hasDefaultSlot())
                 parent.putToDefaultSlot(this);
-            else if (hasDefaultSlot(removed, parent.NAME)) {
-                int savedSlot = getDefaultSlot(removed, parent.NAME);
-                if (savedSlot == slot) {
-                    int emptySlot = parent.getEmptySlot();
-                    if (emptySlot != -1)
-                        parent.swapSlots(this, emptySlot);
-                }
-            }
         }
 
         public boolean put(ItemStack stack) {
