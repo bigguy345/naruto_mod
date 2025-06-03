@@ -212,7 +212,7 @@ public class HUDItemStackWheel extends GuiScreen {
 
         glPushMatrix();
 
-        GL11.glDisable(GL11.GL_BLEND);
+        GlStateManager.disableBlend();
         glPushMatrix();
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
         GL11.glScalef(undoMCScaling, undoMCScaling, undoMCScaling);
@@ -230,8 +230,8 @@ public class HUDItemStackWheel extends GuiScreen {
         GL11.glScalef(guiAnimationScale, guiAnimationScale, 0);
         float wheelDiameter = 1.4f;
         GL11.glScalef(wheelDiameter, wheelDiameter, 0);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         for (int i = 0; i < 6; i++) {
             glPushMatrix();
@@ -333,7 +333,7 @@ public class HUDItemStackWheel extends GuiScreen {
         boolean oldRun = ModConfig.NARUTO_RUN;
         ModConfig.NARUTO_RUN = false;
 
-        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
+        GlStateManager.enableColorMaterial();
         glPushMatrix();
         GL11.glTranslatef(l, i1, 60F);
         GL11.glScalef(-220, 220, 70);

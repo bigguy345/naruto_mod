@@ -80,12 +80,11 @@ public abstract class WheelSegment extends Gui {
     }
 
     public void draw(FontRenderer fontRenderer) {
-        GlStateManager.depthFunc(GL11.GL_LESS); // draw wheel textures at the very bottom
         currentColor = Color.lerpRGBA(NOT_HOVERED, HOVERED, hoverScale);
         currentColor.glColor();
+        GlStateManager.depthFunc(GL11.GL_LESS); // draw wheel textures at the very bottom
         drawIndexedTexture();
         GlStateManager.depthFunc(GL11.GL_LEQUAL);
-        
         GlStateManager.depthMask(true);
         drawWheelItem(fontRenderer);
     }
