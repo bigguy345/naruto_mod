@@ -823,6 +823,7 @@ item.rinnegantomoehelmet.status_off=OFF
 item.rinnegantomoehelmet.status_on=ON
 item.rinnegantomoehelmet.status_eternal=Eternal Mangekyo
 
+key.dojutsu_wheel=Dojutsu Wheel
 dojutsuwheel.set_default=§aSet %s §adefault slot! (%s§a)
 dojutsuwheel.remove_default=§cRemoved %s §cdefault slot! (%s§c)
 dojutsuwheel.slot_is_occupied=§cThis eye's default slot (%s§c) is already assigned to %s

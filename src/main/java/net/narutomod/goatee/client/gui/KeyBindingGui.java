@@ -41,7 +41,7 @@ public class KeyBindingGui extends ElementsNarutomodMod.ModElement {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void init(FMLInitializationEvent event) {
-		key = new KeyBinding("key.jutsu_inventory", Keyboard.KEY_C, "Jutsu Inventory");
+		key = new KeyBinding("key.dojutsu_wheel", Keyboard.KEY_V, "key.mcreator.category");
 		ClientRegistry.registerKeyBinding(key);
 		MinecraftForge.EVENT_BUS.register(this);
 	}
