@@ -122,6 +122,8 @@ public class ProcedureRinneganHelmetTickEvent extends ElementsNarutomodMod.ModEl
 						if (entity instanceof EntityPlayer) {
 							ItemStack _setstack = new ItemStack(ItemTenseiganChakraMode.block, (int) (1));
 							_setstack.setCount(1);
+							if (entity.getEntityData().hasKey("tenseiganChakraCloak"))
+								_setstack.setTagCompound(entity.getEntityData().getCompoundTag("tenseiganChakraCloak"));
 							ItemHandlerHelper.giveItemToPlayer(((EntityPlayer) entity), _setstack);
 						}
 					}
@@ -208,6 +210,8 @@ public class ProcedureRinneganHelmetTickEvent extends ElementsNarutomodMod.ModEl
 						if (entity instanceof EntityPlayer) {
 							ItemStack _setstack = new ItemStack(ItemTenseiganChakraMode.block, (int) (1));
 							_setstack.setCount(1);
+							if (entity.getEntityData().hasKey("tenseiganChakraCloak"))
+								_setstack.setTagCompound(entity.getEntityData().getCompoundTag("tenseiganChakraCloak"));
 							ItemHandlerHelper.giveItemToPlayer(((EntityPlayer) entity), _setstack);
 						}
 					}
