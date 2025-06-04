@@ -164,6 +164,12 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                 return "narutomod:textures/rinnegantomoehelmet.png";
             }
 
+            public int getColor(ItemStack stack) {
+                if (isRinnesharinganActivated(stack)) //set rinnesharingan color here
+                    return 0xffffff;
+                return super.getColor(stack);
+            }
+
             public int getMaxDamage() {
                 return 0;
             }

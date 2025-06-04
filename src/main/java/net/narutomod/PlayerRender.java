@@ -49,6 +49,7 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.Minecraft;
 
 import net.narutomod.entity.EntityShieldBase;
+import net.narutomod.item.ItemDojutsu;
 import net.narutomod.item.ItemOnBody;
 import net.narutomod.item.ItemBijuCloak;
 import net.narutomod.procedure.ProcedureOnLivingUpdate;
@@ -456,7 +457,8 @@ public class PlayerRender extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static boolean shouldNarutoRun(Entity entity) {
-		return ModConfig.NARUTO_RUN && !entity.isRiding() && !ProcedureOnLivingUpdate.isForcedBowPose(entity)
+		return ModConfig.NARUTO_RUN && !entity.isRiding()
+ && !ProcedureOnLivingUpdate.isForcedBowPose(entity)
 		 && (!(entity instanceof EntityPlayer) || !((EntityPlayer)entity).capabilities.isFlying)
 		 && entity.getPositionVector().subtract(entity.lastTickPosX, entity.lastTickPosY, entity.lastTickPosZ).lengthSquared() >= 0.125d;
 	}
@@ -482,6 +484,7 @@ public class PlayerRender extends ElementsNarutomodMod.ModElement {
 	        ItemStack itemstack = entityIn.getItemStackFromSlot(slotIn);	
 	        if (itemstack.getItem() instanceof ItemArmor) {
 	            ItemArmor itemarmor = (ItemArmor)itemstack.getItem();
+				boolean isDojutsu = itemarmor instanceof ItemDojutsu.Base;
 	            if (itemarmor.getEquipmentSlot() == slotIn) {
 	                ModelBiped t = this.getModelFromSlot(slotIn);
 	                t = getArmorModelHook(entityIn, itemstack, slotIn, t);
@@ -493,12 +496,16 @@ public class PlayerRender extends ElementsNarutomodMod.ModElement {
 	                t.setLivingAnimations(entityIn, limbSwing, limbSwingAmount, partialTicks);
 	                this.setModelSlotVisible(t, slotIn);
 	                this.renderer.bindTexture(this.getArmorResource(entityIn, itemstack, slotIn, null));
-                    if (itemarmor.hasOverlay(itemstack)) { // Allow this for anything, not only cloth 
-	                    int i = itemarmor.getColor(itemstack);
-	                    float f = (float)(i >> 16 & 255) / 255.0F;
-	                    float f1 = (float)(i >> 8 & 255) / 255.0F;
-	                    float f2 = (float)(i & 255) / 255.0F;
-	                    GlStateManager.color(f, f1, f2, 1.0F);
+					if (itemarmor.hasOverlay(itemstack)) { // Allow this for anything, not only cloth
+						if (isDojutsu) //fix sharingans being tinted by susanooColor
+							GlStateManager.color(0, 0, 0, 1.0F);
+						else {
+							int i = itemarmor.getColor(itemstack);
+							float f = (float) (i >> 16 & 255) / 255.0F;
+							float f1 = (float) (i >> 8 & 255) / 255.0F;
+							float f2 = (float) (i & 255) / 255.0F;
+							GlStateManager.color(f, f1, f2, 1.0F);
+						}
                         this.renderArmorModel(t, entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
 	                    this.renderer.bindTexture(this.getArmorResource(entityIn, itemstack, slotIn, "overlay"));
 	                }
