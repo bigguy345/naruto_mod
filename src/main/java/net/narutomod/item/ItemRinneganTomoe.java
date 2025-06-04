@@ -151,12 +151,10 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             @SideOnly(Side.CLIENT)
             public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {
                 ItemDojutsu.ClientModel.ModelHelmetSnug model = (ItemDojutsu.ClientModel.ModelHelmetSnug) super.getArmorModel(living, stack, slot, defaultModel);
-                model.hornMiddle.showModel = true;
-                model.isSo6= true;
-                model.headwearShine = true;
-                if (living.ticksExisted % 20 == 6) {
-                    model.foreheadHide = !isRinnesharinganActivated(stack) || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180d;
-                }
+                boolean isS06p = isRinnesharinganActivated(stack);
+                model.isSo6 = model.hornMiddle.showModel = model.headwearShine = model.onface.showModel = isS06p;
+                model.foreheadHide = !isS06p || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180d;
+                
                 return model;
             }
 
