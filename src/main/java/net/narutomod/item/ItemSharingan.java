@@ -268,6 +268,22 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		return !list.isEmpty() && i == list.size();
 	}
 
+	public static boolean isLowerTier(ItemStack higher, ItemStack lower) {
+		if (!(higher.getItem() instanceof ItemSharingan.Base))
+			return false;
+
+		if (!(lower.getItem() instanceof ItemSharingan.Base))
+			return true;
+
+		ItemSharingan.Base higherS = (ItemSharingan.Base) higher.getItem();
+		ItemSharingan.Base lowerS = (ItemSharingan.Base) lower.getItem();
+
+		if (higherS.isEternal() && !lowerS.isEternal() || higherS.isMangekyo() && !lowerS.isMangekyo() || ItemRinneganTomoe.isTomoe(higher) && !ItemRinneganTomoe.isTomoe(lower))
+			return true;
+
+		return false;
+	}
+
 	public class PlayerHook {
 		private static final String shouldTargetLockOnEntity = "shouldTargetLockOnEntity";
 		private static final String targetLockOnEntityId = "targetLockOnEntityId";

@@ -122,6 +122,12 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 			return null;
 		}
 
+		public void playSound(EntityLivingBase entity) {
+			SoundEvent sound = getSound();
+			if (sound != null)
+				entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, sound, SoundCategory.NEUTRAL, 1, 1);
+		}
+		
 		public boolean onJutsuKey1(boolean is_pressed, ItemStack stack, EntityPlayer player) {
 			return false;
 		}
@@ -172,18 +178,17 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 	public static class Hook {
 		@SubscribeEvent
 		public void onEquipmentChange(LivingEquipmentChangeEvent event) {
-			if (event.getEntity().world.isRemote)
+			if (event.getEntity().world.isRemote || !(event.getEntity() instanceof EntityLivingBase) || event.getFrom().getItem().equals(event.getTo().getItem()))
 				return;
-			
-			if (event.getEntity() instanceof EntityLivingBase) {
-				EntityLivingBase entity = (EntityLivingBase) event.getEntity();
-				EntityEquipmentSlot slot = event.getSlot();
-				ItemStack to = event.getTo();
-				if (slot == EntityEquipmentSlot.HEAD && to.getItem() instanceof Base) {
-					SoundEvent sound = ((Base) to.getItem()).getSound();
-					if (sound != null)
-						entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, sound, SoundCategory.NEUTRAL, 1, 1);
-				}
+
+			EntityLivingBase entity = (EntityLivingBase) event.getEntity();
+			EntityEquipmentSlot slot = event.getSlot();
+			ItemStack to = event.getTo();
+			if (slot == EntityEquipmentSlot.HEAD && to.getItem() instanceof Base) {
+				if (ItemSharingan.isLowerTier(event.getFrom(), event.getTo())) //don't play sound when descending into a lower tier sharingan
+					return;
+
+				((Base) to.getItem()).playSound(entity);
 			}
 		}
 
