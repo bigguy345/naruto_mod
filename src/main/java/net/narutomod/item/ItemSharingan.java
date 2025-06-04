@@ -121,16 +121,16 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		@Override
 		public void onUpdate(ItemStack itemstack, World world, Entity entity, int par4, boolean par5) {
 			super.onUpdate(itemstack, world, entity, par4, par5);
-			if (entity instanceof EntityPlayer && entity.ticksExisted % 20 == 0) {
-				for (ItemStack stack1 : ProcedureUtils.getAllItemsOfSubType((EntityPlayer)entity, Base.class)) {
-					if (!ItemStack.areItemStacksEqual(itemstack, stack1) && stack1.getItem() == helmet) {
-						UUID uuid1 = ProcedureUtils.getOwnerId(itemstack);
-						if (uuid1 != null && uuid1.equals(ProcedureUtils.getOwnerId(stack1))) {
-							stack1.shrink(1);
-						}
-					}
-				}
-			}
+//			if (entity instanceof EntityPlayer && entity.ticksExisted % 20 == 0) {
+//				for (ItemStack stack1 : ProcedureUtils.getAllItemsOfSubType((EntityPlayer)entity, Base.class)) {
+//					if (!ItemStack.areItemStacksEqual(itemstack, stack1) && stack1.getItem() == helmet) {
+//						UUID uuid1 = ProcedureUtils.getOwnerId(itemstack);
+//						if (uuid1 != null && uuid1.equals(ProcedureUtils.getOwnerId(stack1))) {
+//							stack1.shrink(1);
+//						}
+//					}
+//				}
+//			}
 		}
 
 		// returns true if evaded, false if otherwise
