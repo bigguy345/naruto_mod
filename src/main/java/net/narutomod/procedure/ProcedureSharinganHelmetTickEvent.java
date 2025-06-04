@@ -153,8 +153,8 @@ public class ProcedureSharinganHelmetTickEvent extends ElementsNarutomodMod.ModE
 						_setstack.setCount(1);
 						ItemHandlerHelper.giveItemToPlayer(((EntityPlayer) entity), _setstack);
 					}
-					if (entity instanceof EntityPlayer)
-						((EntityPlayer) entity).inventory.clearMatchingItems((itemstack).getItem(), -1, (int) 1, null);
+//					if (entity instanceof EntityPlayer)
+//						((EntityPlayer) entity).inventory.clearMatchingItems((itemstack).getItem(), -1, (int) 1, null);
 					entity = ((ItemSharingan.Base) mangekyo.getItem()).getOwner(mangekyo, world);
 					if ((!(((entity instanceof EntityPlayerMP) && ((entity).world instanceof WorldServer))
 							? ((EntityPlayerMP) entity).getAdvancements()
