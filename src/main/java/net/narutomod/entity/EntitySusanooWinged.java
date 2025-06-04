@@ -53,7 +53,7 @@ import java.util.HashMap;
 public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 	public static final int ENTITYID = 42;
 	public static final int ENTITYID_RANGED = 43;
-	private static float MODELSCALE = ModConfig.WingedSusanoo.MODEL_SCALE;
+	private static float MODELSCALE = ModConfig.WINGED_SUSANOO.MODEL_SCALE;
 	
 	public EntitySusanooWinged(ElementsNarutomodMod instance) {
 		super(instance, 232);
@@ -99,10 +99,10 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			this.isWingDetracting = false;
 			this.isWingExtending = false;
 
-			double swordReach = player.getEntityData().hasKey("susanooReach") ? player.getEntityData().getDouble("susanooReach") : ModConfig.WingedSusanoo.SWORD_REACH;
+			double swordReach = player.getEntityData().hasKey("susanooReach") ? player.getEntityData().getDouble("susanooReach") : ModConfig.WINGED_SUSANOO.SWORD_REACH;
 			this.getEntityAttribute(EntityPlayer.REACH_DISTANCE).applyModifier(new AttributeModifier("susanoo.reachExtension", swordReach, 0));
 			this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).applyModifier(new AttributeModifier("susanoo.speedboost", 0.5D, 0));
-			this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier("susanoo.maxhealth", ModConfig.WingedSusanoo.MAX_HEALTH, 2));
+			this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier("susanoo.maxhealth", ModConfig.WINGED_SUSANOO.MAX_HEALTH, 2));
 			this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(this.playerXp * 0.003d);
 			this.getEntityData().setDouble("entityModelScale", (double)MODELSCALE);
 			Item helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem();
@@ -184,7 +184,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 		private double customYOffset = -1;
 		@Override
 		public double getMountedYOffset() {
-			return customYOffset == -1 ? ModConfig.WingedSusanoo.PLAYER_Y_OFFSET : customYOffset;
+			return customYOffset == -1 ? ModConfig.WINGED_SUSANOO.PLAYER_Y_OFFSET : customYOffset;
 		}
 
 		protected int getWingSwingAnimationEnd() {

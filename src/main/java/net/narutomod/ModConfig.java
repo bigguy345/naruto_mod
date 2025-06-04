@@ -7,6 +7,7 @@ import net.minecraftforge.common.config.Config;
 public class ModConfig extends ElementsNarutomodMod.ModElement {
 
 	public static Techniques TECHNIQUES = new Techniques();
+	public static WingedSusanoo WINGED_SUSANOO = new WingedSusanoo();
 
 	public ModConfig(ElementsNarutomodMod instance) {
 		super(instance, 837);
@@ -84,8 +85,7 @@ public class ModConfig extends ElementsNarutomodMod.ModElement {
 		@Config.RangeDouble(min = 1, max = 256)
 		@Config.Comment({"Maximum Universal Pull range."})
 		public double UNIVERSAL_PULL_RANGE = 50;
-
-
+		
 		@Config.RangeDouble(min = 1, max = 5)
 		@Config.Comment({"Player chakra multiplied by this number on Sage Mode entry."})
 		public double SAGE_MODE_CHAKRA_MULTIPLIER = 1.6;
