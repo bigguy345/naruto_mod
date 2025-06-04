@@ -132,8 +132,7 @@ public class ItemBlackReceiver extends ElementsNarutomodMod.ModElement {
 			super.onUpdate(itemstack, world, entity, par4, par5);
 			if (!world.isRemote) {
 				if (entity instanceof EntityPlayer) {
-					if (!ProcedureUtils.hasItemInInventory((EntityPlayer)entity, ItemRinnegan.helmet)
-					 && !ProcedureUtils.hasItemInInventory((EntityPlayer)entity, ItemTenseigan.helmet)
+					if (!ItemRinnegan.rinneganInInventory((EntityPlayer) entity)
 					 && !((EntityPlayer)entity).isCreative() && entity.ticksExisted % 20 == 7) {
 			 			((EntityLivingBase)entity).addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 100, 1, false, false));
 			 		}
