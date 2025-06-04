@@ -395,14 +395,14 @@ public class ItemNinjutsu extends ElementsNarutomodMod.ModElement {
 					entity.world.playSound(null, finalTarget.posX, finalTarget.posY, finalTarget.posZ, SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:rinnegansfx")), SoundCategory.NEUTRAL, 0.8f, entity.getRNG().nextFloat() * 0.4f + 0.8f);
 					entity.world.playSound(null, finalSwitchTargetWith.posX, finalSwitchTargetWith.posY, finalSwitchTargetWith.posZ, SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:rinnegansfx")), SoundCategory.NEUTRAL, 0.8f, entity.getRNG().nextFloat() * 0.4f + 0.8f);
 
+					if (finalTarget instanceof EntityPlayerMP)
+						NarutomodMod.PACKET_HANDLER.sendTo(new SwitchRotationsMessage(finalTarget, finalSwitchTargetWith), (EntityPlayerMP) finalTarget);
+					NarutomodMod.PACKET_HANDLER.sendToAllTracking(new SwitchRotationsMessage(finalTarget, finalSwitchTargetWith), finalTarget);
+					
 					setTarget(stack, null);
 					action.markDone();
 				}));
-
-				if (finalTarget instanceof EntityPlayerMP)
-					NarutomodMod.PACKET_HANDLER.sendTo(new SwitchRotationsMessage(finalTarget, finalSwitchTargetWith), (EntityPlayerMP) finalTarget);
-				NarutomodMod.PACKET_HANDLER.sendToAllTracking(new SwitchRotationsMessage(finalTarget, finalSwitchTargetWith), finalTarget);
-
+				
 				return true;
 			} else if (rtr.typeOfHit == RayTraceResult.Type.BLOCK) {
 				BlockPos pos = entity.world.isAirBlock(rtr.getBlockPos().up()) && entity.world.isAirBlock(rtr.getBlockPos().up(2)) ? rtr.getBlockPos().up() : rtr.getBlockPos().offset(rtr.sideHit);
