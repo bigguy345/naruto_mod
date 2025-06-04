@@ -271,10 +271,11 @@ public class HUDItemStackWheel extends GuiScreen {
         if (!GuiScreen.isShiftKeyDown())
             fontRenderer.drawString(I18n.format("dojutsuwheel.gui.display_info"), 4, height - 15, color);
         else {
+            fontRenderer.drawString(I18n.format("dojutsuwheel.gui.deselect_slot"), 4, height - 55, color);
             fontRenderer.drawString(I18n.format("dojutsuwheel.gui.how_to_insert"), 4, height - 45, color);
             fontRenderer.drawString(I18n.format("dojutsuwheel.gui.insert_info"), 4, height - 35, color);
             fontRenderer.drawString(I18n.format("dojutsuwheel.gui.extract_info"), 4, height - 25, color);
-            fontRenderer.drawString(I18n.format("dojutsuwheel.gui.deselect_slot"), 4, height - 15, color);
+            fontRenderer.drawString(I18n.format("dojutsuwheel.gui.extract_to_inventory"), 4, height - 15, color);
         }
 
         super.drawScreen(mouseX, mouseY, partialTicks);

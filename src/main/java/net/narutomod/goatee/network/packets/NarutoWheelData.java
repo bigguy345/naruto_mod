@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.narutomod.goatee.data.NarutoData;
 import net.narutomod.goatee.data.WheelData;
@@ -24,6 +25,7 @@ public final class NarutoWheelData extends AbstractPacket {
     private int slot;
     private String name;
     private boolean defaultSlotOperation;
+    private boolean toInventory;
 
     public NarutoWheelData() {
     }
@@ -32,6 +34,7 @@ public final class NarutoWheelData extends AbstractPacket {
         this.slot = wheelSlot;
         this.name = wheelName;
         this.defaultSlotOperation = GuiScreen.isShiftKeyDown();
+        this.toInventory = GuiScreen.isCtrlKeyDown();
     }
 
     @Override
@@ -43,6 +46,7 @@ public final class NarutoWheelData extends AbstractPacket {
     public void sendData(ByteBuf out) throws IOException {
         out.writeInt(this.slot);
         out.writeBoolean(defaultSlotOperation);
+        out.writeBoolean(toInventory);
 
         ByteBufUtils.writeUTF8String(out, name);
     }
@@ -51,6 +55,7 @@ public final class NarutoWheelData extends AbstractPacket {
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
         slot = in.readInt();
         defaultSlotOperation = in.readBoolean();
+        toInventory = in.readBoolean();
         name = ByteBufUtils.readUTF8String(in);
 
         WheelData.Segment seg = NarutoData.get(player).dojutsuWheel.get(slot);
@@ -75,22 +80,34 @@ public final class NarutoWheelData extends AbstractPacket {
             if (defaultSlotOperation)
                 seg.removeDefaultSlot();
 
-            ItemStack removedItem = seg.stack;
-            seg.stack = ItemStack.EMPTY;
+            if (toInventory) {
+                if (player.getHeldItemMainhand().isEmpty()) {
+                    player.setHeldItem(EnumHand.MAIN_HAND, seg.stack);
+                    seg.stack = ItemStack.EMPTY;
+                } else if (player.inventory.getFirstEmptyStack() != -1) {
+                    player.inventory.addItemStackToInventory(seg.stack);
+                    seg.stack = ItemStack.EMPTY;
+                } else
+                    player.sendMessage(new TextComponentTranslation("dojutsuwheel.inventory_full"));
+            } else {
+                ItemStack removedItem = seg.stack;
+                seg.stack = ItemStack.EMPTY;
 
-            if (seg.stack.getItem() instanceof ItemRinnegan.Base)
-                ItemRinnegan.giveClothes(removedItem, player);
-            player.setItemStackToSlot(EntityEquipmentSlot.HEAD, removedItem);
+                if (seg.stack.getItem() instanceof ItemRinnegan.Base)
+                    ItemRinnegan.giveClothes(removedItem, player);
+                player.setItemStackToSlot(EntityEquipmentSlot.HEAD, removedItem);
 
-            if (helmet.getItem() instanceof ItemDojutsu.Base)
-                seg.putToSaved(helmet, removedItem);
-            else {
-                boolean addedToInv = player.inventory.addItemStackToInventory(helmet);
-                if (!addedToInv) {
-                    if (helmet.getItem() instanceof ItemDojutsu.Base)
-                        seg.put(helmet);
-                    else
-                        player.dropItem(helmet, false);
+                if (helmet.getItem() instanceof ItemDojutsu.Base)
+                    seg.putToSaved(helmet, removedItem);
+                else {
+                    if (player.inventory.getFirstEmptyStack() != -1)
+                        player.inventory.addItemStackToInventory(helmet);
+                    else {
+                        if (helmet.getItem() instanceof ItemDojutsu.Base)
+                            seg.put(helmet);
+                        else
+                            player.dropItem(helmet, false);
+                    }
                 }
             }
         }
