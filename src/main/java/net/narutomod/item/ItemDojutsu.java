@@ -157,6 +157,10 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 		}
 	}
 
+	public static void playSound(ItemStack eye, EntityLivingBase entity) {
+		if (eye.getItem() instanceof Base)
+			((Base) eye.getItem()).playSound(entity);
+	}
 	public static boolean hasAnyDojutsu(EntityPlayer player) {
 		return ProcedureUtils.hasAnyItemOfSubtype(player, Base.class);
 	}

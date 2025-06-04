@@ -161,7 +161,12 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
                 if (isRinnesharinganActivated(stack))
                     return "narutomod:textures/rinnesharingantomoehelmet.png";
-                return "narutomod:textures/rinnegantomoehelmet.png";
+                else if (sharinganOn(stack))
+                    return "narutomod:textures/rinnegantomoehelmet_sharingan.png";
+                else if (eternalOn(stack))
+                    return "narutomod:textures/rinnegantomoehelmet_eternal.png";
+
+                return "narutomod:textures/rinnegantomoehelmet_off.png";
             }
 
             public int getColor(ItemStack stack) {
@@ -179,8 +184,10 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             }
 
             public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-                super.addInformation(stack, worldIn, tooltip, flagIn);
+                String status = "item.rinnegantomoehelmet.status_" + (sharinganOn(stack) ? "on" : eternalOn(stack) ? "eternal" : "off");
+                tooltip.add(TextFormatting.DARK_GRAY + I18n.translateToLocal("item.rinnegantomoehelmet.sharingan_status") + TextFormatting.RED + I18n.translateToLocal(status));
 
+                super.addInformation(stack, worldIn, tooltip, flagIn);
                 if (isRinnesharinganActivated(stack))
                     tooltip.add(TextFormatting.RED + I18n.translateToLocal("advancements.rinnesharinganactivated.title") + TextFormatting.WHITE);
                 tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu1") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.mangekyo.amaterasu.jutsu1"));
@@ -210,6 +217,9 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
 
             @Override
             public boolean onJutsuKey1(boolean is_pressed, ItemStack stack, EntityPlayer entity) {
+                if (!eternalOn(stack))
+                    return false;
+                
                 Map<String, Object> $_dependencies = Maps.newHashMap();
                 $_dependencies.put("is_pressed", is_pressed);
                 $_dependencies.put("entity", entity);
@@ -235,6 +245,9 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             
             @Override
             public boolean onJutsuKey3(boolean is_pressed, ItemStack stack, EntityPlayer entity) {
+                if (!eternalOn(stack))
+                    return false;
+                
                 Map<String, Object> $_dependencies = Maps.newHashMap();
                 $_dependencies.put("is_pressed", is_pressed);
                 $_dependencies.put("entity", entity);
@@ -341,7 +354,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                     return false;
 
                 if (entity.getRidingEntity() instanceof EntitySusanooBase) {
-                    ProcedureSusanoo.upgrade(entity);
+                    ProcedureSusanoo.upgradeRinneganTomoe(entity, stack);
                     return true;
                 }
 
@@ -368,6 +381,31 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
         return stack.hasTagCompound() && stack.getTagCompound().getBoolean("RinneganTomoeActivated");
     }
 
+    public static final int SHARINGAN_OFF_STATUS = 0, SHARINGAN_ON_STATUS = 1, ETERNAL_ON_STATUS = 2;
+
+    public static boolean sharinganOff(ItemStack stack) {
+        int status = stack.getTagCompound().getShort("tomoeStatus");
+        return status < SHARINGAN_ON_STATUS || status > ETERNAL_ON_STATUS;
+    }
+
+    public static boolean sharinganOn(ItemStack stack) {
+        return stack.hasTagCompound() && stack.getTagCompound().getByte("tomoeStatus") == SHARINGAN_ON_STATUS;
+    }
+
+    public static boolean eternalOn(ItemStack stack) {
+        return stack.hasTagCompound() && stack.getTagCompound().getByte("tomoeStatus") == ETERNAL_ON_STATUS;
+    }
+
+    public static int getTomoeStatus(ItemStack stack) {
+        return stack.getTagCompound().getByte("tomoeStatus");
+    }
+
+    public static void setTomoeStatus(ItemStack stack, int status) {
+        if (status < 0 || status > 2)
+            return;
+        stack.getTagCompound().setByte("tomoeStatus", (byte) status);
+    }
+    
     public static boolean isTomoe(ItemStack stack) {
         return stack.getItem() == helmet;
     }

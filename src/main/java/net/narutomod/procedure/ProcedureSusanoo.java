@@ -19,10 +19,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.nbt.NBTTagCompound;
 
+import net.narutomod.item.*;
 import net.narutomod.potion.PotionFeatherFalling;
-import net.narutomod.item.ItemRinnegan;
-import net.narutomod.item.ItemSharingan;
-import net.narutomod.item.ItemMangekyoSharinganEternal;
 import net.narutomod.entity.EntitySusanooWinged;
 import net.narutomod.entity.EntitySusanooSkeleton;
 import net.narutomod.entity.EntitySusanooClothed;
@@ -122,6 +120,44 @@ public class ProcedureSusanoo extends ElementsNarutomodMod.ModElement {
 				boolean hasLegs = ((EntitySusanooClothed.EntityCustom)susanoo).hasLegs();
 				if (hasLegs && playerXp >= EntitySusanooBase.BXP_REQUIRED_L4) {
 					if (Chakra.pathway(player).consume(BASE_CHAKRA_USAGE)) {
+						changeEntity(player, susanoo, new EntitySusanooWinged.EntityCustom(player));
+					}
+				} else if (!hasLegs && playerXp >= EntitySusanooBase.BXP_REQUIRED_L3) {
+					if (Chakra.pathway(player).consume(BASE_CHAKRA_USAGE)) {
+						changeEntity(player, susanoo, new EntitySusanooClothed.EntityCustom(player, true));
+					}
+				}
+			}
+		}
+	}
+
+	public static void upgradeRinneganTomoe(EntityPlayer player, ItemStack tomoe) {
+		Entity susanoo = player.getRidingEntity();
+		double playerXp = PlayerTracker.getBattleXp(player);
+		if (susanoo instanceof EntitySusanooBase) {
+			if (susanoo instanceof EntitySusanooSkeleton.EntityCustom) {
+				boolean fullBody = ((EntitySusanooSkeleton.EntityCustom) susanoo).isFullBody();
+				if (!fullBody && playerXp >= EntitySusanooBase.BXP_REQUIRED_L1) {
+					if (Chakra.pathway(player).consume(BASE_CHAKRA_USAGE)) {
+						changeEntity(player, susanoo, new EntitySusanooSkeleton.EntityCustom(player, true));
+					}
+				} else if (fullBody && playerXp >= EntitySusanooBase.BXP_REQUIRED_L2) {
+					if (Chakra.pathway(player).consume(BASE_CHAKRA_USAGE)) {
+						if (ItemRinneganTomoe.sharinganOff(tomoe)) {
+							ItemRinneganTomoe.setTomoeStatus(tomoe, ItemRinneganTomoe.SHARINGAN_ON_STATUS);
+							ItemDojutsu.playSound(tomoe, player);
+						}
+						changeEntity(player, susanoo, new EntitySusanooClothed.EntityCustom(player, false));
+					}
+				}
+			} else if (susanoo instanceof EntitySusanooClothed.EntityCustom) {
+				boolean hasLegs = ((EntitySusanooClothed.EntityCustom) susanoo).hasLegs();
+				if (hasLegs && playerXp >= EntitySusanooBase.BXP_REQUIRED_L4) {
+					if (Chakra.pathway(player).consume(BASE_CHAKRA_USAGE)) {
+						if (!ItemRinneganTomoe.eternalOn(tomoe)) {
+							ItemRinneganTomoe.setTomoeStatus(tomoe, ItemRinneganTomoe.ETERNAL_ON_STATUS);
+							ItemDojutsu.playSound(tomoe, player);
+						}
 						changeEntity(player, susanoo, new EntitySusanooWinged.EntityCustom(player));
 					}
 				} else if (!hasLegs && playerXp >= EntitySusanooBase.BXP_REQUIRED_L3) {

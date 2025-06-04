@@ -816,7 +816,12 @@ amenotejikara.target.too_far=Too far away to switch
 key.mcreator.specialjutsu4=Jutsu 4
 key.mcreator.specialjutsu5=Jutsu 5
 key.mcreator.specialjutsu6=Jutsu 6
+
 item.rinnegantomoehelmet.name=Rinnegan Tomoe
+item.rinnegantomoehelmet.sharingan_status=Sharingan status: 
+item.rinnegantomoehelmet.status_off=OFF
+item.rinnegantomoehelmet.status_on=ON
+item.rinnegantomoehelmet.status_eternal=Eternal Mangekyo
 
 dojutsuwheel.set_default=§aSet %s §adefault slot! (%s§a)
 dojutsuwheel.remove_default=§cRemoved %s §cdefault slot! (%s§c)
