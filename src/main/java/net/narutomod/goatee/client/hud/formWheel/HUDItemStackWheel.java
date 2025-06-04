@@ -22,6 +22,7 @@ import net.narutomod.goatee.data.WheelData;
 import net.narutomod.goatee.network.packets.NarutoSyncData;
 import net.narutomod.item.ItemJutsu;
 import net.narutomod.item.ItemRinnegan;
+import net.narutomod.item.ItemRinneganTomoe;
 import net.narutomod.item.ItemTenseigan;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -329,22 +330,27 @@ public class HUDItemStackWheel extends GuiScreen {
 
         if (!(oldItem.getItem() instanceof ItemJutsu.Base))
             entity.inventory.mainInventory.set(entity.inventory.currentItem, ItemStack.EMPTY);
-        
 
+        int oldTomoeSlot = -1;
         if (hoveredSlot != -1) {
-            entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, selectedItem);
+            if (ItemRinneganTomoe.isTomoe(oldHelmet) && ItemRinneganTomoe.getCompatibleStatus(selectedItem) != -1) {
+                oldTomoeSlot = ItemRinneganTomoe.getTomoeStatus(oldHelmet);
+                ItemRinneganTomoe.setTomoeStatus(oldHelmet, ItemRinneganTomoe.getCompatibleStatus(selectedItem));
+            } else {
+                entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, selectedItem);
 
-            if (ItemTenseigan.isTenseigan(selectedItem)) {
+                if (ItemTenseigan.isTenseigan(selectedItem)) {
                     entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ItemTenseigan.body));
                     entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ItemTenseigan.legs));
-            } else if (ItemRinnegan.isRinnesharinganActivated(selectedItem)) {
+                } else if (ItemRinnegan.isRinnesharinganActivated(selectedItem)) {
                     entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ItemRinnegan.body));
                     entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ItemRinnegan.legs));
-            } else {
-                if (oldChest.getItem() == ItemRinnegan.body || oldChest.getItem() == ItemTenseigan.body)
-                    entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStack.EMPTY);
-                if (oldLegs.getItem() == ItemRinnegan.legs || oldLegs.getItem() == ItemTenseigan.legs)
-                    entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStack.EMPTY);
+                } else {
+                    if (oldChest.getItem() == ItemRinnegan.body || oldChest.getItem() == ItemTenseigan.body)
+                        entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStack.EMPTY);
+                    if (oldLegs.getItem() == ItemRinnegan.legs || oldLegs.getItem() == ItemTenseigan.legs)
+                        entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStack.EMPTY);
+                }
             }
         }
 
@@ -408,6 +414,9 @@ public class HUDItemStackWheel extends GuiScreen {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        if (oldTomoeSlot != -1)
+            ItemRinneganTomoe.setTomoeStatus(oldHelmet, oldTomoeSlot);
 
         entity.inventory.mainInventory.set(entity.inventory.currentItem, oldItem);
         entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, oldHelmet);

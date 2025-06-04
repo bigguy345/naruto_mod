@@ -13,6 +13,7 @@ import net.narutomod.goatee.data.WheelData;
 import net.narutomod.goatee.network.AbstractPacket;
 import net.narutomod.item.ItemDojutsu;
 import net.narutomod.item.ItemRinnegan;
+import net.narutomod.item.ItemRinneganTomoe;
 
 import java.io.IOException;
 
@@ -65,7 +66,9 @@ public final class NarutoWheelData extends AbstractPacket {
             boolean swapWithHelmet = false;
             ItemStack toSwapWith = player.getHeldItemMainhand().getItem() instanceof ItemDojutsu.Base ? player.getHeldItemMainhand() : (swapWithHelmet = helmet.getItem() instanceof ItemDojutsu.Base) ? helmet : ItemStack.EMPTY;
 
-            if (!toSwapWith.isEmpty()) {
+            if (helmet == toSwapWith && ItemRinneganTomoe.isTomoe(helmet))
+                ItemRinneganTomoe.setTomoeStatus(helmet, ItemRinneganTomoe.SHARINGAN_OFF_STATUS);
+            else if (!toSwapWith.isEmpty()) {
                 seg.putToSaved(toSwapWith, seg.stack);
 
                 if (defaultSlotOperation)
@@ -90,23 +93,28 @@ public final class NarutoWheelData extends AbstractPacket {
                 } else
                     player.sendMessage(new TextComponentTranslation("dojutsuwheel.inventory_full"));
             } else {
-                ItemStack removedItem = seg.stack;
-                seg.stack = ItemStack.EMPTY;
-
-                if (seg.stack.getItem() instanceof ItemRinnegan.Base)
-                    ItemRinnegan.giveClothes(removedItem, player);
-                player.setItemStackToSlot(EntityEquipmentSlot.HEAD, removedItem);
-
-                if (helmet.getItem() instanceof ItemDojutsu.Base)
-                    seg.putToSaved(helmet, removedItem);
+                if (ItemRinneganTomoe.isTomoe(helmet) && ItemRinneganTomoe.getCompatibleStatus(seg.stack) != -1)
+                    ItemRinneganTomoe.setTomoeStatus(helmet, ItemRinneganTomoe.getCompatibleStatus(seg.stack), player);
                 else {
-                    if (player.inventory.getFirstEmptyStack() != -1)
-                        player.inventory.addItemStackToInventory(helmet);
+                    ItemStack removedItem = seg.stack;
+                    seg.stack = ItemStack.EMPTY;
+
+
+                    if (seg.stack.getItem() instanceof ItemRinnegan.Base)
+                        ItemRinnegan.giveClothes(removedItem, player);
+                    player.setItemStackToSlot(EntityEquipmentSlot.HEAD, removedItem);
+
+                    if (helmet.getItem() instanceof ItemDojutsu.Base)
+                        seg.putToSaved(helmet, removedItem);
                     else {
-                        if (helmet.getItem() instanceof ItemDojutsu.Base)
-                            seg.put(helmet);
-                        else
-                            player.dropItem(helmet, false);
+                        if (player.inventory.getFirstEmptyStack() != -1)
+                            player.inventory.addItemStackToInventory(helmet);
+                        else {
+                            if (helmet.getItem() instanceof ItemDojutsu.Base)
+                                seg.put(helmet);
+                            else
+                                player.dropItem(helmet, false);
+                        }
                     }
                 }
             }

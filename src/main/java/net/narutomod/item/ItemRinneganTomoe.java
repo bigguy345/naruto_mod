@@ -106,7 +106,10 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
 
             public void onUpdate(ItemStack itemstack, World world, Entity entity, int par4, boolean par5) {
                 super.onUpdate(itemstack, world, entity, par4, par5);
-                if (!world.isRemote && entity.ticksExisted % 20 == 0) {
+                if (world.isRemote)
+                    return;
+
+                if (entity.ticksExisted % 20 == 0) {
                     UUID uuid = ProcedureUtils.getUniqueId(itemstack, "KoH_id");
                     if (uuid != null) {
                         Entity koh = ((WorldServer) world).getEntityFromUuid(uuid);
@@ -129,7 +132,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                     }
                 }
 
-                if (itemstack.getTagCompound().hasKey("amenotejikaraDisable")) { //important as to not switch on the same shift click that stores target 
+                if (itemstack.hasTagCompound() && itemstack.getTagCompound().hasKey("amenotejikaraDisable")) { //important as to not switch on the same shift click that stores target 
                     int counter = itemstack.getTagCompound().getInteger("amenotejikaraDisable") - 1;
                     itemstack.getTagCompound().setInteger("amenotejikaraDisable", counter);
                     if (counter <= 0) {
@@ -397,6 +400,8 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
     }
 
     public static int getTomoeStatus(ItemStack stack) {
+        if (!stack.getTagCompound().hasKey("tomoeStatus"))
+            return -1;
         return stack.getTagCompound().getByte("tomoeStatus");
     }
 
@@ -405,7 +410,32 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             return;
         stack.getTagCompound().setByte("tomoeStatus", (byte) status);
     }
-    
+
+    public static void setTomoeStatus(ItemStack stack, int status, EntityLivingBase entity) {
+        if (!isTomoe(stack))
+            return;
+
+        int oldStatus = ItemRinneganTomoe.getTomoeStatus(stack);
+        ItemRinneganTomoe.setTomoeStatus(stack, status);
+        if (status > oldStatus)
+            ((ItemDojutsu.Base) stack.getItem()).playSound(entity);
+    }
+
+    public static int getCompatibleStatus(ItemStack stack) {
+        if (stack.isEmpty())
+            return SHARINGAN_OFF_STATUS;
+
+        if (stack.getItem() == ItemSharingan.helmet)
+            return SHARINGAN_ON_STATUS;
+
+
+        if (ItemSharingan.isMangekyo(stack))
+            return ETERNAL_ON_STATUS;
+
+        return -1;
+    }
+
+
     public static boolean isTomoe(ItemStack stack) {
         return stack.getItem() == helmet;
     }
