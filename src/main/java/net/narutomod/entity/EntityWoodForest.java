@@ -196,7 +196,7 @@ public class EntityWoodForest extends ElementsNarutomodMod.ModElement {
 					}
 					if (index > 16 && this.ticksExisted < 5 && !this.inGround && parent.diameter > 25f && !this.hasLivingTarget()) {
 						BlockPos.PooledMutableBlockPos pos = BlockPos.PooledMutableBlockPos.retain();
-						for (pos.setPos(this); !this.world.isAirBlock(pos); pos.move(EnumFacing.random(this.rand), this.rand.nextInt(Math.max((int)this.width+1, 2))));
+						for (pos.setPos(this.posX,this.posY,this.posZ); !this.world.isAirBlock(pos); pos.move(EnumFacing.random(this.rand), this.rand.nextInt(Math.max((int)this.width+1, 2))));
 						new net.narutomod.event.EventSetBlocks(this.world,
 						 ImmutableMap.of(pos.toImmutable(), Blocks.LEAVES.getStateFromMeta(0)), 0, this.lifespan - this.ticksExisted, false, false);
 						pos.release();
