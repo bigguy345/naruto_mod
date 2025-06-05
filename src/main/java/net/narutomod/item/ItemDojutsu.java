@@ -219,7 +219,7 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 				else
 					ItemDojutsu.playActivationSound(to, entity);
 			} else if (from.getItem() instanceof Base) //eye deactivation sound
-				ItemDojutsu.playActivationSound(from, entity);
+				ItemDojutsu.playDeactivationSound(from, entity);
 			
 		}
 
