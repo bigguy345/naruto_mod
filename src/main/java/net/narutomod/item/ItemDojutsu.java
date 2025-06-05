@@ -98,7 +98,7 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 		
 		public void setOwner(ItemStack stack, EntityLivingBase entityIn) {
 			ProcedureUtils.setOriginalOwner(entityIn, stack);
-			stack.setStackDisplayName(entityIn.getName() + "'s " + stack.getDisplayName());
+			stack.setStackDisplayName(entityIn.getName() + "'s " + stack.getItem().getItemStackDisplayName(stack));
 		}
 
 		@Override
