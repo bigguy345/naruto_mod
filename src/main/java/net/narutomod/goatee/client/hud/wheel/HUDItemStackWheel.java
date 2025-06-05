@@ -1,4 +1,4 @@
-package net.narutomod.goatee.client.hud.formWheel;
+package net.narutomod.goatee.client.hud.wheel;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -15,6 +15,7 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.settings.KeyConflictContext;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.narutomod.ModConfig;
 import net.narutomod.goatee.client.gui.KeyBindingGui;
 import net.narutomod.goatee.data.NarutoData;
@@ -309,12 +310,12 @@ public class HUDItemStackWheel extends GuiScreen {
         entity.capabilities.isFlying = true;
         entity.setSneaking(false);
         try {
-            Field field = Entity.class.getDeclaredField("isImmuneToFire");
+            Field field = ReflectionHelper.findField(Entity.class, "isImmuneToFire", "field_70178_ae");
             field.setAccessible(true);
             isImmunetoFire = field.getBoolean(entity);
             field.setBoolean(entity, true);
 
-            field = Entity.class.getDeclaredField("ridingEntity");
+            field = ReflectionHelper.findField(Entity.class, "ridingEntity", "field_184239_as");
             field.setAccessible(true);
             oldRidingEntity = (Entity) field.get(entity);
             field.set(entity, null);
@@ -404,11 +405,11 @@ public class HUDItemStackWheel extends GuiScreen {
         entity.setSneaking(oldSneaking);
 
         try {
-            Field field = Entity.class.getDeclaredField("isImmuneToFire");
+            Field field = ReflectionHelper.findField(Entity.class, "isImmuneToFire", "field_70178_ae");
             field.setAccessible(true);
             field.setBoolean(entity, isImmunetoFire);
 
-            field = Entity.class.getDeclaredField("ridingEntity");
+            field = ReflectionHelper.findField(Entity.class, "ridingEntity", "field_184239_as");
             field.setAccessible(true);
             field.set(entity, oldRidingEntity);
         } catch (Exception e) {

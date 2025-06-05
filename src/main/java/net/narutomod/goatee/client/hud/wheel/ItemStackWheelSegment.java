@@ -1,4 +1,4 @@
-package net.narutomod.goatee.client.hud.formWheel;
+package net.narutomod.goatee.client.hud.wheel;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

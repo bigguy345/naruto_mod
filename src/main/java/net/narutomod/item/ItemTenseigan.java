@@ -32,7 +32,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.narutomod.entity.EntityPretaShield;
 import net.narutomod.entity.EntityTenTails;
 import net.narutomod.goatee.client.Sounds;
-import net.narutomod.goatee.client.hud.formWheel.HUDItemStackWheel;
+import net.narutomod.goatee.client.hud.wheel.HUDItemStackWheel;
 import net.narutomod.gui.GuiNinjaScroll;
 import net.narutomod.procedure.*;
 import net.narutomod.creativetab.TabModTab;

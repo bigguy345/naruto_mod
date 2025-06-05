@@ -20,7 +20,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.narutomod.ElementsNarutomodMod;
 import net.narutomod.NarutomodMod;
-import net.narutomod.goatee.client.hud.formWheel.HUDItemStackWheel;
+import net.narutomod.goatee.client.hud.wheel.HUDItemStackWheel;
 import net.narutomod.goatee.data.NarutoData;
 import org.lwjgl.input.Keyboard;
 
