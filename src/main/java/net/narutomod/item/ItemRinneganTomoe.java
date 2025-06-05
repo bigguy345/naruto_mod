@@ -235,6 +235,9 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             }
 
             public SoundEvent getActivationSound(ItemStack eye) {
+                if (sharinganOff(eye) && !isRinnesharinganActivated(eye))
+                    return Sounds.get("rinnegansfx");
+                
                 return Sounds.get("rinnesharingansfx");
             }
 
