@@ -24,6 +24,8 @@ minecraft {
         client {
             workingDirectory project.file('run')
 
+            args '--username', 'gg'
+
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
 
