@@ -245,6 +245,10 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 		public SoundEvent getActivationSound(){
 			return Sounds.get("rinnegansfx");
 		}
+
+		public SoundEvent getDeactivationSound() {
+			return Sounds.get("sharingan_off");
+		}
 		
 		@SideOnly(Side.CLIENT)
 		@Override
