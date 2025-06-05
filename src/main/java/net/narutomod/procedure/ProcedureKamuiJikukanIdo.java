@@ -1,5 +1,9 @@
 package net.narutomod.procedure;
 
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.ExplosionEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.narutomod.world.WorldKamuiDimension;
 import net.narutomod.item.ItemMangekyoSharinganObito;
 import net.narutomod.gui.overlay.OverlayByakuganView;
@@ -22,6 +26,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.Entity;
 
+import java.util.Iterator;
 import java.util.Map;
 
 @ElementsNarutomodMod.ModElement.Tag
@@ -93,6 +98,7 @@ public class ProcedureKamuiJikukanIdo extends ElementsNarutomodMod.ModElement {
 				if ((f2)) {
 					ProcedureUtils.purgeHarmfulEffects((EntityLivingBase) entity);
 					ProcedureOnLivingUpdate.setUntargetable(entity, 3);
+					entity.extinguish();
 					entity.fallDistance = (float) (0);
 				}
 				if (entity instanceof EntityPlayer) {
@@ -188,5 +194,26 @@ public class ProcedureKamuiJikukanIdo extends ElementsNarutomodMod.ModElement {
 			}
 		}
 		entity.getEntityData().setDouble("kamui_timer", (timer));
+	}
+
+	public static class Hook {
+
+		@SubscribeEvent
+		public void onExplosion(ExplosionEvent.Detonate event) {
+			if (event.getWorld().isRemote)
+				return;
+
+			Iterator<Entity> it = event.getAffectedEntities().iterator();
+			while (it.hasNext()) {
+				Entity entity = it.next();
+
+				if (entity instanceof EntityPlayer && entity.getEntityData().getBoolean("kamui_intangible"))
+					it.remove();
+			}
+		}
+	}
+
+	public void init(FMLInitializationEvent event) {
+		MinecraftForge.EVENT_BUS.register(new Hook());
 	}
 }
