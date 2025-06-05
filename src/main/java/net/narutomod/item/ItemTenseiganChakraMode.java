@@ -111,6 +111,7 @@ public class ItemTenseiganChakraMode extends ElementsNarutomodMod.ModElement {
 						if (stack2.getItem() == ItemTenseigan.legs) {
 							stack2.shrink(1);
 						}
+						entity.getEntityData().setTag("tenseiganChakraCloak", itemstack.getTagCompound());
 						itemstack.shrink(1);
 					} else if (ItemTenseigan.getHeldChakraCloak(livingEntity).equals(itemstack)) {
 						livingEntity.addPotionEffect(new PotionEffect(PotionFlight.potion, 2, 0, false, false));

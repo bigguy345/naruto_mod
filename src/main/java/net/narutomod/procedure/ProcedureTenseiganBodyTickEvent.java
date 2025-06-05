@@ -31,7 +31,6 @@ public class ProcedureTenseiganBodyTickEvent extends ElementsNarutomodMod.ModEle
 		ItemStack itemstack = (ItemStack) dependencies.get("itemstack");
 		if ((!(((entity instanceof EntityLivingBase) ? ItemTenseigan.getHeldChakraCloak((EntityLivingBase) entity) : ItemStack.EMPTY)
 				.getItem() == new ItemStack(ItemTenseiganChakraMode.block, (int) (1)).getItem()))) {
-			entity.getEntityData().setTag("tenseiganChakraCloak", itemstack.getTagCompound());
 			((itemstack)).shrink((int) 1);
 		} else {
 			(entity).extinguish();
