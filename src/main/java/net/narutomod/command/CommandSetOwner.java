@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ElementsNarutomodMod.ModElement.Tag
-public class CommandDojutsuOwner extends ElementsNarutomodMod.ModElement {
-    public CommandDojutsuOwner(ElementsNarutomodMod instance) {
+public class CommandSetOwner extends ElementsNarutomodMod.ModElement {
+    public CommandSetOwner(ElementsNarutomodMod instance) {
         super(instance, 908);
     }
 
