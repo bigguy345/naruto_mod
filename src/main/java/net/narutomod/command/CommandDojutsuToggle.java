@@ -122,11 +122,7 @@ public class CommandDojutsuToggle extends ElementsNarutomodMod.ModElement {
                 if (status == -1)
                     throw new CommandException("Invalid argument: " + s);
 
-                int oldStatus = ItemRinneganTomoe.getTomoeStatus(tomoe);
-                ItemRinneganTomoe.setTomoeStatus(tomoe, status);
-
-                if (status > oldStatus)
-                    ((ItemDojutsu.Base) tomoe.getItem()).playSound(player);
+                ItemRinneganTomoe.setTomoeStatus(tomoe, status, player);
             }
         }
 

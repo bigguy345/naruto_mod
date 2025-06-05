@@ -17,8 +17,8 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
@@ -409,9 +409,8 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
     }
 
     public static void setTomoeStatus(ItemStack stack, int status) {
-        if (status < 0 || status > 2)
-            return;
-        stack.getTagCompound().setByte("tomoeStatus", (byte) status);
+        int clamped = MathHelper.clamp(status, SHARINGAN_OFF_STATUS, ETERNAL_ON_STATUS);
+        stack.getTagCompound().setByte("tomoeStatus", (byte) clamped);
     }
 
     public static void setTomoeStatus(ItemStack stack, int status, EntityLivingBase entity) {
@@ -421,7 +420,9 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
         int oldStatus = ItemRinneganTomoe.getTomoeStatus(stack);
         ItemRinneganTomoe.setTomoeStatus(stack, status);
         if (status > oldStatus)
-            ((ItemDojutsu.Base) stack.getItem()).playSound(entity);
+            ((ItemDojutsu.Base) stack.getItem()).playActivationSound(entity);
+        else if (status < oldStatus)
+            ((ItemDojutsu.Base) stack.getItem()).playDeactivationSound(entity);
     }
 
     public static int getCompatibleStatus(ItemStack stack) {
