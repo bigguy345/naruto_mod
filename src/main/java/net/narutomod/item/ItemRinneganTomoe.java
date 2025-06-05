@@ -199,9 +199,9 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                 tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu1") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.mangekyo.amaterasu.jutsu1"));
                 tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu2") + ": " + TextFormatting.GRAY + I18n.translateToLocal("entity.susanooclothed.name"));
                 tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu3") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.mangekyo.kamui.jutsu1"));
-                tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu4") + ": " + TextFormatting.GRAY + I18n.translateToLocal("item.ninjutsu.amenotejikara"));
-                tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu5") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.rinnegan.jutsu2"));
-                tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu6") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.rinnegan.jutsu3"));
+                tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.jutsu.4") + ": " + TextFormatting.GRAY + I18n.translateToLocal("item.ninjutsu.amenotejikara"));
+                tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.jutsu.5") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.rinnegan.jutsu2"));
+                tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.jutsu.6") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.rinnegan.jutsu3"));
             }
 
             public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {

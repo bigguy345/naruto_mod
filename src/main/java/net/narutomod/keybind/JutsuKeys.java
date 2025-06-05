@@ -7,29 +7,34 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.narutomod.NarutomodMod;
+import net.narutomod.goatee.client.hud.wheel.HUDItemStackWheel;
+import net.narutomod.goatee.data.NarutoData;
 import net.narutomod.goatee.network.AbstractPacket;
 import net.narutomod.goatee.network.PacketHandler;
 import net.narutomod.item.ItemDojutsu;
 import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 @Mod.EventBusSubscriber
 public class JutsuKeys {
 	public static List<Key> jutsuKeys = new ArrayList<>();
-	private static Key key4 = new Key(4, "key.mcreator.specialjutsu4", Keyboard.KEY_NONE, "key.mcreator.category");
-	private static Key key5 = new Key(5, "key.mcreator.specialjutsu5", Keyboard.KEY_NONE, "key.mcreator.category");
-	private static Key key6 = new Key(6, "key.mcreator.specialjutsu6", Keyboard.KEY_NONE, "key.mcreator.category");
+	private static Key key4 = new Key(4, "key.jutsu.4", Keyboard.KEY_NONE, "key.mcreator.category");
+	private static Key key5 = new Key(5, "key.jutsu.5", Keyboard.KEY_NONE, "key.mcreator.category");
+	private static Key key6 = new Key(6, "key.jutsu.6", Keyboard.KEY_NONE, "key.mcreator.category");
 
+	public static KeyBinding dojutsWheel = new KeyBinding("key.dojutsu_wheel", Keyboard.KEY_V, "key.mcreator.category");
+
+	static {
+		ClientRegistry.registerKeyBinding(dojutsWheel);
+	}
+	
 	@SideOnly(Side.CLIENT)
 	public static class Key extends KeyBinding {
 		public byte keyId;
@@ -46,7 +51,7 @@ public class JutsuKeys {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public static void tick(TickEvent.ClientTickEvent event) {
-		if (event.phase == TickEvent.Phase.START || Minecraft.getMinecraft().currentScreen != null)
+		if (event.phase == TickEvent.Phase.START || Minecraft.getMinecraft().currentScreen != null || Minecraft.getMinecraft().player == null)
 			return;
 
 		for (Key key : jutsuKeys) {
@@ -59,6 +64,9 @@ public class JutsuKeys {
 				key.wasDown = isDown;
 			}
 		}
+
+		if (dojutsWheel.isPressed())
+			Minecraft.getMinecraft().displayGuiScreen(new HUDItemStackWheel(NarutoData.getClient().dojutsuWheel));
 	}
 
 	public static class Packet extends AbstractPacket {

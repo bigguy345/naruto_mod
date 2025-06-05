@@ -813,9 +813,9 @@ amenotejikara.target.switched=Switched with %s
 amenotejikara.target.next_switch=Selected %s for next switch
 amenotejikara.target.too_far=Too far away to switch
 
-key.mcreator.specialjutsu4=Jutsu 4
-key.mcreator.specialjutsu5=Jutsu 5
-key.mcreator.specialjutsu6=Jutsu 6
+key.jutsu.4=Jutsu 4
+key.jutsu.5=Jutsu 5
+key.jutsu.6=Jutsu 6
 
 item.rinnegantomoehelmet.name=Rinnegan Tomoe
 item.rinnegantomoehelmet.sharingan_status=Sharingan status: 

@@ -17,7 +17,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.narutomod.ModConfig;
-import net.narutomod.goatee.client.gui.KeyBindingGui;
 import net.narutomod.goatee.data.NarutoData;
 import net.narutomod.goatee.data.WheelData;
 import net.narutomod.goatee.network.packets.NarutoSyncData;
@@ -25,6 +24,7 @@ import net.narutomod.item.ItemJutsu;
 import net.narutomod.item.ItemRinnegan;
 import net.narutomod.item.ItemRinneganTomoe;
 import net.narutomod.item.ItemTenseigan;
+import net.narutomod.keybind.JutsuKeys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -193,8 +193,8 @@ public class HUDItemStackWheel extends GuiScreen {
 
         calculateHoveredSlot((float) this.width / 2, (float) this.height / 2, configureEnabled);
         
-        int code = KeyBindingGui.key.getKeyCode();
-        keyDown = KeyBindingGui.key.getKeyCode() < 0 ? Mouse.isButtonDown(code + 100) : Keyboard.isKeyDown(code);
+        int code = JutsuKeys.dojutsWheel.getKeyCode();
+        keyDown = JutsuKeys.dojutsWheel.getKeyCode() < 0 ? Mouse.isButtonDown(code + 100) : Keyboard.isKeyDown(code);
         if (!keyDown && !configureEnabled && !isClosing)
             onClose(PRE_CLOSE);
         
