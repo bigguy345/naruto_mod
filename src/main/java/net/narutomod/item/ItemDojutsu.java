@@ -1,9 +1,6 @@
 
 package net.narutomod.item;
 
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.init.Items;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -118,12 +115,12 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 
 		public abstract Type getType();
 
-		public SoundEvent getSound() {
+		public SoundEvent getActivationSound() {
 			return null;
 		}
 
 		public void playSound(EntityLivingBase entity) {
-			SoundEvent sound = getSound();
+			SoundEvent sound = getActivationSound();
 			if (sound != null)
 				entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, sound, SoundCategory.NEUTRAL, 1, 1);
 		}

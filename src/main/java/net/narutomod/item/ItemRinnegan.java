@@ -242,7 +242,7 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 			return false;
 		}
 
-		public SoundEvent getSound(){
+		public SoundEvent getActivationSound(){
 			return Sounds.get("rinnegansfx");
 		}
 		

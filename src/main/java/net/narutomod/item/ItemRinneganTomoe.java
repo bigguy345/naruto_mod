@@ -81,14 +81,17 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                     return;
 
                 entity.addPotionEffect(new PotionEffect(MobEffects.SPEED, 2, 2, false, false));
-                entity.capabilities.allowFlying = entity.isCreative() || entity.dimension == WorldKamuiDimension.DIMID;
-                entity.sendPlayerAbilities();
+                boolean flag = entity.isCreative() || entity.dimension == WorldKamuiDimension.DIMID;
+                if (entity.capabilities.allowFlying != flag) {
+                    entity.capabilities.allowFlying = flag;
+                    entity.sendPlayerAbilities();
+                }
                 if (entity.getEntityData().getBoolean("kamui_teleport")) {
                     Chakra.pathway(entity).consume(ItemMangekyoSharinganObito.getTeleportChakraUsage(entity));
                 }
                 if (entity.getEntityData().getBoolean("kamui_intangible")) {
                     Chakra.pathway(entity).consume(ItemMangekyoSharinganObito.getIntangibleChakraUsage(entity));
-                    entity.getEntityData().setDouble(NarutomodModVariables.InvulnerableTime, 2.0d);
+                    ProcedureWhenPlayerAttcked.setInvulnerable(entity, 2);
                 }
                 
                 int x = (int) entity.posX;
@@ -214,7 +217,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                 return TextFormatting.LIGHT_PURPLE + super.getItemStackDisplayName(stack) + TextFormatting.WHITE;
             }
 
-            public SoundEvent getSound(){
+            public SoundEvent getActivationSound(){
                 return Sounds.get("rinnesharingansfx");
             }
 
@@ -271,7 +274,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                 if (pressType == 0) {
                     if (!entity.world.isRemote && !stack.getTagCompound().getBoolean("amenotejikaraStoreTarget") && !entity.isPotionActive(PotionSpaceInversion.potion)) {
                         Entity hit = ProcedureUtils.objectEntityLookingAt(entity, ModConfig.TECHNIQUES.AMENOTEJIKARA_RANGE).entityHit;
-                        ItemNinjutsu.Amenotejikara.setTarget(stack, hit);
+                         ItemNinjutsu.Amenotejikara.setTarget(stack, hit);
 
                         if (hit != null) {
                             if (entity.isSneaking()) { //shift clicking stores the target, which can be switched to on the next click

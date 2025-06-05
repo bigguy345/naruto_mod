@@ -172,7 +172,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			return itemDamage;
 		}
 
-		public SoundEvent getSound(){
+		public SoundEvent getActivationSound(){
 			return Sounds.get("sharingansfx");
 		}
 

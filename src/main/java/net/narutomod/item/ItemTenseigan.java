@@ -65,7 +65,7 @@ public class ItemTenseigan extends ElementsNarutomodMod.ModElement {
 				return true;
 			}
 
-			public SoundEvent getSound() {
+			public SoundEvent getActivationSound() {
 				return Sounds.get("tenseigansfx");
 			}
 
