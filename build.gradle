@@ -49,6 +49,8 @@ minecraft {
             }
         }
     }
+
+    accessTransformer = file('src/main/resources/META-INF/narutomod_at.cfg')
 }
 
 sourceSets {
