@@ -79,7 +79,8 @@ public class EntityWhiteZetsu extends ElementsNarutomodMod.ModElement {
 				Biomes.MUTATED_BIRCH_FOREST, Biomes.MUTATED_ROOFED_FOREST, Biomes.MUTATED_REDWOOD_TAIGA, Biomes.MUTATED_SAVANNA);
 		}
 	}
-
+
+
 	public static class EntityCustom extends EntityClone._Base implements IMob {
 		private final ItemStack kunaiStack = new ItemStack(ItemKunai.block, 1);
 		private ItemStack oldHeldStack = ItemStack.EMPTY;
@@ -295,7 +296,10 @@ public class EntityWhiteZetsu extends ElementsNarutomodMod.ModElement {
 				if (entityIn.getSummoner() == null) {
 					this.mainModel = this.altModel;
 				}
-				super.doRender(entityIn, x, y, z, entityYaw, partialTicks);
+				try {
+					super.doRender(entityIn, x, y, z, entityYaw, partialTicks);
+				} catch (Exception e) {
+				}
 			}
 			
 			@Override
