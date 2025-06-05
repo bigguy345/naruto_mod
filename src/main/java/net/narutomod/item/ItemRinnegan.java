@@ -534,6 +534,17 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 			ProcedureUtils.swapItemToSlot(entity, EntityEquipmentSlot.LEGS, new ItemStack(ItemRinnegan.legs));
 		}
 	}
+
+	public static void removeClothes(EntityPlayer entity) {
+		ItemStack chest = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+		ItemStack legs = entity.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
+
+		if (chest.getItem() == ItemRinnegan.body || chest.getItem() == ItemTenseigan.body)
+			chest.shrink(1);
+
+		if (legs.getItem() == ItemRinnegan.legs || legs.getItem() == ItemTenseigan.legs)
+			legs.shrink(1);
+	}
 	
 	@SideOnly(Side.CLIENT)
 	public void registerModels(ModelRegistryEvent event) {

@@ -78,6 +78,9 @@ public final class NarutoWheelData extends AbstractPacket {
                     player.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStack.EMPTY);
                 else
                     player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+
+                if (ItemRinnegan.isRinnegan(helmet))
+                    ItemRinnegan.removeClothes(player);
             }
         } else if (seg.stack.getItem() instanceof ItemDojutsu.Base) {
             if (defaultSlotOperation)
@@ -99,13 +102,16 @@ public final class NarutoWheelData extends AbstractPacket {
                     ItemStack removedItem = seg.stack;
                     seg.stack = ItemStack.EMPTY;
 
-
                     if (seg.stack.getItem() instanceof ItemRinnegan.Base)
                         ItemRinnegan.giveClothes(removedItem, player);
                     player.setItemStackToSlot(EntityEquipmentSlot.HEAD, removedItem);
 
-                    if (helmet.getItem() instanceof ItemDojutsu.Base)
+                    if (helmet.getItem() instanceof ItemDojutsu.Base) {
                         seg.putToSaved(helmet, removedItem);
+
+                        if (ItemRinnegan.isRinnegan(helmet))
+                            ItemRinnegan.removeClothes(player);
+                    }
                     else {
                         if (player.inventory.getFirstEmptyStack() != -1)
                             player.inventory.addItemStackToInventory(helmet);

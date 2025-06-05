@@ -446,15 +446,18 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             ((ItemDojutsu.Base) stack.getItem()).playDeactivationSound(entity);
     }
 
-    public static int getCompatibleStatus(ItemStack stack) {
-        if (stack.isEmpty())
+    public static int getCompatibleStatus(ItemStack targetItem) {
+        if (isRinnesharinganActivated(targetItem))
+            return -1;
+        
+        if (targetItem.isEmpty())
             return SHARINGAN_OFF_STATUS;
 
-        if (stack.getItem() == ItemSharingan.helmet)
+        if (targetItem.getItem() == ItemSharingan.helmet)
             return SHARINGAN_ON_STATUS;
 
 
-        if (ItemSharingan.isMangekyo(stack))
+        if (ItemSharingan.isMangekyo(targetItem))
             return ETERNAL_ON_STATUS;
 
         return -1;
