@@ -407,21 +407,25 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
     public static final int SHARINGAN_OFF_STATUS = 0, SHARINGAN_ON_STATUS = 1, ETERNAL_ON_STATUS = 2;
 
     public static boolean sharinganOff(ItemStack stack) {
-        int status = stack.getTagCompound().getShort("tomoeStatus");
+        int status = getTomoeStatus(stack);
         return status < SHARINGAN_ON_STATUS || status > ETERNAL_ON_STATUS;
     }
 
     public static boolean sharinganOn(ItemStack stack) {
-        return stack.hasTagCompound() && stack.getTagCompound().getByte("tomoeStatus") == SHARINGAN_ON_STATUS;
+        return stack.hasTagCompound() && getTomoeStatus(stack) == SHARINGAN_ON_STATUS;
     }
 
     public static boolean eternalOn(ItemStack stack) {
-        return stack.hasTagCompound() && stack.getTagCompound().getByte("tomoeStatus") == ETERNAL_ON_STATUS;
+        return stack.hasTagCompound() && getTomoeStatus(stack) == ETERNAL_ON_STATUS;
     }
 
     public static int getTomoeStatus(ItemStack stack) {
         if (!stack.getTagCompound().hasKey("tomoeStatus"))
             return -1;
+
+        if (isRinnesharinganActivated(stack))
+            return ETERNAL_ON_STATUS;
+        
         return stack.getTagCompound().getByte("tomoeStatus");
     }
 
