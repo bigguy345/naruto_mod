@@ -242,11 +242,11 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 			return false;
 		}
 
-		public SoundEvent getActivationSound(){
+		public SoundEvent getActivationSound(ItemStack eye){
 			return Sounds.get("rinnegansfx");
 		}
 
-		public SoundEvent getDeactivationSound() {
+		public SoundEvent getDeactivationSound(ItemStack eye) {
 			return Sounds.get("sharingan_off");
 		}
 		

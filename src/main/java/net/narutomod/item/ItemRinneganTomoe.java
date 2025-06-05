@@ -234,7 +234,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                 return TextFormatting.LIGHT_PURPLE + super.getItemStackDisplayName(stack) + TextFormatting.WHITE;
             }
 
-            public SoundEvent getActivationSound(){
+            public SoundEvent getActivationSound(ItemStack eye) {
                 return Sounds.get("rinnesharingansfx");
             }
 
@@ -441,9 +441,9 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
         int oldStatus = ItemRinneganTomoe.getTomoeStatus(stack);
         ItemRinneganTomoe.setTomoeStatus(stack, status);
         if (status > oldStatus)
-            ((ItemDojutsu.Base) stack.getItem()).playActivationSound(entity);
+            ItemDojutsu.playActivationSound(stack, entity);
         else if (status < oldStatus)
-            ((ItemDojutsu.Base) stack.getItem()).playDeactivationSound(entity);
+            ItemDojutsu.playDeactivationSound(stack, entity);
     }
 
     public static int getCompatibleStatus(ItemStack targetItem) {

@@ -115,24 +115,12 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 
 		public abstract Type getType();
 
-		public SoundEvent getActivationSound() {
+		public SoundEvent getActivationSound(ItemStack eye) {
 			return null;
 		}
 
-		public SoundEvent getDeactivationSound() {
+		public SoundEvent getDeactivationSound(ItemStack eye) {
 			return null;
-		}
-
-		public void playActivationSound(EntityLivingBase entity) {
-			SoundEvent sound = getActivationSound();
-			if (sound != null)
-				entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, sound, SoundCategory.NEUTRAL, 1, 1);
-		}
-
-		public void playDeactivationSound(EntityLivingBase entity) {
-			SoundEvent sound = getDeactivationSound();
-			if (sound != null)
-				entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, sound, SoundCategory.NEUTRAL, 1, 1);
 		}
 		
 		public boolean onJutsuKey1(boolean is_pressed, ItemStack stack, EntityPlayer player) {
@@ -165,8 +153,19 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static void playActivationSound(ItemStack eye, EntityLivingBase entity) {
-		if (eye.getItem() instanceof Base)
-			((Base) eye.getItem()).playActivationSound(entity);
+		if (eye.getItem() instanceof Base) {
+			SoundEvent sound = ((Base) eye.getItem()).getActivationSound(eye);
+			if (sound != null)
+				entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, sound, SoundCategory.NEUTRAL, 1, 1);
+		}
+	}
+
+	public static void playDeactivationSound(ItemStack eye, EntityLivingBase entity) {
+		if (eye.getItem() instanceof Base) {
+			SoundEvent sound = ((Base) eye.getItem()).getDeactivationSound(eye);
+			if (sound != null)
+				entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, sound, SoundCategory.NEUTRAL, 1, 1);
+		}
 	}
 	public static boolean hasAnyDojutsu(EntityPlayer player) {
 		return ProcedureUtils.hasAnyItemOfSubtype(player, Base.class);
@@ -215,12 +214,12 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 			
 			EntityLivingBase entity = (EntityLivingBase) event.getEntity();
 			if (to.getItem() instanceof Base) { //eye activation sound
-				if (ItemDojutsu.isLowerTier(from, to)) {//don't play sound when descending into a lower tier sharingan
-					((Base) from.getItem()).playDeactivationSound(entity);
-				} else
-					((Base) to.getItem()).playActivationSound(entity);
+				if (ItemDojutsu.isLowerTier(from, to)) //don't play sound when descending into a lower tier sharingan
+					ItemDojutsu.playDeactivationSound(from, entity);
+				else
+					ItemDojutsu.playActivationSound(to, entity);
 			} else if (from.getItem() instanceof Base) //eye deactivation sound
-				((Base) from.getItem()).playDeactivationSound(entity);
+				ItemDojutsu.playActivationSound(from, entity);
 			
 		}
 

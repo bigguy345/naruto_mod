@@ -47,7 +47,6 @@ import net.narutomod.ElementsNarutomodMod;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 import javax.annotation.Nullable;
 import net.minecraft.util.math.RayTraceResult;
 
@@ -172,11 +171,11 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			return itemDamage;
 		}
 
-		public SoundEvent getActivationSound(){
+		public SoundEvent getActivationSound(ItemStack eye){
 			return Sounds.get("sharingansfx");
 		}
 
-		public SoundEvent getDeactivationSound() {
+		public SoundEvent getDeactivationSound(ItemStack eye) {
 			return Sounds.get("sharingan_off");
 		}
 
