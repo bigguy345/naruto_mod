@@ -41,6 +41,7 @@ import net.narutomod.entity.EntitySusanooBase;
 import net.narutomod.entity.EntityTenTails;
 import net.narutomod.goatee.client.Sounds;
 import net.narutomod.gui.GuiNinjaScroll;
+import net.narutomod.potion.PotionReach;
 import net.narutomod.potion.PotionSpaceInversion;
 import net.narutomod.procedure.*;
 import net.narutomod.world.WorldKamuiDimension;
@@ -51,54 +52,69 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static net.narutomod.item.ItemRinnegan.isRinnegan;
-import static net.narutomod.item.ItemRinnegan.isRinnesharinganActivated;
+import static net.narutomod.item.ItemRinnegan.*;
 
 @ElementsNarutomodMod.ModElement.Tag
 public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
 
     @GameRegistry.ObjectHolder("narutomod:rinnegantomoehelmet")
     public static final Item helmet = null;
-    public static final String UNLOCALIZED_NAME = "rinnegantomoehelmet";
-    public static final String TEXTURE_FILE = "rinneems.png";
-    public static final String ENUM_NAME = "RINNEGANTOMOE";
-    public static final String ARMOR_MATERIAL = "rinnegantomoe_";
 
-    public static final String RINNEGANTOMOE_KEY = "RinneganTomoeActivated";
     protected static final UUID RINNEGANTOMOE_MODIFIER = UUID.fromString("135da083-a632-1488-85bd-2281f15ca7e0");
-
+    public static final double ETERNAL_CHAKRA_USAGE = 1d; // per tick
+    
     public ItemRinneganTomoe(ElementsNarutomodMod instance) {
         super(instance, 20000);
     }
 
+    public static double getEternalChakraUsage(ItemStack stack, EntityLivingBase entity) {
+        return ((ItemDojutsu.Base) helmet).isOwner(stack, entity) ? ETERNAL_CHAKRA_USAGE : ETERNAL_CHAKRA_USAGE * 3;
+    }
+    
     public void initElements() {
         ItemArmor.ArmorMaterial enuma = EnumHelper.addArmorMaterial("RINNEGANTOMOE", "narutomod:rinnegantomoe_", 25, new int[]{2, 5, 6, 15}, 0, null, 2.0F);
         this.elements.items.add(() -> new ItemSharingan.Base(enuma) {
 
-            public void onArmorTick(World world, EntityPlayer entity, ItemStack itemstack) {
-                super.onArmorTick(world, entity, itemstack);
+            public void onArmorTick(World world, EntityPlayer player, ItemStack itemstack) {
+                super.onArmorTick(world, player, itemstack);
                 if (world.isRemote)
                     return;
 
-                entity.addPotionEffect(new PotionEffect(MobEffects.SPEED, 2, 2, false, false));
-                boolean flag = entity.isCreative() || entity.dimension == WorldKamuiDimension.DIMID;
-                if (entity.capabilities.allowFlying != flag) {
-                    entity.capabilities.allowFlying = flag;
-                    entity.sendPlayerAbilities();
+                player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 2, 2, false, false));
+
+                boolean flag = player.isCreative() || player.dimension == WorldKamuiDimension.DIMID;
+                if (player.capabilities.allowFlying != flag) {
+                    player.capabilities.allowFlying = flag;
+                    player.sendPlayerAbilities();
                 }
-                if (entity.getEntityData().getBoolean("kamui_teleport")) {
-                    Chakra.pathway(entity).consume(ItemMangekyoSharinganObito.getTeleportChakraUsage(entity));
+                if (player.getEntityData().getBoolean("kamui_teleport")) {
+                    Chakra.pathway(player).consume(ItemMangekyoSharinganObito.getTeleportChakraUsage(player));
                 }
-                if (entity.getEntityData().getBoolean("kamui_intangible")) {
-                    Chakra.pathway(entity).consume(ItemMangekyoSharinganObito.getIntangibleChakraUsage(entity));
-                    ProcedureWhenPlayerAttcked.setInvulnerable(entity, 2);
+                if (player.getEntityData().getBoolean("kamui_intangible")) {
+                    Chakra.pathway(player).consume(ItemMangekyoSharinganObito.getIntangibleChakraUsage(player));
+                    ProcedureWhenPlayerAttcked.setInvulnerable(player, 2);
                 }
-                
-                int x = (int) entity.posX;
-                int y = (int) entity.posY;
-                int z = (int) entity.posZ;
+
+                int tomoeStatus = getTomoeStatus(itemstack);
+
+                if (tomoeStatus == SHARINGAN_ON_STATUS) {
+                    player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 20, 9, false, false));
+                    player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 20, 3, false, false));
+                } else if (tomoeStatus == ETERNAL_ON_STATUS) {
+                    player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 20, 15, false, false));
+                    player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 20, 7, false, false));
+                    player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 20, 3, false, false));
+                    player.addPotionEffect(new PotionEffect(PotionReach.potion, 20, 0, false, false));
+
+                    if (!isRinnesharinganActivated(itemstack))
+                        Chakra.pathway(player).consume(getEternalChakraUsage(itemstack, player));
+                }
+
+                int x = (int) player.posX;
+                int y = (int) player.posY;
+                int z = (int) player.posZ;
                 HashMap $_dependencies = new HashMap();
-                $_dependencies.put("entity", entity);
+                $_dependencies.put("entity", player);
                 $_dependencies.put("x", x);
                 $_dependencies.put("y", y);
                 $_dependencies.put("z", z);
@@ -126,6 +142,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                         ItemStack helmetStack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
                         GuiNinjaScroll.enableJutsu(player, (ItemJutsu.Base) ItemYoton.block, ItemYoton.SEALING9D, isRinnegan(helmetStack));
                         GuiNinjaScroll.enableJutsu(player, (ItemJutsu.Base) ItemYoton.block, ItemYoton.SEALING10, isRinnegan(helmetStack) && EntityTenTails.getBijuManager().isAddedToWorld(player.world));
+
                         if (!(isRinnegan(helmetStack))) {
                             player.inventory.clearMatchingItems(ItemAsuraCanon.block, -1, -1, null);
                             if (player.getRidingEntity() instanceof EntityPretaShield.EntityCustom) {
