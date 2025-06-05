@@ -334,7 +334,7 @@ public class HUDItemStackWheel extends GuiScreen {
             entity.inventory.mainInventory.set(entity.inventory.currentItem, ItemStack.EMPTY);
 
         if (!(oldOffhand.getItem() instanceof ItemJutsu.Base))
-            entity.inventory.mainInventory.set(EntityEquipmentSlot.OFFHAND.getIndex(), ItemStack.EMPTY);
+            entity.inventory.offHandInventory.set(0, ItemStack.EMPTY);
 
         int oldTomoeSlot = -1;
         if (hoveredSlot != -1) {
@@ -423,8 +423,8 @@ public class HUDItemStackWheel extends GuiScreen {
         if (oldTomoeSlot != -1)
             ItemRinneganTomoe.setTomoeStatus(oldHelmet, oldTomoeSlot);
 
-        entity.inventory.mainInventory.set(EntityEquipmentSlot.MAINHAND.getIndex(), oldItem);
-        entity.inventory.mainInventory.set(EntityEquipmentSlot.OFFHAND.getIndex(), oldOffhand);
+        entity.inventory.mainInventory.set(entity.inventory.currentItem, oldItem);
+        entity.inventory.offHandInventory.set(0, oldOffhand);
         entity.inventory.armorInventory.set(EntityEquipmentSlot.HEAD.getIndex(), oldHelmet);
         entity.inventory.armorInventory.set(EntityEquipmentSlot.CHEST.getIndex(), oldChest);
         entity.inventory.armorInventory.set(EntityEquipmentSlot.LEGS.getIndex(), oldLegs);
