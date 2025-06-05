@@ -119,8 +119,18 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 			return null;
 		}
 
-		public void playSound(EntityLivingBase entity) {
+		public SoundEvent getDeactivationSound() {
+			return null;
+		}
+
+		public void playActivationSound(EntityLivingBase entity) {
 			SoundEvent sound = getActivationSound();
+			if (sound != null)
+				entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, sound, SoundCategory.NEUTRAL, 1, 1);
+		}
+
+		public void playDeactivationSound(EntityLivingBase entity) {
+			SoundEvent sound = getDeactivationSound();
 			if (sound != null)
 				entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, sound, SoundCategory.NEUTRAL, 1, 1);
 		}
@@ -154,9 +164,9 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 		}
 	}
 
-	public static void playSound(ItemStack eye, EntityLivingBase entity) {
+	public static void playActivationSound(ItemStack eye, EntityLivingBase entity) {
 		if (eye.getItem() instanceof Base)
-			((Base) eye.getItem()).playSound(entity);
+			((Base) eye.getItem()).playActivationSound(entity);
 	}
 	public static boolean hasAnyDojutsu(EntityPlayer player) {
 		return ProcedureUtils.hasAnyItemOfSubtype(player, Base.class);
@@ -170,6 +180,13 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 		return entity.getEntityData().getLong(NarutomodModVariables.MostRecentWornDojutsuTime);
 	}
 
+	public static boolean isLowerTier(ItemStack higher, ItemStack lower) {
+		if (higher.getItem() instanceof ItemSharingan.Base)
+			return ItemSharingan.isLowerTier(higher, lower);
+
+		return false;
+	}
+
 	public enum Type {
 		BYAKUGAN,
 		SHARINGAN,
@@ -179,18 +196,19 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 	public static class Hook {
 		@SubscribeEvent
 		public void onEquipmentChange(LivingEquipmentChangeEvent event) {
-			if (event.getEntity().world.isRemote || !(event.getEntity() instanceof EntityLivingBase) || event.getFrom().getItem().equals(event.getTo().getItem()))
+			if (event.getEntity().world.isRemote || !(event.getEntity() instanceof EntityLivingBase) || event.getSlot() != EntityEquipmentSlot.HEAD || event.getFrom().getItem().equals(event.getTo().getItem()))
 				return;
 
 			EntityLivingBase entity = (EntityLivingBase) event.getEntity();
-			EntityEquipmentSlot slot = event.getSlot();
-			ItemStack to = event.getTo();
-			if (slot == EntityEquipmentSlot.HEAD && to.getItem() instanceof Base) {
-				if (ItemSharingan.isLowerTier(event.getFrom(), event.getTo())) //don't play sound when descending into a lower tier sharingan
-					return;
-
-				((Base) to.getItem()).playSound(entity);
-			}
+			ItemStack to = event.getTo(), from = event.getFrom();
+			if (to.getItem() instanceof Base) { //eye activation sound
+				if (ItemDojutsu.isLowerTier(from, to)) {//don't play sound when descending into a lower tier sharingan
+					((Base) from.getItem()).playDeactivationSound(entity);
+				} else
+					((Base) to.getItem()).playActivationSound(entity);
+			} else if (from.getItem() instanceof Base) //eye deactivation sound
+				((Base) from.getItem()).playDeactivationSound(entity);
+			
 		}
 
 		@SubscribeEvent

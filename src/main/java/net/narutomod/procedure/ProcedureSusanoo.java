@@ -5,19 +5,15 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import net.minecraft.world.World;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraft.nbt.NBTTagCompound;
 
 import net.narutomod.item.*;
 import net.narutomod.potion.PotionFeatherFalling;
@@ -145,7 +141,7 @@ public class ProcedureSusanoo extends ElementsNarutomodMod.ModElement {
 					if (Chakra.pathway(player).consume(BASE_CHAKRA_USAGE)) {
 						if (ItemRinneganTomoe.sharinganOff(tomoe)) {
 							ItemRinneganTomoe.setTomoeStatus(tomoe, ItemRinneganTomoe.SHARINGAN_ON_STATUS);
-							ItemDojutsu.playSound(tomoe, player);
+							ItemDojutsu.playActivationSound(tomoe, player);
 						}
 						changeEntity(player, susanoo, new EntitySusanooClothed.EntityCustom(player, false));
 					}
@@ -156,7 +152,7 @@ public class ProcedureSusanoo extends ElementsNarutomodMod.ModElement {
 					if (Chakra.pathway(player).consume(BASE_CHAKRA_USAGE)) {
 						if (!ItemRinneganTomoe.eternalOn(tomoe)) {
 							ItemRinneganTomoe.setTomoeStatus(tomoe, ItemRinneganTomoe.ETERNAL_ON_STATUS);
-							ItemDojutsu.playSound(tomoe, player);
+							ItemDojutsu.playActivationSound(tomoe, player);
 						}
 						changeEntity(player, susanoo, new EntitySusanooWinged.EntityCustom(player));
 					}
