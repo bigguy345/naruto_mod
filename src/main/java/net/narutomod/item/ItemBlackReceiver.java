@@ -47,6 +47,7 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.RenderItem;
 
+import net.narutomod.ModConfig;
 import net.narutomod.entity.EntityRendererRegister;
 import net.narutomod.potion.PotionHeaviness;
 import net.narutomod.procedure.ProcedureUtils;
@@ -189,6 +190,14 @@ public class ItemBlackReceiver extends ElementsNarutomodMod.ModElement {
 			amplifier += entity.getActivePotionEffect(PotionHeaviness.potion).getAmplifier();
 		}
 		entity.addPotionEffect(new PotionEffect(PotionHeaviness.potion, 300, amplifier, false, false));
+
+		if (ModConfig.ITEMS.BLACK_RECEIVER_SLOWNESS) {
+			amplifier = 1;
+			if (entity.isPotionActive(MobEffects.SLOWNESS)) {
+				amplifier += entity.getActivePotionEffect(MobEffects.SLOWNESS).getAmplifier();
+			}
+			entity.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 300, amplifier, false, false));
+		}
 	}
 
 	public class AttackHook {
