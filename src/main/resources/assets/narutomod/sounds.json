@@ -251,6 +251,15 @@
       }
     ]
   },
+  "sharingan_off": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "narutomod:sharingan_off",
+        "stream": false
+      }
+    ]
+  },
   "rinnegansfx": {
     "category": "master",
     "sounds": [

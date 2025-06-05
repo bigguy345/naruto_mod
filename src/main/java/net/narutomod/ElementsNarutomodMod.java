@@ -6,6 +6,7 @@
  */
 package net.narutomod;
 
+import net.minecraft.util.SoundEvent;
 import net.narutomod.goatee.client.gui.GuiInventoryJutsu;
 import net.narutomod.gui.GuiTeamManager;
 import net.narutomod.gui.GuiScrollWindBladeGui;
@@ -155,6 +156,7 @@ public class ElementsNarutomodMod implements IFuelHandler, IWorldGenerator {
 				new net.minecraft.util.SoundEvent(new ResourceLocation("narutomod", "rasengan_start")));
 		sounds.put(new ResourceLocation("narutomod", "sharingansfx"),
 				new net.minecraft.util.SoundEvent(new ResourceLocation("narutomod", "sharingansfx")));
+		sounds.put(new ResourceLocation("narutomod", "sharingan_off"), new SoundEvent(new ResourceLocation("narutomod", "sharingan_off")));
 		sounds.put(new ResourceLocation("narutomod", "rinnegansfx"), new net.minecraft.util.SoundEvent(new ResourceLocation("narutomod", "rinnegansfx")));
 		sounds.put(new ResourceLocation("narutomod", "rinnesharingansfx"), new net.minecraft.util.SoundEvent(new ResourceLocation("narutomod", "rinnesharingansfx")));
 		sounds.put(new ResourceLocation("narutomod", "tenseigansfx"), new net.minecraft.util.SoundEvent(new ResourceLocation("narutomod", "tenseigansfx")));

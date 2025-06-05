@@ -176,6 +176,9 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			return Sounds.get("sharingansfx");
 		}
 
+		public SoundEvent getDeactivationSound() {
+			return Sounds.get("sharingan_off");
+		}
 
 		@Override
 		public void setOwner(ItemStack stack, EntityLivingBase entityIn) {
