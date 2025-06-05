@@ -40,8 +40,8 @@ public class HUDItemStackWheel extends GuiScreen {
     public ItemStackWheelSegment[] wheelSlot = new ItemStackWheelSegment[6];
 
     private float rotation;
-    float guiAnimationScale = 0, undoMCScaling = 1;
-    long timeOpened;
+    float guiAnimationScale = 0, animStartValue = 1, undoMCScaling = 1;
+    long timeOpened, timeClosed;
 
     public int hoveredSlot = -1;
     boolean keyDown;
@@ -55,10 +55,11 @@ public class HUDItemStackWheel extends GuiScreen {
     public int mouseY;
     public static boolean IS_OPEN;
 
-    public static final int OPEN_TIME = 2500;
+    public static final int OPEN_TIME = 2500, CLOSE_TIME = 400;
     public ItemStack selectedItem;
-    public double easeOutExpo(double x) {
-        return x == 1 ? 1 :  1 - Math.pow(2, -10 * x);
+
+    public float easeOutExpo(double x) {
+        return x >= 1 ? 1 : (float) (1 - Math.pow(2, -10 * x));
     }
 
     public HUDItemStackWheel(WheelData wheelData) {
@@ -177,17 +178,16 @@ public class HUDItemStackWheel extends GuiScreen {
     public void update() {
         if (Mouse.isButtonDown(1))
             selectSlot(-1);
-
+        
         if (isClosing && guiAnimationScale >= 0) {
-            guiAnimationScale -= 0.015f;
-            if (guiAnimationScale <= 0) {
-                guiAnimationScale = 0;
+            float updateTime = (float) (Minecraft.getSystemTime() - timeClosed) / CLOSE_TIME;
+            float inSine = (float) (1 - Math.cos((updateTime * Math.PI) / 2));
+            guiAnimationScale = lerp(animStartValue, 0, inSine);
+
+            if (guiAnimationScale <= 0.05)
                 onClose(POST_CLOSE);
-            }
         } else if (guiAnimationScale < 1) {
             float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / OPEN_TIME;
-            updateTime = Math.min(1, updateTime);
-
             guiAnimationScale = (float) easeOutExpo(updateTime);
         }
 
@@ -198,6 +198,10 @@ public class HUDItemStackWheel extends GuiScreen {
         if (!keyDown && !configureEnabled && !isClosing)
             onClose(PRE_CLOSE);
         
+    }
+
+    public static float lerp(float start, float end, float alpha) {
+        return start + (end - start) * alpha;
     }
 
     @Override
@@ -469,6 +473,8 @@ public class HUDItemStackWheel extends GuiScreen {
 
             mc.inGameHasFocus = true;
             mc.mouseHelper.grabMouseCursor();
+            timeClosed = Minecraft.getSystemTime();
+            animStartValue = guiAnimationScale;
             isClosing = true;
         } else {
             Keyboard.enableRepeatEvents(false);
