@@ -275,6 +275,12 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		if (!(higher.getItem() instanceof ItemSharingan.Base))
 			return false;
 
+		if (!(lower.getItem() instanceof ItemDojutsu.Base))
+			return true;
+
+		if (ItemRinneganTomoe.isTomoe(higher))
+			return ItemRinnegan.isLowerTier(higher, lower);
+		
 		if (!(lower.getItem() instanceof ItemSharingan.Base))
 			return true;
 

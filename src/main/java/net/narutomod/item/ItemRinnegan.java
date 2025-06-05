@@ -455,6 +455,32 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 		}
 	}
 
+	public static boolean isLowerTier(ItemStack higher, ItemStack lower) {
+		if (!isRinnegan(higher))
+			return false;
+
+		if (!isRinnegan(lower))
+			return true;
+
+
+		if (isRinnesharinganActivated(higher) && !isRinnesharinganActivated(lower))
+			return true;
+
+		return false;
+	}
+
+	public static boolean hasSameData(ItemStack higher, ItemStack lower) {
+		if (!isRinnegan(lower))
+			return false;
+
+		boolean same = true;
+		if (isRinnesharinganActivated(higher) != isRinnesharinganActivated(lower))
+			same = false;
+
+		return same;
+	}
+	
+	
 	public static boolean hasRinnegan(EntityPlayer player) {
 		return player.inventory.hasItemStack(new ItemStack(ItemRinnegan.helmet)) || player.inventory.hasItemStack(new ItemStack(ItemRinneganTomoe.helmet));
 	}

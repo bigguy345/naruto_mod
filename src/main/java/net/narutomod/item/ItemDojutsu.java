@@ -184,7 +184,17 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 		if (higher.getItem() instanceof ItemSharingan.Base)
 			return ItemSharingan.isLowerTier(higher, lower);
 
+		if (ItemRinnegan.isRinnegan(higher))
+			return ItemRinnegan.isLowerTier(higher, lower);
+
 		return false;
+	}
+
+	public static boolean hasSameData(ItemStack higher, ItemStack lower) {
+		if (ItemRinnegan.isRinnegan(higher))
+			return ItemRinnegan.hasSameData(higher, lower);
+
+		return true;
 	}
 
 	public enum Type {
@@ -196,11 +206,14 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 	public static class Hook {
 		@SubscribeEvent
 		public void onEquipmentChange(LivingEquipmentChangeEvent event) {
-			if (event.getEntity().world.isRemote || !(event.getEntity() instanceof EntityLivingBase) || event.getSlot() != EntityEquipmentSlot.HEAD || event.getFrom().getItem().equals(event.getTo().getItem()))
+			if (event.getEntity().world.isRemote || !(event.getEntity() instanceof EntityLivingBase) || event.getSlot() != EntityEquipmentSlot.HEAD)
 				return;
 
-			EntityLivingBase entity = (EntityLivingBase) event.getEntity();
 			ItemStack to = event.getTo(), from = event.getFrom();
+			if (from.getItem().equals(to.getItem()) && hasSameData(from, to))
+				return;
+			
+			EntityLivingBase entity = (EntityLivingBase) event.getEntity();
 			if (to.getItem() instanceof Base) { //eye activation sound
 				if (ItemDojutsu.isLowerTier(from, to)) {//don't play sound when descending into a lower tier sharingan
 					((Base) from.getItem()).playDeactivationSound(entity);
