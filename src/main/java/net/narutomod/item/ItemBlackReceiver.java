@@ -103,10 +103,8 @@ public class ItemBlackReceiver extends ElementsNarutomodMod.ModElement {
 		public Multimap<String, AttributeModifier> getItemAttributeModifiers(EntityEquipmentSlot slot) {
 			Multimap<String, AttributeModifier> multimap = super.getItemAttributeModifiers(slot);
 			if (slot == EntityEquipmentSlot.MAINHAND) {
-				multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(),
-						new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Ranged item modifier", 10d, 0));
-				multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(),
-						new AttributeModifier(ATTACK_SPEED_MODIFIER, "Ranged item modifier", -2.4, 0));
+				multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Ranged item modifier", ModConfig.ITEMS.BLACK_RECEIVER_ATTACK_DAMAGE, 0));
+				multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Ranged item modifier", ModConfig.ITEMS.BLACK_RECEIVER_ATTACK_SPEED, 0));
 			}
 			return multimap;
 		}
@@ -192,7 +190,7 @@ public class ItemBlackReceiver extends ElementsNarutomodMod.ModElement {
 		entity.addPotionEffect(new PotionEffect(PotionHeaviness.potion, 300, amplifier, false, false));
 
 		if (ModConfig.ITEMS.BLACK_RECEIVER_SLOWNESS) {
-			amplifier = 1;
+			amplifier = 2;
 			if (entity.isPotionActive(MobEffects.SLOWNESS)) {
 				amplifier += entity.getActivePotionEffect(MobEffects.SLOWNESS).getAmplifier();
 			}

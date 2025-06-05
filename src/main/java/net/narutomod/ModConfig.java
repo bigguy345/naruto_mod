@@ -95,6 +95,14 @@ public class ModConfig extends ElementsNarutomodMod.ModElement {
 	public static class Items {
 		@Config.Comment({"Black Receivers cause slowness."})
 		public boolean BLACK_RECEIVER_SLOWNESS = true;
+
+		@Config.RangeDouble(min = 0, max = 256)
+		@Config.Comment({"Black Receivers Attack Damage."})
+		public double BLACK_RECEIVER_ATTACK_DAMAGE= 10;
+
+		@Config.RangeDouble(min = -256, max = 256)
+		@Config.Comment({"Black Receivers Attack Speed."})
+		public double BLACK_RECEIVER_ATTACK_SPEED= -2.4;
 	}
 
 	public static class WingedSusanoo {
