@@ -262,33 +262,6 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 	}
 
 	@Override
-	protected void addPassenger(Entity passenger) {
-		if (passenger.getRidingEntity() != this) {
-			throw new IllegalStateException("Use x.startRiding(y), not y.addPassenger(x)");
-		} else {
-			Object obj = ReflectionHelper.getPrivateValue(Entity.class, this, "riddenByEntities", "field_70725_aQ");
-			if (!(obj instanceof List)) {
-				obj = null;
-				try {
-					for (Field field : Entity.class.getDeclaredFields()) {
-						if (!Modifier.isStatic(field.getModifiers()) && field.getType() == List.class) {
-							field.setAccessible(true);
-							obj = field.get(this);
-							break;
-						}
-					}
-					if (obj == null) {
-						throw new RuntimeException("Unable to find private field riddenByEntities");
-					}
-				} catch (Exception e) {
-					throw new ReflectionHelper.UnableToAccessFieldException(e);
-				}
-			}
-			((List<Entity>)obj).add(passenger);
-		}
-	}
-
-	@Override
 	public double getMountedYOffset() {
 		return 0.35D;
 	}
