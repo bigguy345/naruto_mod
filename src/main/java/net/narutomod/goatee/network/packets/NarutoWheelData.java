@@ -66,7 +66,7 @@ public final class NarutoWheelData extends AbstractPacket {
             boolean swapWithHelmet = false;
             ItemStack toSwapWith = player.getHeldItemMainhand().getItem() instanceof ItemDojutsu.Base ? player.getHeldItemMainhand() : (swapWithHelmet = helmet.getItem() instanceof ItemDojutsu.Base) ? helmet : ItemStack.EMPTY;
 
-            if (helmet == toSwapWith && ItemRinneganTomoe.isTomoe(helmet))
+            if (helmet == toSwapWith && ItemRinneganTomoe.isTomoe(helmet)&& !ItemRinnegan.isRinnesharinganActivated(helmet))
                 ItemRinneganTomoe.setTomoeStatus(helmet, ItemRinneganTomoe.SHARINGAN_OFF_STATUS,player);
             else if (!toSwapWith.isEmpty()) {
                 seg.putToSaved(toSwapWith, seg.stack);
@@ -93,7 +93,7 @@ public final class NarutoWheelData extends AbstractPacket {
                 } else
                     player.sendMessage(new TextComponentTranslation("dojutsuwheel.inventory_full"));
             } else {
-                if (ItemRinneganTomoe.isTomoe(helmet) && ItemRinneganTomoe.getCompatibleStatus(seg.stack) != -1)
+                if (ItemRinneganTomoe.isTomoe(helmet) && ItemRinneganTomoe.getCompatibleStatus(seg.stack) != -1&& !ItemRinnegan.isRinnesharinganActivated(helmet))
                     ItemRinneganTomoe.setTomoeStatus(helmet, ItemRinneganTomoe.getCompatibleStatus(seg.stack), player);
                 else {
                     ItemStack removedItem = seg.stack;

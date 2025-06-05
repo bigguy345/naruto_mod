@@ -338,7 +338,7 @@ public class HUDItemStackWheel extends GuiScreen {
 
         int oldTomoeSlot = -1;
         if (hoveredSlot != -1) {
-            if (ItemRinneganTomoe.isTomoe(oldHelmet) && ItemRinneganTomoe.getCompatibleStatus(selectedItem) != -1) {
+            if (ItemRinneganTomoe.isTomoe(oldHelmet) && ItemRinneganTomoe.getCompatibleStatus(selectedItem) != -1 && !ItemRinnegan.isRinnesharinganActivated(oldHelmet)) {
                 oldTomoeSlot = ItemRinneganTomoe.getTomoeStatus(oldHelmet);
                 ItemRinneganTomoe.setTomoeStatus(oldHelmet, ItemRinneganTomoe.getCompatibleStatus(selectedItem));
             } else {
