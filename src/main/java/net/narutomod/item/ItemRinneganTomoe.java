@@ -455,7 +455,10 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
         
         if (targetItem.isEmpty())
             return SHARINGAN_OFF_STATUS;
-
+        
+        if (targetItem.getItem() == helmet)
+            return getTomoeStatus(targetItem);
+        
         if (targetItem.getItem() == ItemSharingan.helmet)
             return SHARINGAN_ON_STATUS;
 
