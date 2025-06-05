@@ -252,6 +252,24 @@ public class ProcedureUtils extends ElementsNarutomodMod.ModElement {
 		return null;
 	}
 
+	public static boolean hasItem(EntityPlayer player, Item item) {
+		List<NonNullList<ItemStack>> allInv = Arrays.asList(player.inventory.mainInventory, player.inventory.armorInventory, player.inventory.offHandInventory);
+		for (List<ItemStack> list : allInv) {
+			Iterator iterator = list.iterator();
+			while (iterator.hasNext()) {
+				ItemStack itemstack = (ItemStack) iterator.next();
+				
+				if (!itemstack.isEmpty() && itemstack.getItem() == item)
+					return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean hasItem(EntityPlayer player, ItemStack stack) {
+		return hasItem(player, stack.getItem());
+	}
+
 	public static boolean hasItemInMainInventory(EntityPlayer player, Item itemIn) {
 		return getItemInMainInventory(player, itemIn) != null;
 	}

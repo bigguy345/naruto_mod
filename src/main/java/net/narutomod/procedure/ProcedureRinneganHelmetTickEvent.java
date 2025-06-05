@@ -228,14 +228,11 @@ public class ProcedureRinneganHelmetTickEvent extends ElementsNarutomodMod.ModEl
 							((EntityPlayer) entity).inventory.clearMatchingItems(new ItemStack(ItemAsuraCanon.block, (int) (1)).getItem(), -1,
 									(int) (-1), null);
 					}
-					if ((!((entity instanceof EntityPlayer)
-							? ((EntityPlayer) entity).inventory.hasItemStack(new ItemStack(ItemBlackReceiver.block, (int) (1)))
-							: false))) {
-						if (entity instanceof EntityPlayer) {
-							ItemStack _setstack = new ItemStack(ItemBlackReceiver.block, (int) (1));
-							_setstack.setCount(1);
-							ItemHandlerHelper.giveItemToPlayer(((EntityPlayer) entity), _setstack);
-						}
+
+					if (entity instanceof EntityPlayer && !ProcedureUtils.hasItem((EntityPlayer) entity, ItemBlackReceiver.block)) {
+						ItemStack _setstack = new ItemStack(ItemBlackReceiver.block, 1);
+						_setstack.setCount(1);
+						ItemHandlerHelper.giveItemToPlayer(((EntityPlayer) entity), _setstack);
 					}
 				}
 			}
