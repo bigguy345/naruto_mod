@@ -1,5 +1,6 @@
 package net.narutomod.item;
 
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -40,6 +41,7 @@ import net.minecraft.block.material.Material;
 
 import net.narutomod.ModConfig;
 import net.narutomod.goatee.client.Sounds;
+import net.narutomod.potion.PotionLockOn;
 import net.narutomod.procedure.ProcedureSharinganHelmetTickEvent;
 import net.narutomod.procedure.ProcedureSync;
 import net.narutomod.procedure.ProcedureUtils;
@@ -173,6 +175,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			PlayerHook.lockOnTarget(player, target, 1);
 			player.getEntityData().setBoolean(PlayerHook.autoLockOnEntity, true);
 			ProcedureSync.EntityNBTTag.sendToSelf((EntityPlayerMP) player, PlayerHook.autoLockOnEntity, true);
+			PlayerHook.giveEffect(player);
 		}
 
 		@Override
@@ -360,21 +363,30 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			entity.getEntityData().setInteger(autoLockOnCD, seconds);
 		}
 
-		private static int getAutoLockOnMaxTime(ItemStack eye) {
+		private static int getAutoLockOnMaxTime(EntityPlayer player) {
+			ItemStack helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+			
 			int time = 30;
-			if (ItemRinneganTomoe.isTomoe(eye)) {
-				if (ItemRinneganTomoe.eternalOn(eye))
+			if (ItemRinneganTomoe.isTomoe(helmet)) {
+				if (ItemRinneganTomoe.eternalOn(helmet))
 					time = 360;
-				else if (ItemRinneganTomoe.sharinganOn(eye))
+				else if (ItemRinneganTomoe.sharinganOn(helmet))
 					time = 180;
 				else
 					time = 60;
-			} else if (ItemSharingan.isEternal(eye))
+			} else if (ItemSharingan.isEternal(helmet))
 				time = 180;
-			else if (ItemSharingan.isMangekyo(eye))
+			else if (ItemSharingan.isMangekyo(helmet))
 				time = 90;
 
 			return time;
+		}
+
+		public static void giveEffect(EntityPlayer player) {
+			player.removeActivePotionEffect(PotionLockOn.potion);
+
+			int duration = PlayerHook.getAutoLockOnMaxTime(player) - PlayerHook.getAutoLockOnTime(player);
+			player.addPotionEffect(new PotionEffect(PotionLockOn.potion, duration * 20));
 		}
 		@SubscribeEvent
 		public void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -399,7 +411,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 						return;
 					}
 
-					boolean reachedMaxTime = time++ >= getAutoLockOnMaxTime(entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD));
+					boolean reachedMaxTime = time++ >= getAutoLockOnMaxTime(entity);
 					if (reachedMaxTime) {
 						unlockOnTarget(entity);
 						setAutoLockOnTime(entity, 0);
@@ -479,6 +491,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 				entity.getEntityData().removeTag(targetLockOnEntityTicksRemaining);
 				entity.getEntityData().removeTag(shouldTargetLockOnEntity);
 				entity.getEntityData().removeTag(autoLockOnEntity);
+				entity.removePotionEffect(PotionLockOn.potion);
 				if (entity instanceof EntityPlayerMP) {
 					ProcedureSync.EntityNBTTag.sendToSelf((EntityPlayerMP)entity, targetLockOnEntityId);
 					ProcedureSync.EntityNBTTag.sendToSelf((EntityPlayerMP)entity, shouldTargetLockOnEntity);

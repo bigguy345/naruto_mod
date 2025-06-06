@@ -819,6 +819,7 @@ key.jutsu.6=Jutsu 6
 key.lock_on=Lock On (Sharingan)
 
 item.sharingan.lock_on_cooldown=Cooldown: %ss
+effect.lock_on=Lock On
 
 item.rinnegantomoehelmet.name=Rinnegan Tomoe
 item.rinnegantomoehelmet.sharingan_status=Sharingan status: 
