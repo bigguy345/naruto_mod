@@ -108,24 +108,24 @@ public class ModConfig extends ElementsNarutomodMod.ModElement {
 
 	public static class WingedSusanoo {
 		@Config.RangeDouble(min = 1, max = 50)
-		public static float MODEL_SCALE = 8;
+		public float MODEL_SCALE = 8;
 
 		@Config.RangeDouble(min = 1, max = 200)
 		@Config.Comment({" Y Offset where player lies within Susanoo. (Adjust with MODEL_SCALE)"})
-		public static double PLAYER_Y_OFFSET = 14;
+		public double PLAYER_Y_OFFSET = 14;
 		
 		@Config.RangeDouble(min = 1, max = 512)
-		public static float MAX_HEALTH = 43;
+		public float MAX_HEALTH = 43;
 
 		@Config.RangeDouble(min = 1, max = 100)
 		@Config.Comment({"Maximum Amenotejikara teleportation range."})
-		public static double SWORD_REACH = 12;
+		public double SWORD_REACH = 12;
 	}
 	public static class Dojutsu {
 
 		@Config.RangeInt(min = 0, max = 3600)
 		@Config.Comment("Sharingan's Lock On cooldown in seconds. (applied once Lock On effect runs out)")
-		public static int SHARINGAN_LOCK_ON_COOLDOWN = 60;
+		public int SHARINGAN_LOCK_ON_COOLDOWN = 60;
 
 		@Config.RangeDouble(min = 1, max = 256)
 		@Config.Comment({"Sharingan's Lock On default range.", "Value is multiplied by 1.25x if Mangekyo, 1.5x if Eternal, and 2x if Rinnegan Tomoe."})
