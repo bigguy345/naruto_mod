@@ -1,16 +1,7 @@
 package net.narutomod.procedure;
 
+import net.narutomod.item.*;
 import net.narutomod.potion.PotionFlight;
-import net.narutomod.item.ItemTenseiganChakraMode;
-import net.narutomod.item.ItemTenseigan;
-import net.narutomod.item.ItemSixPathSenjutsu;
-import net.narutomod.item.ItemSageStaff;
-import net.narutomod.item.ItemRinnegan;
-import net.narutomod.item.ItemNinjutsu;
-import net.narutomod.item.ItemJutsu;
-import net.narutomod.item.ItemBlackReceiver;
-import net.narutomod.item.ItemAsuraPathArmor;
-import net.narutomod.item.ItemAsuraCanon;
 import net.narutomod.entity.EntityTenTails;
 import net.narutomod.NarutomodModVariables;
 import net.narutomod.ElementsNarutomodMod;
@@ -144,7 +135,9 @@ public class ProcedureRinneganHelmetTickEvent extends ElementsNarutomodMod.ModEl
 				}
 				if (((entity.ticksExisted % 20) == 2) && entity instanceof EntityLivingBase) {
 						((EntityLivingBase) entity).addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, (int) 22, (int) 2, (false), (false)));
-					if (((EntityLivingBase) entity).isPotionActive(MobEffects.BLINDNESS))
+
+					boolean isOwner = ((ItemDojutsu.Base) itemstack.getItem()).isOwner(itemstack, (EntityLivingBase) entity);
+					if (isOwner && ((EntityLivingBase) entity).isPotionActive(MobEffects.BLINDNESS))
 						((EntityLivingBase) entity).removePotionEffect(MobEffects.BLINDNESS);
 				}
 				if (entity.equals(EntityTenTails.getBijuManager().getJinchurikiPlayer())) {

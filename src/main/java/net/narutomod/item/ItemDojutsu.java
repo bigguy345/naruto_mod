@@ -49,6 +49,9 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 
 		@Override
 		public void onArmorTick(World world, EntityPlayer entity, ItemStack itemstack) {
+			if (world.isRemote)
+				return;
+			
 			super.onArmorTick(world, entity, itemstack);
 			if (!this.isOwner(itemstack, entity) && !entity.isCreative()) {
 				UUID uuid = ProcedureUtils.getOwnerId(itemstack);
