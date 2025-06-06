@@ -66,6 +66,9 @@ public class PotionLockOn extends ElementsNarutomodMod.ModElement {
 		public void renderHUDEffect(int x, int y, PotionEffect effect, Minecraft mc, float alpha) {
 			mc.getTextureManager().bindTexture(potionIcon);
 			Gui.drawModalRectWithCustomSizedTexture(x + 3, y + 3, 0, 0, 18, 18, 18, 18);
+			
+			String duration = Potion.getPotionDurationString(effect, 1.0F);
+			mc.fontRenderer.drawStringWithShadow(duration, x - 22, y + 9, 0xFFFFFF); // White color
 		}
 
 		@Override
