@@ -178,7 +178,8 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 				return;
 
 			EntityLivingBase target = (EntityLivingBase) rtr.entityHit;
-			LockOn.lockOnTarget(player, target, 1);
+			int time = LockOn.getAutoLockOnMaxTime(player) - LockOn.getAutoLockOnTime(player);
+			LockOn.lockOnTarget(player, target, time * 20);
 			player.getEntityData().setBoolean(LockOn.autoLockOnEntity, true);
 			ProcedureSync.EntityNBTTag.sendToSelf((EntityPlayerMP) player, LockOn.autoLockOnEntity, true);
 			LockOn.giveEffect(player);
@@ -336,14 +337,15 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 
 		@SubscribeEvent
 		public void onAttacked(LivingAttackEvent event) {
+			if (event.getEntity().world.isRemote || !(event.getEntity() instanceof EntityLivingBase) || event.getSource().isUnblockable())
+				return;
+			
 			EntityLivingBase entity = event.getEntityLiving();
 			Entity attacker = event.getSource().getTrueSource();
-			if (wearingAny(entity) && ItemJutsu.canTarget(entity) && !entity.isRiding() && !event.getSource().isUnblockable()
-			 && attacker instanceof EntityLivingBase && !attacker.world.isRemote) {
+			if (wearingAny(entity) && ItemJutsu.canTarget(entity) && !entity.isRiding()) {
 				((Base)entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem()).onAttackEvent(event, entity, (EntityLivingBase)attacker);
-				if (entity instanceof EntityPlayer) {
+				if (entity instanceof EntityPlayer && !isAutoLockOn(entity)) 
 					lockOnTarget(entity, (EntityLivingBase) attacker, 300);
-				}
 			}
 		}
 
