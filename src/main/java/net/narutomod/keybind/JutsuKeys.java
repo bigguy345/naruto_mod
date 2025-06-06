@@ -16,6 +16,7 @@ import net.narutomod.goatee.data.NarutoData;
 import net.narutomod.goatee.network.AbstractPacket;
 import net.narutomod.goatee.network.PacketHandler;
 import net.narutomod.item.ItemDojutsu;
+import net.narutomod.item.ItemSharingan;
 import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
@@ -25,10 +26,13 @@ import java.util.List;
 @Mod.EventBusSubscriber
 public class JutsuKeys {
 	public static List<Key> jutsuKeys = new ArrayList<>();
-	private static Key key4 = new Key(4, "key.jutsu.4", Keyboard.KEY_NONE, "key.mcreator.category");
-	private static Key key5 = new Key(5, "key.jutsu.5", Keyboard.KEY_NONE, "key.mcreator.category");
-	private static Key key6 = new Key(6, "key.jutsu.6", Keyboard.KEY_NONE, "key.mcreator.category");
+	private static Key key4 = new Key(4, "key.jutsu.4", Keyboard.KEY_NUMPAD4, "key.mcreator.category");
+	private static Key key5 = new Key(5, "key.jutsu.5", Keyboard.KEY_NUMPAD5, "key.mcreator.category");
+	private static Key key6 = new Key(6, "key.jutsu.6", Keyboard.KEY_NUMPAD6, "key.mcreator.category");
 
+	private static int LOCK_ON_ID = 10;
+	private static Key lockOn = new Key(LOCK_ON_ID, "key.lock_on", Keyboard.KEY_TAB, "key.mcreator.category");
+	
 	public static KeyBinding dojutsWheel = new KeyBinding("key.dojutsu_wheel", Keyboard.KEY_V, "key.mcreator.category");
 
 	static {
@@ -46,6 +50,14 @@ public class JutsuKeys {
 			jutsuKeys.add(this);
 			ClientRegistry.registerKeyBinding(this);
 		}
+
+		/**
+		 * @return Pressed = 0, Held = 1, Released = 2
+		 */
+		public byte getPressType() {
+			boolean isDown = isKeyDown();
+			return (byte) (!wasDown && isDown ? 0 : wasDown && !isDown ? 2 : 1);
+		}
 	}
 
 	@SubscribeEvent
@@ -56,11 +68,8 @@ public class JutsuKeys {
 
 		for (Key key : jutsuKeys) {
 			boolean isDown = key.isKeyDown();
-
-			//Pressed = 0, Held = 1, Released = 2
-			byte pressType = (byte) (!key.wasDown && isDown ? 0 : key.wasDown && !isDown ? 2 : 1);
 			if (isDown || key.wasDown) {
-				PacketHandler.Instance.sendToServer(new Packet(key.keyId, pressType));
+				PacketHandler.Instance.sendToServer(new Packet(key.keyId, key.getPressType()));
 				key.wasDown = isDown;
 			}
 		}
@@ -97,9 +106,12 @@ public class JutsuKeys {
 			this.pressType = in.readByte();
 
 			ItemStack helmet = player.inventory.armorInventory.get(3);
-			if ((helmet.getItem() instanceof ItemDojutsu.Base)) {
+
+			if (ItemSharingan.wearingAny(player) && keyId == LOCK_ON_ID && pressType == 0)
+				((ItemSharingan.Base) helmet.getItem()).lockOnLookingAt(player);
+			else if ((helmet.getItem() instanceof ItemDojutsu.Base)) {
 				ItemDojutsu.Base eye = (ItemDojutsu.Base) helmet.getItem();
-				
+
 				if (keyId == 4)
 					eye.onJutsuKey4(pressType, helmet, player);
 				else if (keyId == 5)

@@ -1,6 +1,7 @@
 package net.narutomod.item;
 
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
@@ -152,6 +153,28 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		 	return false;
 		}
 
+		public void lockOnLookingAt(EntityPlayer player) {
+			int cooldown = PlayerHook.getAutoLockOnCD(player);
+			if (cooldown > 0) {
+				player.sendStatusMessage(new TextComponentTranslation("item.sharingan.lock_on_cooldown", cooldown), true);
+				return;
+			}
+
+			if (PlayerHook.getLockedTarget(player) != null) {
+				PlayerHook.unlockOnTarget(player);
+				return;
+			}
+
+			RayTraceResult rtr = ProcedureUtils.objectEntityLookingAt(player, ModConfig.TECHNIQUES.AMENOTEJIKARA_RANGE);
+			if (!(rtr.entityHit instanceof EntityLivingBase))
+				return;
+
+			EntityLivingBase target = (EntityLivingBase) rtr.entityHit;
+			PlayerHook.lockOnTarget(player, target, 1);
+			player.getEntityData().setBoolean(PlayerHook.autoLockOnEntity, true);
+			ProcedureSync.EntityNBTTag.sendToSelf((EntityPlayerMP) player, PlayerHook.autoLockOnEntity, true);
+		}
+
 		@Override
 		public void setDamage(ItemStack stack, int damage) {
 			if (this.canDamage) {
@@ -294,6 +317,10 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static class PlayerHook {
+		private static final String autoLockOnEntity = "autoLockOnEntity";
+		private static final String autoLockOnTime = "autoLockOnTime"; //seconds entity spent in autolock
+		private static final String autoLockOnCD = "autoLockOnCD"; //seconds of CD
+
 		private static final String shouldTargetLockOnEntity = "shouldTargetLockOnEntity";
 		private static final String targetLockOnEntityId = "targetLockOnEntityId";
 		private static final String targetLockOnEntityTicksRemaining = "targetLockOnEntityTicksRemaining";
@@ -311,18 +338,86 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			}
 		}
 
+		private static boolean isAutoLockOn(EntityLivingBase entity) {
+			return entity.getEntityData().getBoolean(autoLockOnEntity);
+		}
+
+		private static int getAutoLockOnTime(EntityLivingBase entity) {
+			return entity.getEntityData().getInteger(autoLockOnTime);
+		}
+
+		private static void setAutoLockOnTime(EntityLivingBase entity, int seconds) {
+			entity.getEntityData().setInteger(autoLockOnTime, seconds);
+			if (seconds == 0)
+				entity.getEntityData().removeTag(autoLockOnEntity);
+		}
+
+		private static int getAutoLockOnCD(EntityLivingBase entity) {
+			return entity.getEntityData().getInteger(autoLockOnCD);
+		}
+
+		private static void setAutoLockOnCD(EntityLivingBase entity, int seconds) {
+			entity.getEntityData().setInteger(autoLockOnCD, seconds);
+		}
+
+		private static int getAutoLockOnMaxTime(ItemStack eye) {
+			int time = 30;
+			if (ItemRinneganTomoe.isTomoe(eye)) {
+				if (ItemRinneganTomoe.eternalOn(eye))
+					time = 360;
+				else if (ItemRinneganTomoe.sharinganOn(eye))
+					time = 180;
+				else
+					time = 60;
+			} else if (ItemSharingan.isEternal(eye))
+				time = 180;
+			else if (ItemSharingan.isMangekyo(eye))
+				time = 90;
+
+			return time;
+		}
 		@SubscribeEvent
 		public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+			if (event.player.world.isRemote || event.phase != TickEvent.Phase.END)
+				return;
+			
 			EntityPlayer entity = event.player;
-			if (event.phase == TickEvent.Phase.END && hasTargetLockOnEntity(entity)) {
+
+			if (getAutoLockOnCD(entity) > 0) {
+				if (entity.ticksExisted % 20 == 0)
+					setAutoLockOnCD(entity, getAutoLockOnCD(entity) - 1);
+				return;
+			}
+			
+			if (isAutoLockOn(entity)) {
+				if (entity.ticksExisted % 20 == 0) {
+					int time = getAutoLockOnTime(entity);
+					EntityLivingBase target = getLockedTarget(entity);
+
+					if (target == null || !target.isEntityAlive() || target.getDistance(entity) > 64) {
+						unlockOnTarget(entity);
+						return;
+					}
+
+					boolean reachedMaxTime = time++ >= getAutoLockOnMaxTime(entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD));
+					if (reachedMaxTime) {
+						unlockOnTarget(entity);
+						setAutoLockOnTime(entity, 0);
+						setAutoLockOnCD(entity, 5);
+						return;
+					}
+
+					setAutoLockOnTime(entity, time);
+				}
+				return;
+			}
+
+			if (hasTargetLockOnEntity(entity)) {
 				int remaining = targetLockTicksRemaining(entity);
 				EntityLivingBase target = getLockedTarget(entity);
 				if (!entity.world.isRemote && (remaining <= 0 || target == null || !target.isEntityAlive() || target.getDistanceSq(entity) > 1024d)) {
 					unlockOnTarget(entity);
 				} else if (target != null) {
-					if (entity.world.isRemote) 
-						ProcedureOnLivingUpdate.setGlowingFor(target, 3);
-					
 					lockOnTarget(entity, target, remaining - 1);
 				}
 			}
@@ -342,6 +437,8 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 				Vec3d vec2 = target.getPositionEyes(1f).subtract(player.getPositionEyes(1f));
 				player.rotationYaw = ProcedureUtils.getYawFromVec(vec2);
 				player.rotationPitch = ProcedureUtils.getPitchFromVec(vec2);
+
+				ProcedureOnLivingUpdate.setGlowingFor(target, 2);
 			}
 		}
 		@SideOnly(Side.CLIENT)
@@ -381,21 +478,23 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 				entity.getEntityData().removeTag(targetLockOnEntityId);
 				entity.getEntityData().removeTag(targetLockOnEntityTicksRemaining);
 				entity.getEntityData().removeTag(shouldTargetLockOnEntity);
+				entity.getEntityData().removeTag(autoLockOnEntity);
 				if (entity instanceof EntityPlayerMP) {
 					ProcedureSync.EntityNBTTag.sendToSelf((EntityPlayerMP)entity, targetLockOnEntityId);
 					ProcedureSync.EntityNBTTag.sendToSelf((EntityPlayerMP)entity, shouldTargetLockOnEntity);
+					ProcedureSync.EntityNBTTag.sendToSelf((EntityPlayerMP) entity, autoLockOnEntity);
 				}
 			}
 		}
 
 		private static boolean shouldLockOnTarget(EntityLivingBase entity) {
-			return entity.getEntityData().getBoolean(shouldTargetLockOnEntity);
+			return entity.getEntityData().getBoolean(shouldTargetLockOnEntity) || entity.getEntityData().getBoolean(autoLockOnEntity);
 		}
 
 		private static boolean hasTargetLockOnEntity(EntityLivingBase entity) {
 			return entity.getEntityData().hasKey(targetLockOnEntityId);
 		}
-	
+
 		@Nullable
 		private static EntityLivingBase getLockedTarget(EntityLivingBase entity) {
 			Entity target = entity.world.getEntityByID(entity.getEntityData().getInteger(targetLockOnEntityId));
