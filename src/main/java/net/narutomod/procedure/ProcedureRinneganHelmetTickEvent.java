@@ -55,6 +55,7 @@ public class ProcedureRinneganHelmetTickEvent extends ElementsNarutomodMod.ModEl
 		entity.fallDistance = (float) (0);
 		isRinnesharingan = (boolean) ((itemstack).hasTagCompound()
 				&& (itemstack).getTagCompound().getBoolean((NarutomodModVariables.RINNESHARINGAN_ACTIVATED)));
+		boolean isTomoe = ItemRinneganTomoe.isTomoe(itemstack);
 		if ((!(world.isRemote))) {
 			if (((isRinnesharingan) && (!(((entity instanceof EntityLivingBase) ? ItemTenseigan.getHeldChakraCloak((EntityLivingBase) entity) : ItemStack.EMPTY)
 					.getItem() == new ItemStack(ItemTenseiganChakraMode.block, (int) (1)).getItem())))) {
@@ -231,7 +232,7 @@ public class ProcedureRinneganHelmetTickEvent extends ElementsNarutomodMod.ModEl
 			if (((entity.ticksExisted % 20) == 2)) {
 				if (entity instanceof EntityLivingBase)
 					((EntityLivingBase) entity).addPotionEffect(new PotionEffect(MobEffects.SPEED, (int) 22, (int) 4, (false), (false)));
-				if (entity instanceof EntityLivingBase)
+				if (entity instanceof EntityLivingBase && (!isTomoe || isTomoe && !ItemRinneganTomoe.sharinganOff(itemstack)))
 					((EntityLivingBase) entity).addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, (int) 230, (int) 0, (false), (false)));
 			}
 		}
