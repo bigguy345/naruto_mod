@@ -183,17 +183,20 @@ public class ItemBlackReceiver extends ElementsNarutomodMod.ModElement {
 	}
 
 	protected static void onHitEntity(EntityLivingBase entity) {
+		if (ItemRinnegan.isWearing(entity))
+			return;
+			
 		int amplifier = 1;
-		if (entity.isPotionActive(PotionHeaviness.potion)) {
+		if (entity.isPotionActive(PotionHeaviness.potion)) 
 			amplifier += entity.getActivePotionEffect(PotionHeaviness.potion).getAmplifier();
-		}
+		
 		entity.addPotionEffect(new PotionEffect(PotionHeaviness.potion, 300, amplifier, false, false));
 
 		if (ModConfig.ITEMS.BLACK_RECEIVER_SLOWNESS) {
 			amplifier = 2;
-			if (entity.isPotionActive(MobEffects.SLOWNESS)) {
+			if (entity.isPotionActive(MobEffects.SLOWNESS)) 
 				amplifier += entity.getActivePotionEffect(MobEffects.SLOWNESS).getAmplifier();
-			}
+
 			entity.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 300, amplifier, false, false));
 		}
 	}
