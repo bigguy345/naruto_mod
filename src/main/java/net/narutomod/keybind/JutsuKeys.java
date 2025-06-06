@@ -108,7 +108,7 @@ public class JutsuKeys {
 			ItemStack helmet = player.inventory.armorInventory.get(3);
 
 			if (ItemSharingan.wearingAny(player) && keyId == LOCK_ON_ID && pressType == 0)
-				((ItemSharingan.Base) helmet.getItem()).lockOnLookingAt(player);
+				((ItemSharingan.Base) helmet.getItem()).lockOnLookingAt(player, helmet);
 			else if ((helmet.getItem() instanceof ItemDojutsu.Base)) {
 				ItemDojutsu.Base eye = (ItemDojutsu.Base) helmet.getItem();
 

@@ -126,5 +126,9 @@ public class ModConfig extends ElementsNarutomodMod.ModElement {
 		@Config.RangeInt(min = 0, max = 3600)
 		@Config.Comment("Sharingan's Lock On cooldown in seconds. (applied once Lock On effect runs out)")
 		public static int SHARINGAN_LOCK_ON_COOLDOWN = 60;
+
+		@Config.RangeDouble(min = 1, max = 256)
+		@Config.Comment({"Sharingan's Lock On default range.", "Value is multiplied by 1.25x if Mangekyo, 1.5x if Eternal, and 2x if Rinnegan Tomoe."})
+		public double SHARINGAN_LOCK_ON_RANGE = 50;
 	}
 }

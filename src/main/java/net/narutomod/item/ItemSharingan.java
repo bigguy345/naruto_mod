@@ -2,6 +2,7 @@ package net.narutomod.item;
 
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
@@ -159,8 +160,8 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			if (LockOn.isAutoLockOn(entity))
 				LockOn.giveEffect(entity);
 		}
-		
-		public void lockOnLookingAt(EntityPlayer player) {
+
+		public void lockOnLookingAt(EntityPlayer player, ItemStack eye) {
 			int cooldown = LockOn.getAutoLockOnCD(player);
 			if (cooldown > 0) {
 				player.sendStatusMessage(new TextComponentTranslation("item.sharingan.lock_on_cooldown", cooldown), true);
@@ -172,7 +173,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 				return;
 			}
 
-			RayTraceResult rtr = ProcedureUtils.objectEntityLookingAt(player, ModConfig.TECHNIQUES.AMENOTEJIKARA_RANGE);
+			RayTraceResult rtr = ProcedureUtils.objectEntityLookingAt(player, LockOn.getRange(eye));
 			if (!(rtr.entityHit instanceof EntityLivingBase))
 				return;
 
@@ -393,6 +394,19 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			int duration = LockOn.getAutoLockOnMaxTime(player) - LockOn.getAutoLockOnTime(player);
 			player.addPotionEffect(new PotionEffect(PotionLockOn.potion, duration * 20));
 		}
+
+		public static double getRange(ItemStack eye) {
+			double range = ModConfig.DOJUTSU.SHARINGAN_LOCK_ON_RANGE;
+
+			if (ItemRinneganTomoe.isTomoe(eye))
+				range *= 2;
+			else if (ItemSharingan.isEternal(eye))
+				range *= 1.5;
+			else if (ItemSharingan.isMangekyo(eye))
+				range *= 1.25;
+
+			return MathHelper.clamp(range, 0, 256);
+		}
 		@SubscribeEvent
 		public void onPlayerTick(TickEvent.PlayerTickEvent event) {
 			if (event.player.world.isRemote || event.phase != TickEvent.Phase.END)
@@ -408,10 +422,11 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			
 			if (isAutoLockOn(entity)) {
 				if (entity.ticksExisted % 20 == 0) {
+					ItemStack eye = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
 					int time = getAutoLockOnTime(entity);
 					EntityLivingBase target = getLockedTarget(entity);
 
-					if (target == null || !target.isEntityAlive() || !ItemSharingan.wearingAny(entity) || target.getDistance(entity) > 64) {
+					if (target == null || !target.isEntityAlive() || !(eye.getItem() instanceof Base) || target.getDistance(entity) > getRange(eye)) {
 						unlockOnTarget(entity);
 						return;
 					}
