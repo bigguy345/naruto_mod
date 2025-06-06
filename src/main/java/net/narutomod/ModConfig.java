@@ -9,6 +9,7 @@ public class ModConfig extends ElementsNarutomodMod.ModElement {
 	public static Techniques TECHNIQUES = new Techniques();
 	public static Items ITEMS = new Items();
 	public static WingedSusanoo WINGED_SUSANOO = new WingedSusanoo();
+	public static Dojutsu DOJUTSU = new Dojutsu();
 
 	public ModConfig(ElementsNarutomodMod instance) {
 		super(instance, 837);
@@ -119,5 +120,11 @@ public class ModConfig extends ElementsNarutomodMod.ModElement {
 		@Config.RangeDouble(min = 1, max = 100)
 		@Config.Comment({"Maximum Amenotejikara teleportation range."})
 		public static double SWORD_REACH = 12;
+	}
+	public static class Dojutsu {
+
+		@Config.RangeInt(min = 0, max = 3600)
+		@Config.Comment("Sharingan's Lock On cooldown in seconds. (applied once Lock On effect runs out)")
+		public static int SHARINGAN_LOCK_ON_COOLDOWN = 60;
 	}
 }

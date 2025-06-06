@@ -155,6 +155,11 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		 	return false;
 		}
 
+		public void onEquip(ItemStack stack, EntityLivingBase entity, boolean takenOff) {
+			if (LockOn.isAutoLockOn(entity))
+				LockOn.giveEffect(entity);
+		}
+		
 		public void lockOnLookingAt(EntityPlayer player) {
 			int cooldown = LockOn.getAutoLockOnCD(player);
 			if (cooldown > 0) {
@@ -363,8 +368,8 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			entity.getEntityData().setInteger(autoLockOnCD, seconds);
 		}
 
-		private static int getAutoLockOnMaxTime(EntityPlayer player) {
-			ItemStack helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		private static int getAutoLockOnMaxTime(EntityLivingBase entity) {
+			ItemStack helmet = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
 			
 			int time = 30;
 			if (ItemRinneganTomoe.isTomoe(helmet)) {
@@ -382,8 +387,8 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			return time;
 		}
 
-		public static void giveEffect(EntityPlayer player) {
-			player.removeActivePotionEffect(PotionLockOn.potion);
+		public static void giveEffect(EntityLivingBase player) {
+			player.removePotionEffect(PotionLockOn.potion);
 
 			int duration = LockOn.getAutoLockOnMaxTime(player) - LockOn.getAutoLockOnTime(player);
 			player.addPotionEffect(new PotionEffect(PotionLockOn.potion, duration * 20));
@@ -395,7 +400,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			
 			EntityPlayer entity = event.player;
 
-			if (getAutoLockOnCD(entity) > 0) {
+			if (getAutoLockOnCD(entity) > 0) { //decrement CD every second
 				if (entity.ticksExisted % 20 == 0)
 					setAutoLockOnCD(entity, getAutoLockOnCD(entity) - 1);
 				return;
@@ -406,7 +411,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 					int time = getAutoLockOnTime(entity);
 					EntityLivingBase target = getLockedTarget(entity);
 
-					if (target == null || !target.isEntityAlive() || target.getDistance(entity) > 64) {
+					if (target == null || !target.isEntityAlive() || !ItemSharingan.wearingAny(entity) || target.getDistance(entity) > 64) {
 						unlockOnTarget(entity);
 						return;
 					}
@@ -415,12 +420,16 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 					if (reachedMaxTime) {
 						unlockOnTarget(entity);
 						setAutoLockOnTime(entity, 0);
-						setAutoLockOnCD(entity, 5);
+						setAutoLockOnCD(entity, ModConfig.DOJUTSU.SHARINGAN_LOCK_ON_COOLDOWN);
 						return;
 					}
 
 					setAutoLockOnTime(entity, time);
 				}
+				return;
+			} else if (getAutoLockOnTime(entity) > 0) { //if deactivated and not on CD, decrement every 2 sec
+				if (entity.ticksExisted % 40 == 0)
+					setAutoLockOnTime(entity, getAutoLockOnTime(entity) - 1);
 				return;
 			}
 
