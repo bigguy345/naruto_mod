@@ -156,14 +156,14 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		}
 
 		public void lockOnLookingAt(EntityPlayer player) {
-			int cooldown = PlayerHook.getAutoLockOnCD(player);
+			int cooldown = LockOn.getAutoLockOnCD(player);
 			if (cooldown > 0) {
 				player.sendStatusMessage(new TextComponentTranslation("item.sharingan.lock_on_cooldown", cooldown), true);
 				return;
 			}
 
-			if (PlayerHook.getLockedTarget(player) != null) {
-				PlayerHook.unlockOnTarget(player);
+			if (LockOn.getLockedTarget(player) != null) {
+				LockOn.unlockOnTarget(player);
 				return;
 			}
 
@@ -172,10 +172,10 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 				return;
 
 			EntityLivingBase target = (EntityLivingBase) rtr.entityHit;
-			PlayerHook.lockOnTarget(player, target, 1);
-			player.getEntityData().setBoolean(PlayerHook.autoLockOnEntity, true);
-			ProcedureSync.EntityNBTTag.sendToSelf((EntityPlayerMP) player, PlayerHook.autoLockOnEntity, true);
-			PlayerHook.giveEffect(player);
+			LockOn.lockOnTarget(player, target, 1);
+			player.getEntityData().setBoolean(LockOn.autoLockOnEntity, true);
+			ProcedureSync.EntityNBTTag.sendToSelf((EntityPlayerMP) player, LockOn.autoLockOnEntity, true);
+			LockOn.giveEffect(player);
 		}
 
 		@Override
@@ -319,7 +319,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		return false;
 	}
 
-	public static class PlayerHook {
+	public static class LockOn {
 		private static final String autoLockOnEntity = "autoLockOnEntity";
 		private static final String autoLockOnTime = "autoLockOnTime"; //seconds entity spent in autolock
 		private static final String autoLockOnCD = "autoLockOnCD"; //seconds of CD
@@ -385,7 +385,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		public static void giveEffect(EntityPlayer player) {
 			player.removeActivePotionEffect(PotionLockOn.potion);
 
-			int duration = PlayerHook.getAutoLockOnMaxTime(player) - PlayerHook.getAutoLockOnTime(player);
+			int duration = LockOn.getAutoLockOnMaxTime(player) - LockOn.getAutoLockOnTime(player);
 			player.addPotionEffect(new PotionEffect(PotionLockOn.potion, duration * 20));
 		}
 		@SubscribeEvent
@@ -538,7 +538,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 
 	@Override
 	public void init(FMLInitializationEvent event) {
-		MinecraftForge.EVENT_BUS.register(new PlayerHook());
+		MinecraftForge.EVENT_BUS.register(new LockOn());
 	}
 
 	public enum Type {
