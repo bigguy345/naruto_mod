@@ -503,7 +503,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		}
 
 		private static void lockOnTarget(EntityLivingBase entity, EntityLivingBase target, int ticks) {
-			if (!entity.world.isRemote) {
+			if (!entity.world.isRemote && target != null) {
 				entity.getEntityData().setInteger(targetLockOnEntityId, target.getEntityId());
 				entity.getEntityData().setInteger(targetLockOnEntityTicksRemaining, ticks);
 				if (entity instanceof EntityPlayerMP) {
