@@ -459,6 +459,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			}
 		}
 
+		@SideOnly(Side.CLIENT)
 		@SubscribeEvent
 		public void onPlayerTick(TickEvent.ClientTickEvent event) {
 			if ( Minecraft.getMinecraft().player == null)
