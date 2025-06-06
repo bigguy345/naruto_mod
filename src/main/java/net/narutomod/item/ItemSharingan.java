@@ -320,22 +320,30 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 				if (!entity.world.isRemote && (remaining <= 0 || target == null || !target.isEntityAlive() || target.getDistanceSq(entity) > 1024d)) {
 					unlockOnTarget(entity);
 				} else if (target != null) {
-					if (entity.world.isRemote) {
+					if (entity.world.isRemote) 
 						ProcedureOnLivingUpdate.setGlowingFor(target, 3);
-					}
-					if (shouldLockOnTarget(entity)) {
-						RayTraceResult rtr = ProcedureUtils.objectEntityLookingAt(entity, 32d);
-						if (rtr == null || rtr.entityHit != target) {
-							Vec3d vec2 = target.getPositionEyes(1f).subtract(entity.getPositionEyes(1f));
-							entity.rotationYaw = ProcedureUtils.getYawFromVec(vec2);
-							entity.rotationPitch = ProcedureUtils.getPitchFromVec(vec2);
-						}
-					}
+					
 					lockOnTarget(entity, target, remaining - 1);
 				}
 			}
 		}
 
+		@SubscribeEvent
+		public void onPlayerTick(TickEvent.ClientTickEvent event) {
+			if ( Minecraft.getMinecraft().player == null)
+				return;
+
+			EntityPlayer player = Minecraft.getMinecraft().player;
+			if (!shouldLockOnTarget(player))
+				return;
+
+			EntityLivingBase target = getLockedTarget(player);
+			if (target != null) {
+				Vec3d vec2 = target.getPositionEyes(1f).subtract(player.getPositionEyes(1f));
+				player.rotationYaw = ProcedureUtils.getYawFromVec(vec2);
+				player.rotationPitch = ProcedureUtils.getPitchFromVec(vec2);
+			}
+		}
 		@SideOnly(Side.CLIENT)
 		@SubscribeEvent
 		public void onMouseEvent(MouseEvent event) {
