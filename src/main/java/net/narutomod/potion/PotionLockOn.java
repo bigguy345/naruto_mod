@@ -34,7 +34,7 @@ public class PotionLockOn extends ElementsNarutomodMod.ModElement {
 			this.setBeneficial();
 			this.setRegistryName("lock_on");
 			this.setPotionName("effect.lock_on");
-			this.potionIcon = new ResourceLocation("narutomod:textures/mob_effect/reach.png");
+			this.potionIcon = new ResourceLocation("narutomod:textures/mob_effect/lock_on.png");
 		}
 
 		@Override
