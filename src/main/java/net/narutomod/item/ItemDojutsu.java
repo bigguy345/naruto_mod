@@ -113,6 +113,9 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 			super.onUpdate(stack, world, entity, par4, par5);
 		}
 
+		public void onEquip(ItemStack stack, EntityLivingBase entity, boolean takenOff) {
+		}
+		
 		public abstract Type getType();
 
 		public SoundEvent getActivationSound(ItemStack eye) {
@@ -214,12 +217,16 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 			
 			EntityLivingBase entity = (EntityLivingBase) event.getEntity();
 			if (to.getItem() instanceof Base) { //eye activation sound
+				((Base) to.getItem()).onEquip(to, entity, false);
+				
 				if (ItemDojutsu.isLowerTier(from, to)) //don't play sound when descending into a lower tier sharingan
 					ItemDojutsu.playDeactivationSound(from, entity);
 				else
 					ItemDojutsu.playActivationSound(to, entity);
-			} else if (from.getItem() instanceof Base) //eye deactivation sound
+			} else if (from.getItem() instanceof Base) {//eye deactivation sound
+				((Base) from.getItem()).onEquip(to, entity, true);
 				ItemDojutsu.playDeactivationSound(from, entity);
+			}
 			
 		}
 

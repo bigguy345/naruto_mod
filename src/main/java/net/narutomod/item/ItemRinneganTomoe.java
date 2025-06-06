@@ -443,10 +443,14 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
 
         int oldStatus = ItemRinneganTomoe.getTomoeStatus(stack);
         ItemRinneganTomoe.setTomoeStatus(stack, status);
-        if (status > oldStatus)
+
+        if (status > oldStatus) {
+            ((ItemDojutsu.Base) stack.getItem()).onEquip(stack, entity, false);
             ItemDojutsu.playActivationSound(stack, entity);
-        else if (status < oldStatus)
+        } else if (status < oldStatus) {
+            ((ItemDojutsu.Base) stack.getItem()).onEquip(stack, entity, true);
             ItemDojutsu.playDeactivationSound(stack, entity);
+        }
     }
 
     public static int getCompatibleStatus(ItemStack targetItem) {
