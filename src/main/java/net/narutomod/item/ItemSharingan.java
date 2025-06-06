@@ -37,6 +37,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.block.material.Material;
 
+import net.narutomod.ModConfig;
 import net.narutomod.goatee.client.Sounds;
 import net.narutomod.procedure.ProcedureSharinganHelmetTickEvent;
 import net.narutomod.procedure.ProcedureSync;
@@ -292,7 +293,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		return false;
 	}
 
-	public class PlayerHook {
+	public static class PlayerHook {
 		private static final String shouldTargetLockOnEntity = "shouldTargetLockOnEntity";
 		private static final String targetLockOnEntityId = "targetLockOnEntityId";
 		private static final String targetLockOnEntityTicksRemaining = "targetLockOnEntityTicksRemaining";
@@ -305,7 +306,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			 && attacker instanceof EntityLivingBase && !attacker.world.isRemote) {
 				((Base)entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem()).onAttackEvent(event, entity, (EntityLivingBase)attacker);
 				if (entity instanceof EntityPlayer) {
-					this.lockOnTarget(entity, (EntityLivingBase)attacker, 300);
+					lockOnTarget(entity, (EntityLivingBase) attacker, 300);
 				}
 			}
 		}
@@ -313,16 +314,16 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		@SubscribeEvent
 		public void onPlayerTick(TickEvent.PlayerTickEvent event) {
 			EntityPlayer entity = event.player;
-			if (event.phase == TickEvent.Phase.END && this.hasTargetLockOnEntity(entity)) {
-				int remaining = this.targetLockTicksRemaining(entity);
-				EntityLivingBase target = this.getLockedTarget(entity);
+			if (event.phase == TickEvent.Phase.END && hasTargetLockOnEntity(entity)) {
+				int remaining = targetLockTicksRemaining(entity);
+				EntityLivingBase target = getLockedTarget(entity);
 				if (!entity.world.isRemote && (remaining <= 0 || target == null || !target.isEntityAlive() || target.getDistanceSq(entity) > 1024d)) {
-					this.unlockOnTarget(entity);
+					unlockOnTarget(entity);
 				} else if (target != null) {
 					if (entity.world.isRemote) {
 						ProcedureOnLivingUpdate.setGlowingFor(target, 3);
 					}
-					if (this.shouldLockOnTarget(entity)) {
+					if (shouldLockOnTarget(entity)) {
 						RayTraceResult rtr = ProcedureUtils.objectEntityLookingAt(entity, 32d);
 						if (rtr == null || rtr.entityHit != target) {
 							Vec3d vec2 = target.getPositionEyes(1f).subtract(entity.getPositionEyes(1f));
@@ -330,7 +331,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 							entity.rotationPitch = ProcedureUtils.getPitchFromVec(vec2);
 						}
 					}
-					this.lockOnTarget(entity, target, remaining - 1);
+					lockOnTarget(entity, target, remaining - 1);
 				}
 			}
 		}
@@ -342,7 +343,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			if (FMLClientHandler.instance().isGUIOpen(net.minecraft.client.gui.GuiChat.class) || player == null) {
 				return;
 			}
-			if (event.getButton() == 1 && this.hasTargetLockOnEntity(player)) {
+			if (event.getButton() == 1 && hasTargetLockOnEntity(player)) {
 				//boolean flag = player.getEntityData().getBoolean("shouldTargetLockOnEntity");
 				boolean flag = !event.isButtonstate();
 				player.getEntityData().setBoolean(shouldTargetLockOnEntity, !flag);
@@ -353,11 +354,11 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		@SubscribeEvent
 		public void onEntitySpawn(EntityJoinWorldEvent event) {
 			if (event.getEntity() instanceof EntityPlayerMP) {
-				this.unlockOnTarget((EntityLivingBase)event.getEntity());
+				unlockOnTarget((EntityLivingBase) event.getEntity());
 			}
 		}
 
-		private void lockOnTarget(EntityLivingBase entity, EntityLivingBase target, int ticks) {
+		private static void lockOnTarget(EntityLivingBase entity, EntityLivingBase target, int ticks) {
 			if (!entity.world.isRemote) {
 				entity.getEntityData().setInteger(targetLockOnEntityId, target.getEntityId());
 				entity.getEntityData().setInteger(targetLockOnEntityTicksRemaining, ticks);
@@ -366,8 +367,8 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 				}
 			}
 		}
-	
-		private void unlockOnTarget(EntityLivingBase entity) {
+
+		private static void unlockOnTarget(EntityLivingBase entity) {
 			if (!entity.world.isRemote) {
 				entity.getEntityData().removeTag(targetLockOnEntityId);
 				entity.getEntityData().removeTag(targetLockOnEntityTicksRemaining);
@@ -379,21 +380,21 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			}
 		}
 
-		private boolean shouldLockOnTarget(EntityLivingBase entity) {
+		private static boolean shouldLockOnTarget(EntityLivingBase entity) {
 			return entity.getEntityData().getBoolean(shouldTargetLockOnEntity);
 		}
-	
-		private boolean hasTargetLockOnEntity(EntityLivingBase entity) {
+
+		private static boolean hasTargetLockOnEntity(EntityLivingBase entity) {
 			return entity.getEntityData().hasKey(targetLockOnEntityId);
 		}
 	
 		@Nullable
-		private EntityLivingBase getLockedTarget(EntityLivingBase entity) {
+		private static EntityLivingBase getLockedTarget(EntityLivingBase entity) {
 			Entity target = entity.world.getEntityByID(entity.getEntityData().getInteger(targetLockOnEntityId));
 			return target instanceof EntityLivingBase ? (EntityLivingBase)target : null;
 		}
-	
-		private int targetLockTicksRemaining(EntityLivingBase entity) {
+
+		private static int targetLockTicksRemaining(EntityLivingBase entity) {
 			return entity.getEntityData().getInteger(targetLockOnEntityTicksRemaining);
 		}
 	}
