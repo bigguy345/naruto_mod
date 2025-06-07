@@ -552,41 +552,51 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 		@SideOnly(Side.CLIENT)
 		@SubscribeEvent
 		public void onLeftClickEmpty(PlayerInteractEvent.LeftClickEmpty event) {
+			executeTeleport(event.getEntityPlayer());
+		}
+
+		@SideOnly(Side.CLIENT)
+		@SubscribeEvent
+		public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+			if (event.getEntityPlayer().isSneaking())
+				executeTeleport(event.getEntityPlayer());
+		}
+
+		@SideOnly(Side.CLIENT)
+		private static void executeTeleport(EntityPlayer player) {
 			Minecraft mc = Minecraft.getMinecraft();
-			EntityPlayer player = event.getEntityPlayer();
 			if (PlayerTracker.isNinja(player) && !clientMarkerList.isEmpty() && mc.gameSettings.thirdPersonView == 0 && canUseJutsu(player)) {
 				Vec3d vec1 = player.getPositionEyes(1f);
 				for (Vector4d vec4d : clientMarkerList.values()) {
-					if ((int)vec4d.w == mc.world.provider.getDimension()) {
-						Vec3d vec = new Vec3d(vec4d.x, vec4d.y, vec4d.z);
-						double d = vec.subtract(vec1).lengthVector();
-						Vec3d vec2 = vec1.add(player.getLookVec().scale(d + 10d));
-						AxisAlignedBB aabb = new AxisAlignedBB(vec.x-0.5d, vec.y, vec.z-0.5d, vec.x+0.5d, vec.y+1.0d, vec.z+0.5d);
-						if (aabb.grow(d * 0.05d).calculateIntercept(vec1, vec2) != null) {
-							Chakra.Pathway chakra = Chakra.pathway(player);
-							double chakraUsage = MathHelper.sqrt(d) * 10d;
-							if (chakra.getAmount() > chakraUsage) {
-								ProcedureOnLivingUpdate.setUntargetable(player, 5);
-								ProcedureSync.SoundEffectMessage.sendToServer(player.posX, player.posY, player.posZ,
-								 net.minecraft.util.SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:swoosh")),
-								 net.minecraft.util.SoundCategory.NEUTRAL, 0.8f, player.getRNG().nextFloat() * 0.4f + 0.8f);
-								ProcedureSync.SoundEffectMessage.sendToServer(vec.x, vec.y, vec.z,
-								 net.minecraft.util.SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:swoosh")),
-								 net.minecraft.util.SoundCategory.NEUTRAL, 0.8f, player.getRNG().nextFloat() * 0.4f + 0.8f);
-								EntityLivingBase entity = mc.world.findNearestEntityWithinAABB(EntityLivingBase.class, player.getEntityBoundingBox().grow(0.1d), player);
-								player.setPosition(vec.x, vec.y, vec.z);
-								ProcedureSync.EntityPositionAndRotation.sendToServer(player);
-								if (entity != null) {
-									ProcedureOnLivingUpdate.setUntargetable(entity, 5);
-									entity.setPosition(vec.x, vec.y, vec.z);
-									ProcedureSync.EntityPositionAndRotation.sendToServer(entity);
-									chakraUsage *= 2;
-								}
-								Chakra.PathwayPlayer.ConsumeMessage.sendToServer(chakraUsage);
-							} else {
-								chakra.warningDisplay();
-							}
+					if ((int) vec4d.w != mc.world.provider.getDimension())
+						continue;
+
+					Vec3d vec = new Vec3d(vec4d.x, vec4d.y, vec4d.z);
+					double d = vec.subtract(vec1).lengthVector();
+					Vec3d vec2 = vec1.add(player.getLookVec().scale(d + 10d));
+					AxisAlignedBB aabb = new AxisAlignedBB(vec.x - 0.5d, vec.y, vec.z - 0.5d, vec.x + 0.5d, vec.y + 1.0d, vec.z + 0.5d);
+					if (aabb.grow(d * 0.05d).calculateIntercept(vec1, vec2) == null)
+						continue;
+
+					Chakra.Pathway chakra = Chakra.pathway(player);
+					double chakraUsage = MathHelper.sqrt(d) * 10d;
+					if (chakra.getAmount() > chakraUsage) {
+						ProcedureOnLivingUpdate.setUntargetable(player, 5);
+						ProcedureSync.SoundEffectMessage.sendToServer(player.posX, player.posY, player.posZ, net.minecraft.util.SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:swoosh")), net.minecraft.util.SoundCategory.NEUTRAL, 0.8f, player.getRNG().nextFloat() * 0.4f + 0.8f);
+						ProcedureSync.SoundEffectMessage.sendToServer(vec.x, vec.y, vec.z, net.minecraft.util.SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:swoosh")), net.minecraft.util.SoundCategory.NEUTRAL, 0.8f, player.getRNG().nextFloat() * 0.4f + 0.8f);
+						player.setPosition(vec.x, vec.y, vec.z);
+
+						EntityLivingBase entity = mc.world.findNearestEntityWithinAABB(EntityLivingBase.class, player.getEntityBoundingBox().grow(0.1d), player);
+						ProcedureSync.EntityPositionAndRotation.sendToServer(player);
+						if (entity != null) {
+							ProcedureOnLivingUpdate.setUntargetable(entity, 5);
+							entity.setPosition(vec.x, vec.y, vec.z);
+							ProcedureSync.EntityPositionAndRotation.sendToServer(entity);
+							chakraUsage *= 2;
 						}
+						Chakra.PathwayPlayer.ConsumeMessage.sendToServer(chakraUsage);
+					} else {
+						chakra.warningDisplay();
 					}
 				}
 			}
