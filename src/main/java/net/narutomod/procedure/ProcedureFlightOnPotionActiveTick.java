@@ -1,10 +1,13 @@
 package net.narutomod.procedure;
 
+import net.minecraft.entity.player.PlayerCapabilities;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.narutomod.ElementsNarutomodMod;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.Entity;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 
 @ElementsNarutomodMod.ModElement.Tag
@@ -22,8 +25,14 @@ public class ProcedureFlightOnPotionActiveTick extends ElementsNarutomodMod.ModE
 		int speed = (int) dependencies.get("speed");
 		if (entity instanceof EntityPlayer) {
 			((EntityPlayer) entity).capabilities.allowFlying = (true);
-			if (((EntityPlayer) entity).capabilities.getFlySpeed() == 0.05f)
-				((EntityPlayer) entity).capabilities.setFlySpeed(0.05f * speed);
+			if (((EntityPlayer) entity).capabilities.getFlySpeed() == 0.05f) {
+				try {
+					Field field = ReflectionHelper.findField(PlayerCapabilities.class, "flySpeed", "field_75096_f");
+					field.setAccessible(true);
+					field.setFloat(((EntityPlayer) entity).capabilities, 0.05f * speed);
+				} catch (Exception e) {
+				}
+			}
 			((EntityPlayer) entity).sendPlayerAbilities();
 		}
 	}

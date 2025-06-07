@@ -82,7 +82,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
 
                 player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 2, 2, false, false));
 
-                boolean flag = player.isCreative() || player.dimension == WorldKamuiDimension.DIMID;
+                boolean flag = player.capabilities.allowFlying || player.isCreative() || player.dimension == WorldKamuiDimension.DIMID;
                 if (player.capabilities.allowFlying != flag) {
                     player.capabilities.allowFlying = flag;
                     player.sendPlayerAbilities();

@@ -1,5 +1,7 @@
 package net.narutomod.procedure;
 
+import net.minecraft.entity.player.PlayerCapabilities;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.narutomod.potion.PotionFlight;
 import net.narutomod.potion.PotionFeatherFalling;
 import net.narutomod.ElementsNarutomodMod;
@@ -9,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.Entity;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Collection;
 
@@ -39,7 +42,12 @@ public class ProcedureFlightPotionExpires extends ElementsNarutomodMod.ModElemen
 			if (entity instanceof EntityPlayer) {
 				((EntityPlayer) entity).capabilities.isFlying = (false);
 				((EntityPlayer) entity).capabilities.allowFlying = (false);
-				((EntityPlayer) entity).capabilities.setFlySpeed(0.05f);
+				try {
+					Field field = ReflectionHelper.findField(PlayerCapabilities.class, "flySpeed", "field_75096_f");
+					field.setAccessible(true);
+					field.setFloat(((EntityPlayer) entity).capabilities, 0.05f);
+				} catch (Exception e) {
+				}
 				((EntityPlayer) entity).sendPlayerAbilities();
 			}
 			if (entity instanceof EntityLivingBase)

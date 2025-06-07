@@ -2,17 +2,19 @@ package net.narutomod.command;
 
 import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.narutomod.ElementsNarutomodMod;
 import net.narutomod.item.ItemRinnegan;
-import net.narutomod.item.ItemRinneganTomoe;
 import net.narutomod.item.ItemTenseigan;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,7 +89,12 @@ public class CommandSpeed extends ElementsNarutomodMod.ModElement {
                     speed = 0.99f;
 
                 speed = MathHelper.clamp(speed, 0, maxSpeed);
-                player.capabilities.setFlySpeed(0.05f * speed);
+                try {
+                    Field field = ReflectionHelper.findField(PlayerCapabilities.class, "flySpeed", "field_75096_f");
+                    field.setAccessible(true);
+                    field.setFloat(player.capabilities, 0.05f * speed);
+                } catch (Exception e) {
+                }
             } else
                 throw new CommandException("Not flying!" + "");
         }
