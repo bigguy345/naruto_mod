@@ -19,8 +19,11 @@ public class ProcedureFlightOnPotionActiveTick extends ElementsNarutomodMod.ModE
 			return;
 		}
 		Entity entity = (Entity) dependencies.get("entity");
+		int speed = (int) dependencies.get("speed");
 		if (entity instanceof EntityPlayer) {
 			((EntityPlayer) entity).capabilities.allowFlying = (true);
+			if (((EntityPlayer) entity).capabilities.getFlySpeed() == 0.05f)
+				((EntityPlayer) entity).capabilities.setFlySpeed(0.05f * speed);
 			((EntityPlayer) entity).sendPlayerAbilities();
 		}
 	}

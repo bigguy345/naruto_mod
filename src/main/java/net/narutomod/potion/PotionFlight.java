@@ -67,6 +67,7 @@ public class PotionFlight extends ElementsNarutomodMod.ModElement {
 			{
 				Map<String, Object> $_dependencies = new HashMap<>();
 				$_dependencies.put("entity", entity);
+				$_dependencies.put("speed", amplifier + 1);
 				ProcedureFlightOnPotionActiveTick.executeProcedure($_dependencies);
 			}
 		}

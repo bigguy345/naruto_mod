@@ -63,7 +63,7 @@ public class ProcedureRinneganHelmetTickEvent extends ElementsNarutomodMod.ModEl
 				ProcedureWhenPlayerAttcked.setExtraDamageReduction(entity, 0.9f);
 				if (((entity.ticksExisted % 20) == 2)) {
 					if (entity instanceof EntityLivingBase)
-						((EntityLivingBase) entity).addPotionEffect(new PotionEffect(PotionFlight.potion, (int) 22, (int) 1, (false), (false)));
+						((EntityLivingBase) entity).addPotionEffect(new PotionEffect(PotionFlight.potion, (int) 22, 4, (false), (false)));
 					if (entity instanceof EntityLivingBase)
 						((EntityLivingBase) entity).addPotionEffect(new PotionEffect(MobEffects.SATURATION, (int) 22, (int) 1, (false), (false)));
 					if (entity instanceof EntityLivingBase)
