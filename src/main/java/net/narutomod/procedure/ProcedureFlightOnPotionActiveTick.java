@@ -20,7 +20,7 @@ public class ProcedureFlightOnPotionActiveTick extends ElementsNarutomodMod.ModE
 		}
 		Entity entity = (Entity) dependencies.get("entity");
 		if (entity instanceof EntityPlayer) {
-			((EntityPlayer) entity).capabilities.isFlying = (true);
+			((EntityPlayer) entity).capabilities.allowFlying = (true);
 			((EntityPlayer) entity).sendPlayerAbilities();
 		}
 	}
