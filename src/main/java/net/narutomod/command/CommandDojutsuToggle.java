@@ -38,6 +38,10 @@ public class CommandDojutsuToggle extends ElementsNarutomodMod.ModElement {
         public boolean checkPermission(MinecraftServer server, ICommandSender var1) {
             return var1.canUseCommand(0, this.getName());
         }
+        @Override
+        public int getRequiredPermissionLevel() {
+            return 0; // Allow all players
+        }
 
         @Override
         public List getAliases() {

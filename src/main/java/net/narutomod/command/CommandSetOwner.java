@@ -39,6 +39,11 @@ public class CommandSetOwner extends ElementsNarutomodMod.ModElement {
         }
 
         @Override
+        public int getRequiredPermissionLevel() {
+            return 4; 
+        }
+
+        @Override
         public List getAliases() {
             return new ArrayList();
         }

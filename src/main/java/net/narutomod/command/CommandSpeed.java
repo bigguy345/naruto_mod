@@ -41,6 +41,11 @@ public class CommandSpeed extends ElementsNarutomodMod.ModElement {
         }
 
         @Override
+        public int getRequiredPermissionLevel() {
+            return 0; // Allow all players
+        }
+
+        @Override
         public List getAliases() {
             return new ArrayList();
         }
