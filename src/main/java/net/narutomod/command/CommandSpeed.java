@@ -1,0 +1,95 @@
+package net.narutomod.command;
+
+import net.minecraft.command.*;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.narutomod.ElementsNarutomodMod;
+import net.narutomod.item.ItemRinnegan;
+import net.narutomod.item.ItemRinneganTomoe;
+import net.narutomod.item.ItemTenseigan;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@ElementsNarutomodMod.ModElement.Tag
+public class CommandSpeed extends ElementsNarutomodMod.ModElement {
+    public CommandSpeed(ElementsNarutomodMod instance) {
+        super(instance, 908);
+    }
+
+    @Override
+    public void serverLoad(FMLServerStartingEvent event) {
+        event.registerServerCommand(new CommandHandler());
+    }
+
+    public static class CommandHandler extends CommandBase implements ICommand {
+        @Override
+        public int compareTo(ICommand c) {
+            return getName().compareTo(c.getName());
+        }
+
+        @Override
+        public boolean checkPermission(MinecraftServer server, ICommandSender var1) {
+            return var1.canUseCommand(0, this.getName());
+        }
+
+        @Override
+        public List getAliases() {
+            return new ArrayList();
+        }
+
+        @Override
+        public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos) {
+            return new ArrayList();
+        }
+
+        @Override
+        public boolean isUsernameIndex(String[] string, int index) {
+            return true;
+        }
+
+        @Override
+        public String getName() {
+            return "narutospeed";
+        }
+
+        @Override
+        public String getUsage(ICommandSender var1) {
+            return "/narutospeed <value> ";
+        }
+
+        @Override
+        public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+            if (args.length == 0)
+                throw new WrongUsageException(getUsage(sender));
+
+            EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+
+            if (player.capabilities.isFlying) {
+                float speed = (float) parseDouble(args[0]);
+                float maxSpeed = 1;
+
+                ItemStack helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+                if (ItemRinnegan.isRinnesharinganActivated(helmet))
+                    maxSpeed = 10;
+                else if (!ItemTenseigan.getHeldChakraCloak(player).isEmpty())
+                    maxSpeed = 5;
+
+                if (speed > maxSpeed)
+                    throw new CommandException("Max allowed speed is " + maxSpeed);
+
+                if (speed == 1)
+                    speed = 0.99f;
+
+                speed = MathHelper.clamp(speed, 0, maxSpeed);
+                player.capabilities.setFlySpeed(0.05f * speed);
+            } else
+                throw new CommandException("Not flying!" + "");
+        }
+    }
+}
