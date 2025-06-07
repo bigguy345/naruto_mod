@@ -243,7 +243,7 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 			if (item.getItem() instanceof Base) {
 				ItemStack helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
 				if (helmet.getItem() instanceof Base) {
-					int slot = player.inventory.getSlotFor(item);
+					int slot = ProcedureUtils.getSlotFor(item,player); 
 					player.inventory.armorInventory.set(3, item);
 					player.inventory.mainInventory.set(slot, helmet);
 				}
