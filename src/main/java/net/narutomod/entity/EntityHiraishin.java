@@ -1,6 +1,7 @@
 
 package net.narutomod.entity;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.narutomod.item.ItemKunaiHiraishin;
 import net.narutomod.item.ItemKunai3prong;
 import net.narutomod.item.ItemNinjutsu;
@@ -62,6 +63,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -582,18 +584,28 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 					double chakraUsage = MathHelper.sqrt(d) * 10d;
 					if (chakra.getAmount() > chakraUsage) {
 						ProcedureOnLivingUpdate.setUntargetable(player, 5);
+						AxisAlignedBB oldPlayerBox = player.getEntityBoundingBox();
 						player.setPosition(vec.x, vec.y, vec.z);
 						ProcedureSync.EntityPositionAndRotation.sendToServer(player);
 						ProcedureSync.SoundEffectMessage.sendToServer(player.posX, player.posY, player.posZ, net.minecraft.util.SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:swoosh")), net.minecraft.util.SoundCategory.NEUTRAL, 0.8f, player.getRNG().nextFloat() * 0.4f + 0.8f);
 						ProcedureSync.SoundEffectMessage.sendToServer(vec.x, vec.y, vec.z, net.minecraft.util.SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:swoosh")), net.minecraft.util.SoundCategory.NEUTRAL, 0.8f, player.getRNG().nextFloat() * 0.4f + 0.8f);
 
-						EntityLivingBase entity = mc.world.findNearestEntityWithinAABB(EntityLivingBase.class, player.getEntityBoundingBox().grow(0.1d), player);
-						if (entity != null) {
-							ProcedureOnLivingUpdate.setUntargetable(entity, 5);
-							entity.setPosition(vec.x, vec.y, vec.z);
-							ProcedureSync.EntityPositionAndRotation.sendToServer(entity);
-							chakraUsage *= 2;
+						if (GuiScreen.isCtrlKeyDown()) {
+							int chakraUsageMulti = 0;
+							List<EntityLivingBase> entities = mc.world.getEntitiesWithinAABB(EntityLivingBase.class, oldPlayerBox.grow(0.5d));
+							for (EntityLivingBase entity : entities) {
+								System.out.println(entity);
+								if (entity != null) {
+									ProcedureOnLivingUpdate.setUntargetable(entity, 5);
+									entity.setPosition(vec.x, vec.y, vec.z);
+									ProcedureSync.EntityPositionAndRotation.sendToServer(entity);
+									chakraUsage += 2;
+								}
+							}
+							if (chakraUsageMulti > 0)
+								chakraUsage *= chakraUsageMulti;
 						}
+
 						Chakra.PathwayPlayer.ConsumeMessage.sendToServer(chakraUsage);
 					} else {
 						chakra.warningDisplay();
