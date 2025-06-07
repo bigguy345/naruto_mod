@@ -141,6 +141,8 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		public boolean onAttackEvent(LivingAttackEvent event, EntityLivingBase entity, EntityLivingBase attacker) {
 			if (isDodgeEnabled(entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD)) && entity.getRNG().nextFloat() <= 0.6f) {
 		 		Entity immediateSource = event.getSource().getImmediateSource();
+				if (immediateSource == null)
+					return false;
 		    	List<BlockPos> list = ProcedureUtils.getAllAirBlocks(entity.world, entity.getEntityBoundingBox().grow(2.5d));
 		    	for (int i = 0; i < list.size(); i++) {
 		    		BlockPos pos = list.get(entity.getRNG().nextInt(list.size()));
