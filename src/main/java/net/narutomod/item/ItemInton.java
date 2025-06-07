@@ -80,7 +80,8 @@ public class ItemInton extends ElementsNarutomodMod.ModElement {
 		@Override
 		public boolean createJutsu(ItemStack stack, EntityLivingBase entity, float power) {
 			Entity target = ProcedureUtils.objectEntityLookingAt(entity, this.maxRange).entityHit;
-			if (target instanceof EntityLivingBase && this.createJutsu(entity, (EntityLivingBase)target, this.duration)) {				
+			if (target instanceof EntityLivingBase && this.createJutsu(entity, (EntityLivingBase)target, this.duration)) {
+				
 				if (stack != null && entity instanceof EntityPlayer) {
 					ItemJutsu.setCurrentJutsuCooldown(stack, (EntityPlayer)entity, this.cooldown);
 				}
@@ -108,7 +109,11 @@ public class ItemInton extends ElementsNarutomodMod.ModElement {
 		public static boolean canTargetBeAffected(EntityLivingBase caster, EntityLivingBase target) {
 			if (target instanceof EntityTailedBeast.Base && !ItemSharingan.wearingAny(caster)) {
 				return false;
-			} else {
+			} else if (ItemRinnegan.isWearing(target) && (!ItemRinnegan.isWearing(caster) || !ItemSharingan.isWearingEternal(caster)))
+				return false;
+			else if (ItemSharingan.isWearingEternal(target) && !ItemSharingan.isWearingEternal(caster))
+				return false;
+			else {
 				ItemStack stack = ProcedureUtils.getMatchingItemStack(target, ItemNinjutsu.block);
 				if (stack != null && ItemNinjutsu.isJutsuEnabled(stack, ItemNinjutsu.BUGSWARM)) {
 					return false;
