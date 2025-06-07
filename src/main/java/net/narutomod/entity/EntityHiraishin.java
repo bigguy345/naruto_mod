@@ -3,6 +3,7 @@ package net.narutomod.entity;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.narutomod.item.ItemKunaiHiraishin;
 import net.narutomod.item.ItemKunai3prong;
 import net.narutomod.item.ItemNinjutsu;
@@ -213,6 +214,16 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 			return uuid != null ? ProcedureUtils.getEntityFromUUID(this.world, uuid) : null;
 		}
 
+		@Nullable
+		public UUID getOwnerUuid() {
+			return userUuid;
+		}
+
+		@Nullable
+		public Entity getOwner() {
+			return userUuid != null ? ProcedureUtils.getEntityFromUUID(this.world, userUuid) : null;
+		}
+		
 		public void setMarkerName(String markerName) {
 			this.markerName = markerName;
 		}
@@ -252,8 +263,12 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 		public void onUpdate() {
 			super.onUpdate();
 			if (!this.world.isRemote && this.userUuid != null) {
-				if (((WorldServer)this.world).getEntityFromUuid(this.userUuid) != null) {
+				Entity owner = ((WorldServer) this.world).getEntityFromUuid(this.userUuid);
+				if (owner != null) {
 					boolean update = false;
+					if (owner.ticksExisted == 1)
+						update = true;
+					
 					UUID targetUuid = this.getTargetUuid();
 					if (targetUuid == null) {
 						if (this.ticksExisted == 1) {
@@ -308,10 +323,10 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 				compound.setFloat("offsetZ", (float)vec.z);
 				compound.setFloat("offsetYaw", vec2.x);
 				compound.setFloat("offsetPitch", vec2.y);
-
-				if (markerName != null)
-					compound.setString("markerName", markerName);
 			}
+
+			if (markerName != null)
+				compound.setString("markerName", markerName);
 		}
 
 		public static class Jutsu implements ItemJutsu.IJutsuCallback {
@@ -512,7 +527,7 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 				return this.texture;
 			}
 
-			protected void renderMarker(double x, double y, double z, float ageInTicks) {
+			protected void renderMarker(double x, double y, double z, float ageInTicks, MarkerData markerData) {
 				double d = MathHelper.sqrt(x * x + y * y + z * z);
 				if (d > 2.0D) {
 					x = x / d;
@@ -530,7 +545,10 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 					this.itemRenderer.renderItem(new ItemStack(this.item), ItemCameraTransforms.TransformType.GROUND);
             		GlStateManager.enableLighting();
 					GlStateManager.popMatrix();
-					this.renderText("this is discs marker" + (int) d, x, y, z);
+
+					String name = markerData.name != null && !markerData.name.isEmpty() ? markerData.name : "";
+					String markerTag = !name.isEmpty() ? String.format("%s (%s)", name, (int) d) : (int) d + "";
+					this.renderText(markerTag, x, y, z);
 				}
 			}
 
@@ -601,11 +619,17 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 						Vec3d vec1 = new Vec3d(vec.x, vec.y, vec.z).subtract(renderManager.viewerPosX, renderManager.viewerPosY, renderManager.viewerPosZ);
 						float f = MathHelper.abs(MathHelper.wrapDegrees(ProcedureUtils.getYawFromVec(vec1) - mc.player.rotationYawHead));
 						if ((int)vec.w == mc.world.provider.getDimension() && f < 90.0f) {
-							this.renderCustom.renderMarker(vec1.x, vec1.y, vec1.z, (float)mc.world.getTotalWorldTime() + event.getPartialTicks());
+							this.renderCustom.renderMarker(vec1.x, vec1.y, vec1.z, (float) mc.world.getTotalWorldTime() + event.getPartialTicks(), data);
 						}
 					}
 				}
 			}
+		}
+
+		@SideOnly(Side.CLIENT)
+		@SubscribeEvent
+		public void onClientDisconnect(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
+			clientMarkerList.clear();
 		}
 
 		@SideOnly(Side.CLIENT)
