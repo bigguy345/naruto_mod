@@ -5,7 +5,6 @@ import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.creativetab.TabModTab;
 import net.narutomod.entity.EntityRendererRegister;
 import net.narutomod.entity.EntityHiraishin;
-import net.narutomod.NarutomodMod;
 import net.narutomod.ElementsNarutomodMod;
 
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -169,7 +168,7 @@ public class ItemKunaiHiraishin extends ElementsNarutomodMod.ModElement {
 					if (lastMarkerUuid != null && !lastMarkerUuid.equals(entity.getUniqueID())) {
 						EntityHiraishin.updateServerMarkerMap(ownerUuid, lastMarkerUuid, null);
 					}
-					EntityHiraishin.updateServerMarkerMap(ownerUuid, entity.getUniqueID(), new Vector4d(entity.posX, entity.posY, entity.posZ, entity.dimension));
+					EntityHiraishin.updateServerMarkerMap(ownerUuid, entity.getUniqueID(), new EntityHiraishin.MarkerData(new Vector4d(entity.posX, entity.posY, entity.posZ, entity.dimension)));
 					stack.getTagCompound().setUniqueId("lastMarkerUuid", entity.getUniqueID());
 				} else if (lastMarkerUuid != null) {
 					EntityHiraishin.updateServerMarkerMap(ownerUuid, lastMarkerUuid, null);
@@ -268,7 +267,7 @@ public class ItemKunaiHiraishin extends ElementsNarutomodMod.ModElement {
 				} else if (!this.noUpdate) {
 					Vec3d vec = this.getPositionVector();
 					Vector4d vec4d = new Vector4d(vec.x, vec.y, vec.z, this.dimension);
-					EntityHiraishin.updateServerMarkerMap(owner.getUniqueID(), this.getUniqueID(), vec4d);
+					EntityHiraishin.updateServerMarkerMap(owner.getUniqueID(), this.getUniqueID(), new EntityHiraishin.MarkerData(vec4d));
 					if (this.inGround) {
 						this.noUpdate = true;
 					}

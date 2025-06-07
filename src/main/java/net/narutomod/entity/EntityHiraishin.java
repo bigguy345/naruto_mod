@@ -2,6 +2,7 @@
 package net.narutomod.entity;
 
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.narutomod.item.ItemKunaiHiraishin;
 import net.narutomod.item.ItemKunai3prong;
 import net.narutomod.item.ItemNinjutsu;
@@ -79,8 +80,8 @@ import io.netty.buffer.ByteBuf;
 public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 	public static final int ENTITYID = 419;
 	public static final int ENTITYID_RANGED = 420;
-	private static final Map<UUID, Map<UUID, Vector4d>> serverMarkerMap = Maps.newHashMap();
-	private static final Map<UUID, Vector4d> clientMarkerList = Maps.newHashMap();
+	private static final Map<UUID, Map<UUID, MarkerData>> serverMarkerMap = Maps.newHashMap();
+	private static final Map<UUID, MarkerData> clientMarkerList = Maps.newHashMap();
 
 	public EntityHiraishin(ElementsNarutomodMod instance) {
 		super(instance, 841);
@@ -92,25 +93,27 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 		 .id(new ResourceLocation("narutomod", "hiraishin"), ENTITYID).name("hiraishin").tracker(64, 3, true).build());
 	}
 
-	public static void updateServerMarkerMap(UUID ownerUuid, UUID kunaiUuid, @Nullable Vector4d vec4d) {
-		if (vec4d == null) {
+	public static void updateServerMarkerMap(UUID ownerUuid, UUID kunaiUuid, MarkerData data) {
+		if (data == null) {
 			if (serverMarkerMap.containsKey(ownerUuid)) {
-				Map<UUID, Vector4d> map = serverMarkerMap.get(ownerUuid);
+				Map<UUID, MarkerData> map = serverMarkerMap.get(ownerUuid);
 				map.remove(kunaiUuid);
-				if (map.isEmpty()) {
+				if (map.isEmpty()) 
 					serverMarkerMap.remove(ownerUuid);
-				}
 			}
 		} else if (!serverMarkerMap.containsKey(ownerUuid)) {
-			Map<UUID, Vector4d> map = Maps.newHashMap();
-			map.put(kunaiUuid, vec4d);
+			Map<UUID, MarkerData> map = Maps.newHashMap();
+			map.put(kunaiUuid, data);
 			serverMarkerMap.put(ownerUuid, map);
 		} else {
-			serverMarkerMap.get(ownerUuid).put(kunaiUuid, vec4d);
+			serverMarkerMap.get(ownerUuid).put(kunaiUuid, data);
 		}
 		EntityPlayerMP owner = ProcedureUtils.getPlayerMatchingUuid(ownerUuid);
 		if (owner != null) {
-			UpdateMarkerMessage.sendToPlayer(owner, kunaiUuid, vec4d);
+			if (data == null)
+				data = new MarkerData();
+			data.uuid = kunaiUuid;
+			UpdateMarkerMessage.sendToPlayer(owner, data);
 		}
 	}
 
@@ -127,6 +130,24 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 		 .canActivateJutsu(stack, ItemNinjutsu.HIRAISHIN, player) == EnumActionResult.SUCCESS;
 	}
 
+	public static class MarkerData {
+		public UUID uuid;
+		public String name;
+		public Vector4d vec;
+
+		public MarkerData() {
+		}
+
+		public MarkerData(Vector4d vec) {
+			this.vec = vec;
+		}
+
+		public MarkerData(EC entity) {
+			this.vec = new Vector4d(entity.posX, entity.posY, entity.posZ, entity.dimension);
+			this.name = entity.markerName;
+		}
+	}
+
 	public static class EC extends Entity implements ItemJutsu.IJutsu {
 		private static final DataParameter<Optional<UUID>> TARGET_UUID = EntityDataManager.<Optional<UUID>>createKey(EC.class, DataSerializers.OPTIONAL_UNIQUE_ID);
 		private static final DataParameter<Float> OFFSET_X = EntityDataManager.<Float>createKey(EC.class, DataSerializers.FLOAT);
@@ -135,7 +156,8 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 		private static final DataParameter<Float> OFFSET_YAW = EntityDataManager.<Float>createKey(EC.class, DataSerializers.FLOAT);
 		private static final DataParameter<Float> OFFSET_PITCH = EntityDataManager.<Float>createKey(EC.class, DataSerializers.FLOAT);
 		private UUID userUuid;
-
+		private String markerName;
+		
 		public EC(World world) {
 			super(world);
 			this.setSize(0.6f, 0.05f);
@@ -191,6 +213,14 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 			return uuid != null ? ProcedureUtils.getEntityFromUUID(this.world, uuid) : null;
 		}
 
+		public void setMarkerName(String markerName) {
+			this.markerName = markerName;
+		}
+
+		public MarkerData getMarkerData() {
+			return new MarkerData(this);
+		}
+
 		private void setOffsets(double x, double y, double z, float yaw, float pitch) {
 			this.dataManager.set(OFFSET_X, Float.valueOf((float)x));
 			this.dataManager.set(OFFSET_Y, Float.valueOf((float)y));
@@ -241,7 +271,7 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 						}
 					}
 					if (update) {
-						updateServerMarkerMap(this.userUuid, this.getUniqueID(), new Vector4d(this.posX, this.posY, this.posZ, this.dimension));
+						updateServerMarkerMap(this.userUuid, this.getUniqueID(), getMarkerData());
 					}
 				}
 			}
@@ -257,6 +287,10 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 				this.setOffsets(compound.getFloat("offsetX"), compound.getFloat("offsetY"), compound.getFloat("offsetZ"),
 				 compound.getFloat("offsetYaw"), compound.getFloat("offsetPitch"));
 			}
+
+			if (compound.hasKey("markerName"))
+				this.markerName = compound.getString("markerName");
+			
 		}
 
 		@Override
@@ -274,6 +308,9 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 				compound.setFloat("offsetZ", (float)vec.z);
 				compound.setFloat("offsetYaw", vec2.x);
 				compound.setFloat("offsetPitch", vec2.y);
+
+				if (markerName != null)
+					compound.setString("markerName", markerName);
 			}
 		}
 
@@ -306,18 +343,19 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static class UpdateMarkerMessage implements IMessage {
-		String uuid;
-		Vector4d vec;
+		MarkerData data;
+		boolean clear;
 
-		public UpdateMarkerMessage() {}
-
-		public UpdateMarkerMessage(UUID id, @Nullable Vector4d v4d) {
-			this.uuid = id.toString();
-			this.vec = v4d;
+		public UpdateMarkerMessage() {
+			clear = true;
 		}
 
-		public static void sendToPlayer(EntityPlayerMP entity, UUID id, @Nullable Vector4d v4d) {
-			NarutomodMod.PACKET_HANDLER.sendTo(new UpdateMarkerMessage(id, v4d), entity);
+		public UpdateMarkerMessage(MarkerData data) {
+			this.data = data;
+		}
+
+		public static void sendToPlayer(EntityPlayerMP entity, MarkerData data) {
+			NarutomodMod.PACKET_HANDLER.sendTo(new UpdateMarkerMessage(data), entity);
 		}
 
 		public static void clearClientMarkers(EntityPlayerMP entity) {
@@ -329,14 +367,13 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 			@Override
 			public IMessage onMessage(UpdateMarkerMessage message, MessageContext context) {
 				Minecraft.getMinecraft().addScheduledTask(() -> {
-					if (message.uuid == null) {
+					if (message.clear) {
 						clientMarkerList.clear();
 					} else {
-						UUID uuid = UUID.fromString(message.uuid);
-						if (message.vec != null) {
-							clientMarkerList.put(uuid, message.vec);
+						if (message.data.vec != null) {
+							clientMarkerList.put(message.data.uuid, message.data);
 						} else {
-							clientMarkerList.remove(uuid);
+							clientMarkerList.remove(message.data.uuid);
 						}
 					}
 				});
@@ -345,26 +382,45 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 		}
 	
 		public void toBytes(ByteBuf buf) {
-			if (this.uuid != null) {
+			buf.writeBoolean(clear);
+			if (clear)
+				return;
+
+			if (data.uuid != null) {
 				buf.writeBoolean(true);
-				ProcedureSync.writeString(buf, this.uuid);
+				ByteBufUtils.writeUTF8String(buf, data.uuid.toString());
+			} else 
+				buf.writeBoolean(false);
+
+			if (data.vec != null) {
+				buf.writeBoolean(true);
+				buf.writeDouble(data.vec.x);
+				buf.writeDouble(data.vec.y);
+				buf.writeDouble(data.vec.z);
+				buf.writeDouble(data.vec.w);
 			} else {
 				buf.writeBoolean(false);
 			}
-			if (this.vec != null) {
+
+			if (data.name != null) {
 				buf.writeBoolean(true);
-				buf.writeDouble(this.vec.x);
-				buf.writeDouble(this.vec.y);
-				buf.writeDouble(this.vec.z);
-				buf.writeDouble(this.vec.w);
+				ByteBufUtils.writeUTF8String(buf, data.name);
 			} else {
 				buf.writeBoolean(false);
 			}
 		}
 	
 		public void fromBytes(ByteBuf buf) {
-			this.uuid = buf.readBoolean() ? ProcedureSync.readString(buf) : null;
-			this.vec = buf.readBoolean() ? new Vector4d(buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readDouble()) : null;
+			clear = buf.readBoolean();
+			if (clear)
+				return;
+
+			if (data == null)
+				data = new MarkerData();
+
+			data.uuid = buf.readBoolean() ? UUID.fromString(ByteBufUtils.readUTF8String(buf)) : null;
+			data.vec = buf.readBoolean() ? new Vector4d(buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readDouble()) : null;
+			data.name = buf.readBoolean() ? ByteBufUtils.readUTF8String(buf) : "";
 		}
 	}
 
@@ -474,7 +530,7 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 					this.itemRenderer.renderItem(new ItemStack(this.item), ItemCameraTransforms.TransformType.GROUND);
             		GlStateManager.enableLighting();
 					GlStateManager.popMatrix();
-					this.renderText(""+(int)d, x, y, z);
+					this.renderText("this is discs marker" + (int) d, x, y, z);
 				}
 			}
 
@@ -540,7 +596,8 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 			if (mc.player != null && PlayerTracker.isNinja(mc.player) && !clientMarkerList.isEmpty()) {
 				RenderManager renderManager = mc.getRenderManager();
 				if (renderManager != null && renderManager.options != null && renderManager.options.thirdPersonView == 0) {
-					for (Vector4d vec : clientMarkerList.values()) {
+					for (MarkerData data : clientMarkerList.values()) {
+						Vector4d vec = data.vec;
 						Vec3d vec1 = new Vec3d(vec.x, vec.y, vec.z).subtract(renderManager.viewerPosX, renderManager.viewerPosY, renderManager.viewerPosZ);
 						float f = MathHelper.abs(MathHelper.wrapDegrees(ProcedureUtils.getYawFromVec(vec1) - mc.player.rotationYawHead));
 						if ((int)vec.w == mc.world.provider.getDimension() && f < 90.0f) {
@@ -569,7 +626,8 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 			Minecraft mc = Minecraft.getMinecraft();
 			if (PlayerTracker.isNinja(player) && !clientMarkerList.isEmpty() && mc.gameSettings.thirdPersonView == 0 && canUseJutsu(player)) {
 				Vec3d vec1 = player.getPositionEyes(1f);
-				for (Vector4d vec4d : clientMarkerList.values()) {
+				for (MarkerData data : clientMarkerList.values()) {
+					Vector4d vec4d = data.vec;
 					if ((int) vec4d.w != mc.world.provider.getDimension())
 						continue;
 
