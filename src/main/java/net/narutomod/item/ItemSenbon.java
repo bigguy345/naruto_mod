@@ -50,7 +50,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.potion.PotionEffect;
 
 import com.google.common.collect.Multimap;
-
+
+
 @ElementsNarutomodMod.ModElement.Tag
 public class ItemSenbon extends ElementsNarutomodMod.ModElement {
 	@GameRegistry.ObjectHolder("narutomod:senbon")
@@ -182,8 +183,8 @@ public class ItemSenbon extends ElementsNarutomodMod.ModElement {
 			super.arrowHit(entity);
 			entity.setArrowCountInEntity(entity.getArrowCountInEntity() - 1);
 			if (this.poisened) {
-				entity.addPotionEffect(new PotionEffect(MobEffects.POISON, 6000, 5));
-				entity.addPotionEffect(new PotionEffect(PotionHeaviness.potion, 6000, 1));
+				entity.addPotionEffect(new PotionEffect(MobEffects.POISON, 1800, 5));
+				entity.addPotionEffect(new PotionEffect(PotionHeaviness.potion, 1800, 1));
 			}
 		}
 
