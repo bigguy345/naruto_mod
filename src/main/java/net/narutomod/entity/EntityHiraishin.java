@@ -481,7 +481,7 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 		    private void renderText(String str, double x, double y, double z) {
 		    	FontRenderer fontRenderer = this.getFontRendererFromRenderManager();
             	GlStateManager.pushMatrix();
-            	GlStateManager.translate(x, y + 0.1D, z);
+				GlStateManager.translate(x, y + 0.085D, z);
             	GlStateManager.rotate(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
             	GlStateManager.rotate((float)(this.renderManager.options.thirdPersonView == 2 ? -1 : 1) * this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
             	GlStateManager.scale(-0.0025F, -0.0025F, 0.0025F);
@@ -491,22 +491,22 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
             	GlStateManager.disableDepth();
             	GlStateManager.enableBlend();
             	GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-            	int i = fontRenderer.getStringWidth(str) / 2;
+				int centered = fontRenderer.getStringWidth(str) / 2;
             	GlStateManager.disableTexture2D();
             	Tessellator tessellator = Tessellator.getInstance();
             	BufferBuilder bufferbuilder = tessellator.getBuffer();
             	bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
-            	bufferbuilder.pos((double)(-i - 1), -1.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.3F).endVertex();
-            	bufferbuilder.pos((double)(-i - 1), 8.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.3F).endVertex();
-            	bufferbuilder.pos((double)(i + 1), 8.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.3F).endVertex();
-            	bufferbuilder.pos((double)(i + 1), -1.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.3F).endVertex();
+				bufferbuilder.pos(-centered - 1, -1.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.3F).endVertex();
+				bufferbuilder.pos(-centered - 1, 8.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.3F).endVertex();
+				bufferbuilder.pos(centered + 1, 8.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.3F).endVertex();
+				bufferbuilder.pos(centered + 1, -1.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.3F).endVertex();
             	tessellator.draw();
             	GlStateManager.enableTexture2D();
-            	fontRenderer.drawString(str, -fontRenderer.getStringWidth(str) / 2, 0, 0x20FFFFFF);
+				fontRenderer.drawString(str, -centered, 0, 0x20FFFFFF);
             	GlStateManager.enableDepth();
             	
             	GlStateManager.depthMask(true);
-            	fontRenderer.drawString(str, -fontRenderer.getStringWidth(str) / 2, 0, 0xFF00FF00);
+				fontRenderer.drawString(str, -centered, 0, 0xFF00FF00);
             	GlStateManager.enableLighting();
             	GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             	GlStateManager.popMatrix();
