@@ -1,6 +1,11 @@
 
 package net.narutomod.entity;
 
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
@@ -40,10 +45,7 @@ import net.narutomod.procedure.ProcedureAoeCommand;
 import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.procedure.ProcedureGravityPower;
 
-import java.util.List;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.google.common.base.Predicate;
@@ -95,10 +97,14 @@ public class EntityChibakuTenseiBall extends ElementsNarutomodMod.ModElement {
 		}
 
 		private void convertBlocks2Satellite(int stayTicks) {
+			List<Entity> copy = new ArrayList<>(affectedEntities);
 			this.setDead();
 			List<? extends BlockPos> list = ProcedureUtils.getNonAirBlocks(this.world, this.getEntityBoundingBox().grow(1));
 			if (!list.isEmpty() && this.shootingEntity != null) {
-				this.world.spawnEntity(new Satellite(this.shootingEntity, list, stayTicks));
+				Satellite sat = new Satellite(this.shootingEntity, list, stayTicks);
+				sat.checkForTailedBeast(copy);
+
+				this.world.spawnEntity(sat);
 			}
 		}
 
@@ -341,6 +347,10 @@ public class EntityChibakuTenseiBall extends ElementsNarutomodMod.ModElement {
 		private EntityLivingBase summoner;
 		private boolean explosionSet;
 
+		public List<EntityTailedBeast.Base> bijuus = new ArrayList<>();
+		public List<UUID> bijuuUUIDs = new ArrayList<>();
+		boolean loadBijuus;
+
 		public Satellite(World world) {
 			super(world);
 		}
@@ -362,8 +372,10 @@ public class EntityChibakuTenseiBall extends ElementsNarutomodMod.ModElement {
 					}
 					new EventSphericalExplosion(this.world, this.summoner, (int)this.posX, (int)this.posY, (int)this.posZ, 60, 0, 0.3f) {
 						protected void doOnTick(int currentTick) {
-							ProcedureAoeCommand.set(getWorld(), getX0(), getY0(), getZ0(), 0d, getRadius())
-							 .exclude(getEntity()).damageEntities(DamageSource.FALLING_BLOCK.setExplosion(), (float)getRadius());
+							ProcedureAoeCommand aoe = ProcedureAoeCommand.set(getWorld(), getX0(), getY0(), getZ0(), 0d, getRadius()).exclude(getEntity());
+							for (Entity bijuu : bijuus)
+								aoe.exclude(bijuu);
+							aoe.damageEntities(DamageSource.FALLING_BLOCK.setExplosion(), (float) getRadius());
 						}
 					};
 					this.explosionSet = true;
@@ -373,9 +385,86 @@ public class EntityChibakuTenseiBall extends ElementsNarutomodMod.ModElement {
 			super.onImpact(impact);
 		}
 
+		public void checkForTailedBeast(List<Entity> entities) {
+			for (Entity entity : entities) {
+				if (entity instanceof EntityTailedBeast.Base)
+					bijuus.add((EntityTailedBeast.Base) entity);
+			}
+		}
+
+		public void onUpdate() {
+			super.onUpdate();
+			if (world.isRemote)
+				return;
+
+			if (ticksExisted % 5 == 0 && !loadBijuus && !bijuuUUIDs.isEmpty()) {
+				for (UUID uuid : bijuuUUIDs)
+					readBijuu(uuid);
+				loadBijuus = true;
+			}
+
+			if (!bijuus.isEmpty())
+				ticksAlive = 500;
+
+			Iterator<EntityTailedBeast.Base> iter = bijuus.iterator();
+
+			while (iter.hasNext()) {
+				EntityTailedBeast.Base bijuu = iter.next();
+				if (ItemJutsu.canTarget(bijuu)) {
+					Vec3d vec = this.getCenter().subtract(bijuu.posX, bijuu.posY + bijuu.height / 2, bijuu.posZ).normalize().scale(0.1d);
+					bijuu.addVelocity(vec.x, vec.y, vec.z);
+					bijuu.velocityChanged = true;
+				}
+
+				if (bijuu.isDead)
+					iter.remove();
+			}
+		}
 		@Override
 		public boolean griefingAllowed() {
 			return this.getTicksAlive() == 1 ? true : super.griefingAllowed();
+		}
+		
+		
+
+		@Override
+		protected void readEntityFromNBT(NBTTagCompound compound) {
+			super.readEntityFromNBT(compound);
+
+			if (compound.hasKey("Bijuus", 9)) { // 9 = TAG_LIST
+				NBTTagList uuidList = compound.getTagList("Bijuus", 8); // 8 = TAG_STRING
+				for (int i = 0; i < uuidList.tagCount(); i++) {
+					String uuidStr = uuidList.getStringTagAt(i);
+					try {
+						bijuuUUIDs.add(UUID.fromString(uuidStr));
+					} catch (IllegalArgumentException e) {
+					}
+				}
+			}
+		}
+
+		@Override
+		protected void writeEntityToNBT(NBTTagCompound compound) {
+			super.writeEntityToNBT(compound);
+
+			if (!bijuus.isEmpty()) {
+				NBTTagList uuidList = new NBTTagList();
+				for (EntityTailedBeast.Base beast : bijuus) {
+					if (beast.getUniqueID() != null)
+						uuidList.appendTag(new NBTTagString(beast.getUniqueID().toString()));
+				}
+				compound.setTag("Bijuus", uuidList);
+			}
+		}
+
+		private void readBijuu(UUID uuid) {
+			try {
+				Entity entity = ((WorldServer) this.world).getEntityFromUuid(uuid);
+
+				if (entity instanceof EntityTailedBeast.Base)
+					bijuus.add((EntityTailedBeast.Base) entity);
+			} catch (IllegalArgumentException e) {
+			}
 		}
 	}
 
@@ -422,7 +511,8 @@ public class EntityChibakuTenseiBall extends ElementsNarutomodMod.ModElement {
 	
 			@Override
 			protected ResourceLocation getEntityTexture(EntityCustom entity) {
-				return entity.getEntityScale() > entity.maxScale * 0.4f ? this.blank_tex : this.texture;
+				return entity.getEntityScale() > entity.maxScale * 0.4f 
+? this.blank_tex : this.texture;
 			} // meteor2
 		}
 	

@@ -52,7 +52,8 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 import com.google.common.collect.Maps;
-import com.google.common.base.Predicate;
+
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 @ElementsNarutomodMod.ModElement.Tag
@@ -75,7 +76,7 @@ public class EntityEarthBlocks extends ElementsNarutomodMod.ModElement {
 		private final Map<Vec3d, IBlockState> blocksMap = Maps.newHashMap();
 		private final Map<Entity, Vec3d> entityMap = Maps.newHashMap();
 		private int fallTime = 600;
-		private int ticksAlive;
+		public int ticksAlive;
 		protected int fallTicks;
 		private int blocksTotal;
 		private float health;
@@ -129,7 +130,7 @@ public class EntityEarthBlocks extends ElementsNarutomodMod.ModElement {
 		protected void entityInit() {
 		}
 
-		private Vec3d getCenter() {
+		protected Vec3d getCenter() {
 			AxisAlignedBB bb = this.getEntityBoundingBox();
         	return new Vec3d(bb.minX + (bb.maxX - bb.minX) * 0.5D, bb.minY + (bb.maxY - bb.minY) * 0.5D, bb.minZ + (bb.maxZ - bb.minZ) * 0.5D);
     	}
