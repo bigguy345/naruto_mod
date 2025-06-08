@@ -557,7 +557,7 @@ public class EntityTailedBeast extends ElementsNarutomodMod.ModElement {
 		@Override
 		public boolean attackEntityFrom(DamageSource source, float amount) {
 			if (this.getHealth() <= 0.0f)
-				return false;
+				return false; 
 			if (source.getTrueSource() instanceof EntityPlayer && source.getTrueSource().equals(this.getControllingPassenger()))
 				return false;
 			if (source.getImmediateSource() instanceof net.minecraft.entity.projectile.EntityPotion)
@@ -570,6 +570,8 @@ public class EntityTailedBeast extends ElementsNarutomodMod.ModElement {
 				return false;
 			if (source == DamageSource.LIGHTNING_BOLT)
 				return false;
+			if (source == DamageSource.FALLING_BLOCK)
+				amount /= 2;
 			if (this.equals(source.getTrueSource())) {
 				return false;
 			}
@@ -776,7 +778,8 @@ public class EntityTailedBeast extends ElementsNarutomodMod.ModElement {
 				float maxhp = this.getMaxHealth();
 				if (hp > maxhp * 0.1f && this.isFaceDown()) {
 					this.setFaceDown(false);
-				} else if (hp <= maxhp * 0.1f && !this.isFaceDown()) {
+				}
+ else if (hp <= maxhp * 0.1f && !this.isFaceDown()) {
 					this.setFaceDown(true);
 				}
 				if (this.isAIDisabled() && jinchuriki != null && jinchuriki.getHealth() <= 0.0F) {
@@ -1170,7 +1173,8 @@ public class EntityTailedBeast extends ElementsNarutomodMod.ModElement {
 
 	public static class NavigateGround extends PathNavigateGround {
 		private BlockPos targetPos;
-	    private int ticksAtLastPos;
+	
+    private int ticksAtLastPos;
 	    private Vec3d lastPosCheck = Vec3d.ZERO;
 
 		public NavigateGround(EntityLiving entityLivingIn, World worldIn) {
