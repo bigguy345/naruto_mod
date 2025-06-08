@@ -170,16 +170,24 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 				return;
 			}
 
-			if (LockOn.getLockedTarget(player) != null) {
+			boolean isAutoLockOn = LockOn.isAutoLockOn(player);
+			if (isAutoLockOn) {
 				LockOn.unlockOnTarget(player);
 				return;
 			}
 
-			RayTraceResult rtr = ProcedureUtils.objectEntityLookingAt(player, LockOn.getRange(eye));
-			if (!(rtr.entityHit instanceof EntityLivingBase))
-				return;
+			EntityLivingBase target = null;
+			if (LockOn.getLockedTarget(player) != null && player.isSneaking())
+				target = LockOn.getLockedTarget(player);
 
-			EntityLivingBase target = (EntityLivingBase) rtr.entityHit;
+
+			if (target == null) {
+				RayTraceResult rtr = ProcedureUtils.objectEntityLookingAt(player, LockOn.getRange(eye), 1.5f);
+				if (!(rtr.entityHit instanceof EntityLivingBase))
+					return;
+				target = (EntityLivingBase) rtr.entityHit;
+			}
+			
 			int time = LockOn.getAutoLockOnMaxTime(player) - LockOn.getAutoLockOnTime(player);
 			LockOn.lockOnTarget(player, target, time * 20);
 			player.getEntityData().setBoolean(LockOn.autoLockOnEntity, true);
