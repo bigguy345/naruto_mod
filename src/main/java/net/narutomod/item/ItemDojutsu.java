@@ -162,7 +162,7 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 		if (eye.getItem() instanceof Base) {
 			SoundEvent sound = ((Base) eye.getItem()).getActivationSound(eye);
 			if (sound != null)
-				entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, sound, SoundCategory.NEUTRAL, 1, 1);
+				entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, sound, SoundCategory.NEUTRAL, 2, 1);
 		}
 	}
 
@@ -170,7 +170,7 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 		if (eye.getItem() instanceof Base) {
 			SoundEvent sound = ((Base) eye.getItem()).getDeactivationSound(eye);
 			if (sound != null)
-				entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, sound, SoundCategory.NEUTRAL, 1, 1);
+				entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, sound, SoundCategory.NEUTRAL, 2, 1);
 		}
 	}
 	public static boolean hasAnyDojutsu(EntityPlayer player) {
