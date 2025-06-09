@@ -64,7 +64,6 @@ public class JutsuKeys {
 			super(description, keyCode, category);
 			this.keyId = (byte) keyId;
 			jutsuKeys.add(this);
-			ClientRegistry.registerKeyBinding(this);
 		}
 
 		/**
@@ -78,6 +77,10 @@ public class JutsuKeys {
 		public boolean onPress(byte pressType) {
 			return true; //send packet
 		}
+	}
+
+	public static void register() {
+		jutsuKeys.forEach(key -> ClientRegistry.registerKeyBinding(key));
 	}
 
 	@SubscribeEvent
