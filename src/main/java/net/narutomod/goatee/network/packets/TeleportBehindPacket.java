@@ -18,7 +18,7 @@ import net.narutomod.procedure.ProcedureUtils;
 import java.io.IOException;
 
 public final class TeleportBehindPacket extends AbstractPacket {
-    public static final String packetName = "HiraishinTeleportBehind";
+    public static final String packetName = "TeleportBehind";
 
     int id;
 
