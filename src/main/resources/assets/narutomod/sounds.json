@@ -296,6 +296,15 @@
       }
     ]
   },
+  "wheel_select": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "narutomod:wheel_select",
+        "stream": false
+      }
+    ]
+  },
   "laser_long": {
     "category": "master",
     "sounds": [

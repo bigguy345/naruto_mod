@@ -17,6 +17,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.narutomod.ModConfig;
+import net.narutomod.goatee.client.Sounds;
 import net.narutomod.goatee.data.NarutoData;
 import net.narutomod.goatee.data.WheelData;
 import net.narutomod.goatee.network.packets.NarutoSyncData;
@@ -139,14 +140,21 @@ public class HUDItemStackWheel extends GuiScreen {
         mc.gameSettings.keyBindSprint.setKeyConflictContext(KeyConflictContext.UNIVERSAL);
     }
 
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        if (mouseButton == 1)
+            selectSlot(-1);
+    }
+    
     public void selectSlot(int slotID) {
         if (hoveredSlot == slotID)
             return;
 
         if (hoveredSlot != -1)
             wheelSlot[hoveredSlot].setHoveredState(false);
-        if (slotID != -1)
+        if (slotID != -1) {
             wheelSlot[slotID].setHoveredState(true);
+            Minecraft.getMinecraft().player.playSound(Sounds.get("wheel_select"), 1, 1);
+        }
         hoveredSlot = slotID;
     }
 
@@ -176,9 +184,6 @@ public class HUDItemStackWheel extends GuiScreen {
     }
 
     public void update() {
-        if (Mouse.isButtonDown(1))
-            selectSlot(-1);
-        
         if (isClosing && guiAnimationScale >= 0) {
             float updateTime = (float) (Minecraft.getSystemTime() - timeClosed) / CLOSE_TIME;
             float inSine = (float) (1 - Math.cos((updateTime * Math.PI) / 2));
