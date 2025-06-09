@@ -38,7 +38,7 @@ public class JutsuKeys {
 	///////////////////////
 	// Client handled keys
 
-	public static Key dojutsWheel = new Key(0, "key.dojutsu_wheel", Keyboard.KEY_V, "key.mcreator.category") {
+	public static Key dojutsuWheel = new Key(0, "key.dojutsu_wheel", Keyboard.KEY_V, "key.mcreator.category") {
 		public boolean onPress(byte pressType) {
 			if (pressType == 0)
 				Minecraft.getMinecraft().displayGuiScreen(new HUDItemStackWheel(NarutoData.getClient().dojutsuWheel));

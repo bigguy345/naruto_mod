@@ -198,8 +198,8 @@ public class HUDItemStackWheel extends GuiScreen {
 
         calculateHoveredSlot((float) this.width / 2, (float) this.height / 2, configureEnabled);
         
-        int code = JutsuKeys.dojutsWheel.getKeyCode();
-        keyDown = JutsuKeys.dojutsWheel.getKeyCode() < 0 ? Mouse.isButtonDown(code + 100) : Keyboard.isKeyDown(code);
+        int code = JutsuKeys.dojutsuWheel.getKeyCode();
+        keyDown = JutsuKeys.dojutsuWheel.getKeyCode() < 0 ? Mouse.isButtonDown(code + 100) : Keyboard.isKeyDown(code);
         if (!keyDown && !configureEnabled && !isClosing)
             onClose(PRE_CLOSE);
         
