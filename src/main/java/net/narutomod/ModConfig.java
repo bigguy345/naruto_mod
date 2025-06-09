@@ -91,6 +91,10 @@ public class ModConfig extends ElementsNarutomodMod.ModElement {
 		@Config.RangeDouble(min = 1, max = 5)
 		@Config.Comment({"Player chakra multiplied by this number on Sage Mode entry."})
 		public double SAGE_MODE_CHAKRA_MULTIPLIER = 1.6;
+
+		@Config.RangeDouble(min = 0, max = 10000)
+		@Config.Comment({"Chakra consumed when using the Hiraishin Teleport Behind"})
+		public double HIRAISHIN_TELEPORT_BEHIND_CHAKRA_USAGE = 500;
 	}
 
 	public static class Items {

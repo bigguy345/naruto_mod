@@ -713,4 +713,26 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 			}
 		}
 	}
+
+	@SideOnly(Side.CLIENT)
+	public static void teleportBehind() {
+		Minecraft mc = Minecraft.getMinecraft();
+		if (!(PlayerTracker.isNinja(mc.player) && !clientMarkerList.isEmpty() && mc.gameSettings.thirdPersonView == 0 && canUseJutsu(mc.player)))
+			return;
+
+		Entity target = null;
+		RayTraceResult rtr = ProcedureUtils.objectEntityLookingAt(mc.player, 256, 1.5f);
+
+		if ((target = rtr.entityHit) instanceof EntityLivingBase) {
+			int targetId = target.getEntityId();
+			boolean found = false;
+			for (MarkerData data : clientMarkerList.values())
+				if (data.targetId == targetId)
+					found = true;
+
+
+			if (found)
+				PacketHandler.Instance.sendToServer(new TeleportBehindPacket(targetId));
+		}
+	}
 }

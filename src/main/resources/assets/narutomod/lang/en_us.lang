@@ -817,6 +817,7 @@ key.jutsu.4=Jutsu 4
 key.jutsu.5=Jutsu 5
 key.jutsu.6=Jutsu 6
 key.lock_on=Lock On (Sharingan)
+key.teleport_behind=Teleport Behind (Hiraishin)
 
 item.sharingan.lock_on_cooldown=Cooldown: %ss
 effect.lock_on=Lock On
@@ -840,5 +841,6 @@ dojutsuwheel.gui.how_to_insert=§6* §aInsert §6by hovering over slot while hol
 dojutsuwheel.gui.insert_info=§6* §aSHIFT-Insert §6into empty slot to set default slot
 dojutsuwheel.gui.extract_info=§6* §cSHIFT-Extract §6removes default slot
 dojutsuwheel.gui.extract_to_inventory=§6* §cCTRL-Extract §6extracts to inventory
-
 dojutsuwheel.gui.deselect_slot=§6* §7Right-Click §6to deselect hovered slot
+
+hiraishin.teleport_behind.not_safe=Not safe to teleport!

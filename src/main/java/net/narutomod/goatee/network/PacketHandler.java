@@ -16,6 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.narutomod.NarutomodMod;
 import net.narutomod.goatee.network.packets.NarutoSyncData;
 import net.narutomod.goatee.network.packets.NarutoWheelData;
+import net.narutomod.goatee.network.packets.TeleportBehindPacket;
 import net.narutomod.goatee.proxy.CommonProxy;
 import net.narutomod.keybind.JutsuKeys;
 
@@ -33,7 +34,7 @@ public final class PacketHandler {
         map.put(NarutoWheelData.packetName, new NarutoWheelData());
         map.put(NarutoSyncData.packetName, new NarutoSyncData());
         map.put(JutsuKeys.Packet.packetName, new JutsuKeys.Packet());
-
+        map.put(TeleportBehindPacket.packetName, new TeleportBehindPacket());
         this.register();
     }
 

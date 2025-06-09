@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.narutomod.entity.EntityHiraishin;
 import net.narutomod.goatee.client.hud.wheel.HUDItemStackWheel;
 import net.narutomod.goatee.data.NarutoData;
 import net.narutomod.goatee.network.AbstractPacket;
@@ -30,15 +31,29 @@ public class JutsuKeys {
 	private static Key key5 = new Key(5, "key.jutsu.5", Keyboard.KEY_NUMPAD5, "key.mcreator.category");
 	private static Key key6 = new Key(6, "key.jutsu.6", Keyboard.KEY_NUMPAD6, "key.mcreator.category");
 
-	private static int LOCK_ON_ID = 10;
-	private static Key lockOn = new Key(LOCK_ON_ID, "key.lock_on", Keyboard.KEY_TAB, "key.mcreator.category");
-	
-	public static KeyBinding dojutsWheel = new KeyBinding("key.dojutsu_wheel", Keyboard.KEY_V, "key.mcreator.category");
+	private static Key lockOn = new Key(10, "key.lock_on", Keyboard.KEY_TAB, "key.mcreator.category");
 
-	static {
-		ClientRegistry.registerKeyBinding(dojutsWheel);
-	}
-	
+	////////////////////////
+	///////////////////////
+	// Client handled keys
+
+	public static Key dojutsWheel = new Key(0, "key.dojutsu_wheel", Keyboard.KEY_V, "key.mcreator.category") {
+		public boolean onPress(byte pressType) {
+			if (pressType == 0)
+				Minecraft.getMinecraft().displayGuiScreen(new HUDItemStackWheel(NarutoData.getClient().dojutsuWheel));
+
+			return false; //client sided only
+		}
+	};
+
+	public static Key teleportBehind = new Key(0, "key.teleport_behind", Keyboard.KEY_LMENU, "key.mcreator.category") {
+		public boolean onPress(byte pressType) {
+			if (pressType == 2)
+				EntityHiraishin.teleportBehind();
+			return false; //client sided only
+		}
+	};
+
 	@SideOnly(Side.CLIENT)
 	public static class Key extends KeyBinding {
 		public byte keyId;
@@ -58,6 +73,10 @@ public class JutsuKeys {
 			boolean isDown = isKeyDown();
 			return (byte) (!wasDown && isDown ? 0 : wasDown && !isDown ? 2 : 1);
 		}
+
+		public boolean onPress(byte pressType) {
+			return true; //send packet
+		}
 	}
 
 	@SubscribeEvent
@@ -69,13 +88,12 @@ public class JutsuKeys {
 		for (Key key : jutsuKeys) {
 			boolean isDown = key.isKeyDown();
 			if (isDown || key.wasDown) {
-				PacketHandler.Instance.sendToServer(new Packet(key.keyId, key.getPressType()));
+				byte pressType = key.getPressType();
+				if (key.onPress(pressType))
+					PacketHandler.Instance.sendToServer(new Packet(key.keyId, pressType));
 				key.wasDown = isDown;
 			}
 		}
-
-		if (dojutsWheel.isPressed())
-			Minecraft.getMinecraft().displayGuiScreen(new HUDItemStackWheel(NarutoData.getClient().dojutsuWheel));
 	}
 
 	public static class Packet extends AbstractPacket {
