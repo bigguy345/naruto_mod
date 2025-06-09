@@ -307,10 +307,11 @@ public class HUDItemStackWheel extends GuiScreen {
 
         float oldLimbSwing = entity.limbSwingAmount;
         boolean isInvisible = entity.isInvisible(), isImmunetoFire = false, oldFlying = entity.capabilities.isFlying, oldSneaking = entity.isSneaking();
+        int oldArrowCount = entity.getArrowCountInEntity();
         Entity oldRidingEntity = null;
         entity.limbSwingAmount = entity.prevLimbSwingAmount = 0; // Removes moving animation
         entity.setInvisible(false); // Removes invisibility
-
+        entity.setArrowCountInEntity(0);
         entity.capabilities.isFlying = true;
         entity.setSneaking(false);
         try {
@@ -411,6 +412,7 @@ public class HUDItemStackWheel extends GuiScreen {
         entity.setInvisible(isInvisible);
         entity.capabilities.isFlying = oldFlying;
         entity.setSneaking(oldSneaking);
+        entity.setArrowCountInEntity(oldArrowCount);
 
         try {
             Field field = ReflectionHelper.findField(Entity.class, "isImmuneToFire", "field_70178_ae");
