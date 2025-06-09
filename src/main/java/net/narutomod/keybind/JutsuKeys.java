@@ -30,6 +30,7 @@ public class JutsuKeys {
 	private static Key key4 = new Key(4, "key.jutsu.4", Keyboard.KEY_NUMPAD4, "key.mcreator.category");
 	private static Key key5 = new Key(5, "key.jutsu.5", Keyboard.KEY_NUMPAD5, "key.mcreator.category");
 	private static Key key6 = new Key(6, "key.jutsu.6", Keyboard.KEY_NUMPAD6, "key.mcreator.category");
+	private static Key key7 = new Key(7, "key.jutsu.7", Keyboard.KEY_NUMPAD7, "key.mcreator.category");
 
 	private static Key lockOn = new Key(10, "key.lock_on", Keyboard.KEY_TAB, "key.mcreator.category");
 
@@ -136,6 +137,8 @@ public class JutsuKeys {
 					eye.onJutsuKey5(pressType, helmet, player);
 				else if (keyId == 6)
 					eye.onJutsuKey6(pressType, helmet, player);
+				else if (keyId == 7)
+					eye.onJutsuKey7(pressType, helmet, player);
 			}
 		}
 	}

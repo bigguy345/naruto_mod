@@ -216,9 +216,10 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                 tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu1") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.mangekyo.amaterasu.jutsu1"));
                 tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu2") + ": " + TextFormatting.GRAY + I18n.translateToLocal("entity.susanooclothed.name"));
                 tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu3") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.mangekyo.kamui.jutsu1"));
-                tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.jutsu.4") + ": " + TextFormatting.GRAY + I18n.translateToLocal("item.ninjutsu.amenotejikara"));
+                tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.jutsu.4") + ": " + TextFormatting.GRAY + I18n.translateToLocal("chattext.shinratensei"));
                 tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.jutsu.5") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.rinnegan.jutsu2"));
                 tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.jutsu.6") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.rinnegan.jutsu3"));
+                tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.jutsu.7") + ": " + TextFormatting.GRAY + I18n.translateToLocal("item.ninjutsu.amenotejikara"));
             }
 
             public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
@@ -291,23 +292,14 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
 
             @Override
             public boolean onJutsuKey4(byte pressType, ItemStack stack, EntityPlayer entity) {
-                if (pressType == 0) {
-                    if (!entity.world.isRemote && !stack.getTagCompound().getBoolean("amenotejikaraStoreTarget") && !entity.isPotionActive(PotionSpaceInversion.potion)) {
-                        Entity hit = ProcedureUtils.objectEntityLookingAt(entity, ModConfig.TECHNIQUES.AMENOTEJIKARA_RANGE).entityHit;
-                         ItemNinjutsu.Amenotejikara.setTarget(stack, hit);
-
-                        if (hit != null) {
-                            if (entity.isSneaking()) { //shift clicking stores the target, which can be switched to on the next click
-                                stack.getTagCompound().setBoolean("amenotejikaraStoreTarget", true);
-                                stack.getTagCompound().setInteger("amenotejikaraDisable", 5);
-                                entity.sendStatusMessage(new TextComponentTranslation("amenotejikara.target.next_switch", hit.getDisplayName()), true);
-                            } else
-                                entity.sendStatusMessage(new TextComponentTranslation("amenotejikara.target.switching", hit.getDisplayName()), true);
-                        }
-                    }
-                } else if (pressType == 2) {
-                    ItemNinjutsu.AMENOTEJIKARA.jutsu.createJutsu(stack, entity, 100);
-                }
+                Map<String, Object> $_dependencies = Maps.newHashMap();
+                $_dependencies.put("is_pressed", pressType == 1);
+                $_dependencies.put("entity", entity);
+                $_dependencies.put("world", entity.world);
+                $_dependencies.put("x", (int) entity.posX);
+                $_dependencies.put("y", (int) entity.posY);
+                $_dependencies.put("z", (int) entity.posZ);
+                ProcedureShinraTenseiOnKeyPressed.executeProcedure($_dependencies);
                 return true;
             }
 
@@ -374,6 +366,28 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                 return true;
             }
 
+            @Override
+            public boolean onJutsuKey7(byte pressType, ItemStack stack, EntityPlayer entity) {
+                if (pressType == 0) {
+                    if (!entity.world.isRemote && !stack.getTagCompound().getBoolean("amenotejikaraStoreTarget") && !entity.isPotionActive(PotionSpaceInversion.potion)) {
+                        Entity hit = ProcedureUtils.objectEntityLookingAt(entity, ModConfig.TECHNIQUES.AMENOTEJIKARA_RANGE).entityHit;
+                        ItemNinjutsu.Amenotejikara.setTarget(stack, hit);
+
+                        if (hit != null) {
+                            if (entity.isSneaking()) { //shift clicking stores the target, which can be switched to on the next click
+                                stack.getTagCompound().setBoolean("amenotejikaraStoreTarget", true);
+                                stack.getTagCompound().setInteger("amenotejikaraDisable", 5);
+                                entity.sendStatusMessage(new TextComponentTranslation("amenotejikara.target.next_switch", hit.getDisplayName()), true);
+                            } else
+                                entity.sendStatusMessage(new TextComponentTranslation("amenotejikara.target.switching", hit.getDisplayName()), true);
+                        }
+                    }
+                } else if (pressType == 2) {
+                    ItemNinjutsu.AMENOTEJIKARA.jutsu.createJutsu(stack, entity, 100);
+                }
+                return true;
+            }
+            
             @Override
             public boolean onSwitchJutsuKey(boolean is_pressed, ItemStack stack, EntityPlayer entity) {
                 if (is_pressed)

@@ -152,7 +152,11 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 		public boolean onJutsuKey6(byte pressType, ItemStack stack, EntityPlayer player) {
 			return false;
 		}
-
+		
+		public boolean onJutsuKey7(byte pressType, ItemStack stack, EntityPlayer player) {
+			return false;
+		}
+		
 		public boolean onSwitchJutsuKey(boolean is_pressed, ItemStack stack, EntityPlayer player) {
 			return false;
 		}
