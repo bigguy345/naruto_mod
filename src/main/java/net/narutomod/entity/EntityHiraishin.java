@@ -2,12 +2,16 @@
 package net.narutomod.entity;
 
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
+import net.narutomod.goatee.network.PacketHandler;
+import net.narutomod.goatee.network.packets.TeleportBehindPacket;
 import net.narutomod.item.ItemKunaiHiraishin;
 import net.narutomod.item.ItemKunai3prong;
 import net.narutomod.item.ItemNinjutsu;
 import net.narutomod.item.ItemJutsu;
+import net.narutomod.keybind.JutsuKeys;
 import net.narutomod.procedure.ProcedureOnLivingUpdate;
 import net.narutomod.procedure.ProcedureSync;
 import net.narutomod.procedure.ProcedureUtils;
@@ -132,7 +136,8 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static class MarkerData {
-		public UUID uuid;
+		public UUID uuid; //target UUID
+		public int targetId = -1; //target entity ID (for client retrieval)
 		public String name;
 		public Vector4d vec;
 
@@ -146,6 +151,9 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 		public MarkerData(EC entity) {
 			this.vec = new Vector4d(entity.posX, entity.posY, entity.posZ, entity.dimension);
 			this.name = entity.markerName;
+
+			if (entity.getTarget() != null)
+				this.targetId = entity.getTarget().getEntityId();
 		}
 	}
 
@@ -332,7 +340,7 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 		public static class Jutsu implements ItemJutsu.IJutsuCallback {
 			@Override
 			public boolean createJutsu(ItemStack stack, EntityLivingBase entity, float power) {
-				RayTraceResult res = ProcedureUtils.objectEntityLookingAt(entity, 4d, true);
+				RayTraceResult res = ProcedureUtils.objectEntityLookingAt(entity, 4d, 1.5f, true);
 				if (res != null && res.typeOfHit != RayTraceResult.Type.MISS) {
 					if (res.entityHit instanceof EC) {
 						res.entityHit.setDead();
@@ -423,6 +431,13 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 			} else {
 				buf.writeBoolean(false);
 			}
+
+			if (data.targetId != -1) {
+				buf.writeBoolean(true);
+				buf.writeInt(data.targetId);
+			} else {
+				buf.writeBoolean(false);
+			}
 		}
 	
 		public void fromBytes(ByteBuf buf) {
@@ -436,6 +451,8 @@ public class EntityHiraishin extends ElementsNarutomodMod.ModElement {
 			data.uuid = buf.readBoolean() ? UUID.fromString(ByteBufUtils.readUTF8String(buf)) : null;
 			data.vec = buf.readBoolean() ? new Vector4d(buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readDouble()) : null;
 			data.name = buf.readBoolean() ? ByteBufUtils.readUTF8String(buf) : "";
+			data.targetId = buf.readBoolean() ? buf.readInt() : -1;
+
 		}
 	}
 
