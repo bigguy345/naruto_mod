@@ -35,7 +35,8 @@ public class ProcedureCameraShake extends ElementsNarutomodMod.ModElement {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onShake(EntityViewRenderEvent.CameraSetup event) {
-		if (this.shakeDuration > Minecraft.getMinecraft().world.getTotalWorldTime()) {
+		Minecraft mc = Minecraft.getMinecraft();
+		if (this.shakeDuration > mc.world.getTotalWorldTime() && !mc.player.getEntityData().getBoolean("noClipFlag")) {
 			event.setYaw(((float) Math.random() - 0.5F) * instance.shakeScale + event.getYaw());
 			event.setPitch(((float) Math.random() - 0.5F) * instance.shakeScale + event.getPitch());
 			event.setRoll(((float) Math.random() - 0.5F) * instance.shakeScale + event.getRoll());
