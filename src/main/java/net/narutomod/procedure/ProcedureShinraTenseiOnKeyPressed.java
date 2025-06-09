@@ -1,5 +1,6 @@
 package net.narutomod.procedure;
 
+import net.narutomod.ModConfig;
 import net.narutomod.potion.PotionFlight;
 import net.narutomod.item.ItemRinnegan;
 import net.narutomod.item.ItemJutsu;
@@ -71,7 +72,7 @@ public class ProcedureShinraTenseiOnKeyPressed extends ElementsNarutomodMod.ModE
 				if (!entity.getEntityData().getBoolean("was_pressed")) {
 					power = 10.0d;
 				}
-				if (power + 0.1d < ItemJutsu.getMaxPower(entity, ItemRinnegan.getShinratenseiChakraUsage(entity)) && power < 100d) {
+				if (power + 0.1d < ItemJutsu.getMaxPower(entity, ItemRinnegan.getShinratenseiChakraUsage(entity)) && power < ModConfig.TECHNIQUES.MAX_SHINRA_TENSEI_POWER) {
 					power += 0.1d;
 				}
 				if (entity instanceof EntityPlayer && !entity.world.isRemote) {

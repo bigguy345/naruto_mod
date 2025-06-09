@@ -93,8 +93,12 @@ public class ModConfig extends ElementsNarutomodMod.ModElement {
 		public double SAGE_MODE_CHAKRA_MULTIPLIER = 1.6;
 
 		@Config.RangeDouble(min = 0, max = 10000)
-		@Config.Comment({"Chakra consumed when using the Hiraishin Teleport Behind"})
+		@Config.Comment({"Chakra consumed when using the Hiraishin Teleport Behind."})
 		public double HIRAISHIN_TELEPORT_BEHIND_CHAKRA_USAGE = 500;
+
+		@Config.RangeDouble(min = 0, max = 500)
+		@Config.Comment({"Maximum charge allowed for Shinra Tensei."})
+		public double MAX_SHINRA_TENSEI_POWER = 100;
 	}
 
 	public static class Items {
