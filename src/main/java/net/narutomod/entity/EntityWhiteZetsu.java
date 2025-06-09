@@ -1,6 +1,8 @@
 
 package net.narutomod.entity;
 
+import net.minecraft.client.model.*;
+import net.minecraft.entity.monster.EntityZombieVillager;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -35,9 +37,6 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.Entity;
-import net.minecraft.client.model.ModelBox;
-import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.block.state.IBlockState;
@@ -118,11 +117,13 @@ public class EntityWhiteZetsu extends ElementsNarutomodMod.ModElement {
 								entity1 = world.playerEntities.get(rand.nextInt(world.playerEntities.size()));
 							} else {
 								List<EntityLiving> list = world.getEntitiesWithinAABB(EntityLiving.class, EntityCustom.this.getEntityBoundingBox().grow(64, 32, 64), (p)-> {
-									return p instanceof EntityZombie || p instanceof EntityVillager || p instanceof EntityEnderman
+									return p instanceof EntityZombie && !(p instanceof EntityZombieVillager) || p instanceof EntityVillager || p instanceof EntityEnderman
 									 || p instanceof EntityNinjaMerchant.Base;
 								});
 								entity1 = !list.isEmpty() ? list.get(rand.nextInt(list.size())) : null;
 							}
+							if (entity1 instanceof EntityZombieVillager)
+								System.out.println(entity1);
 							if (entity1 != null && !entity1.equals(this.closestEntity)) {
 								EntityCustom.this.setSummoner(entity1);
 								return;
@@ -293,7 +294,7 @@ public class EntityWhiteZetsu extends ElementsNarutomodMod.ModElement {
 
 			@Override
 			public void doRender(EntityCustom entityIn, double x, double y, double z, float entityYaw, float partialTicks) {
-				if (entityIn.getSummoner() == null) {
+				if (entityIn.getSummoner() == null || mainModel instanceof ModelZombie || mainModel instanceof ModelZombieVillager) {
 					this.mainModel = this.altModel;
 				}
 				try {
