@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(value = Side.CLIENT)
 public class JutsuKeys {
 	public static List<Key> jutsuKeys = new ArrayList<>();
 	private static Key key4 = new Key(4, "key.jutsu.4", Keyboard.KEY_NUMPAD4, "key.mcreator.category");
