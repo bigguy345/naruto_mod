@@ -168,7 +168,10 @@ public class ItemKunaiHiraishin extends ElementsNarutomodMod.ModElement {
 					if (lastMarkerUuid != null && !lastMarkerUuid.equals(entity.getUniqueID())) {
 						EntityHiraishin.updateServerMarkerMap(ownerUuid, lastMarkerUuid, null);
 					}
-					EntityHiraishin.updateServerMarkerMap(ownerUuid, entity.getUniqueID(), new EntityHiraishin.MarkerData(new Vector4d(entity.posX, entity.posY, entity.posZ, entity.dimension)));
+					EntityHiraishin.MarkerData data = new EntityHiraishin.MarkerData(new Vector4d(entity.posX, entity.posY, entity.posZ, entity.dimension));
+					data.name = entity.getDisplayName().getFormattedText();
+					//data.targetId = entity.getEntityId();
+					EntityHiraishin.updateServerMarkerMap(ownerUuid, entity.getUniqueID(), data);
 					stack.getTagCompound().setUniqueId("lastMarkerUuid", entity.getUniqueID());
 				} else if (lastMarkerUuid != null) {
 					EntityHiraishin.updateServerMarkerMap(ownerUuid, lastMarkerUuid, null);
