@@ -1,6 +1,7 @@
 
 package net.narutomod.item;
 
+import net.minecraft.item.Item;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -205,6 +206,10 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 
 		return true;
 	}
+	
+public static boolean dropOnForceDojutsuDrop(Item eye){
+		return eye == ItemByakugan.helmet || eye == ItemSharingan.helmet||eye == ItemMangekyoSharingan.helmet||eye == ItemMangekyoSharinganObito.helmet;
+}
 
 	public enum Type {
 		BYAKUGAN,

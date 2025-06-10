@@ -1,5 +1,6 @@
 package net.narutomod.procedure;
 
+import net.narutomod.goatee.data.NarutoData;
 import net.narutomod.item.*;
 import net.narutomod.entity.EntityBijuManager;
 import net.narutomod.PlayerTracker;
@@ -20,6 +21,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.Entity;
 
+import java.util.List;
 import java.util.Map;
 
 @ElementsNarutomodMod.ModElement.Tag
@@ -212,6 +214,15 @@ public class ProcedureOnPlayerDeath extends ElementsNarutomodMod.ModElement {
 							ItemHandlerHelper.giveItemToPlayer(((EntityPlayer) entity), _setstack);
 						}
 						((stack)).shrink((int) 1);
+					}
+
+					List<ItemStack> toDrops = NarutoData.get((EntityPlayer) entity).dojutsuWheel.dropAll((EntityPlayer) entity, (eye) -> ItemDojutsu.dropOnForceDojutsuDrop(eye.getItem()));
+					for (ItemStack eye : toDrops) {
+						if (eye.getItem() == ItemMangekyoSharingan.helmet || eye.getItem() == ItemMangekyoSharinganObito.helmet) {
+							stack2 = new ItemStack(ItemSharingan.helmet, 1);
+							((ItemSharingan.Base) stack2.getItem()).copyOwner(stack2, eye);
+							ItemHandlerHelper.giveItemToPlayer(((EntityPlayer) entity), stack2);
+						}
 					}
 				}
 			}

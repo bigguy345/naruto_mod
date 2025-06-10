@@ -1,11 +1,16 @@
 package net.narutomod.goatee.data;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Mod;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 @Mod.EventBusSubscriber
 public class WheelData {
@@ -82,6 +87,17 @@ public class WheelData {
 
         swapSlots(seg, savedSlot);
     }
+
+    public List<ItemStack> dropAll(EntityPlayer owner, Predicate<ItemStack> condition) {
+        List<ItemStack> toDrop = new ArrayList<>();
+        for (Segment data : wheelSegments) {
+            ItemStack item = data.drop(owner, condition);
+            if (!item.isEmpty())
+                toDrop.add(item);
+        }
+
+        return toDrop;
+    }
     
     public static class Segment {
         public WheelData parent;
@@ -96,6 +112,15 @@ public class WheelData {
             this.parent = parent;
         }
 
+        public ItemStack drop(EntityPlayer owner, Predicate<ItemStack> condition) {
+            if (condition.test(stack)) {
+                ItemStack toDrop = stack.copy();
+                owner.dropItem(toDrop, true, true);
+                stack = ItemStack.EMPTY;
+                return toDrop;
+            }
+            return ItemStack.EMPTY;
+        }
         public NBTTagCompound writeToNBT(NBTTagCompound compound) {
             compound.setTag(slot + "", stack.writeToNBT(new NBTTagCompound()));
             return compound;
