@@ -16,11 +16,11 @@ public class ModConfig extends ElementsNarutomodMod.ModElement {
 	}
 
 	@Config.RangeDouble(min = 1, max = 10000000)
-	@Config.Comment({"Maximum NINJA XP gainable."})
-	public static double MAX_NINJA_XP = 1000000;
+	@Config.Comment({"Maximum NINJA XP gainable.(Default: 100,000)"})
+	public static double MAX_NINJA_XP = 100000;
 
 	@Config.RangeInt(min = 1, max = 1000)
-	@Config.Comment({"Jutsu XP gained on damage"})
+	@Config.Comment({"Jutsu XP gained on damage (Default: 1)" })
 	public static int JUTSU_XP_GAIN = 1;
 	
 	@Config.Comment("If enabled tailed beasts spawn naturally around the world.")
@@ -85,61 +85,63 @@ public class ModConfig extends ElementsNarutomodMod.ModElement {
 
 	public static class Techniques {
 		@Config.RangeDouble(min = 1, max = 256)
-		@Config.Comment({"Maximum Amenotejikara teleportation range."})
+		@Config.Comment({"Maximum Amenotejikara teleportation range. (Default: 40)"})
 		public double AMENOTEJIKARA_RANGE = 40;
 		@Config.RangeDouble(min = 1, max = 256)
-		@Config.Comment({"Maximum Universal Pull range."})
+		@Config.Comment({"Maximum Universal Pull range. (Default: 50)"})
 		public double UNIVERSAL_PULL_RANGE = 50;
 		
 		@Config.RangeDouble(min = 1, max = 5)
-		@Config.Comment({"Player chakra multiplied by this number on Sage Mode entry."})
+		@Config.Comment({"Player chakra multiplied by this number on Sage Mode entry. (Default: 1.6)"})
 		public double SAGE_MODE_CHAKRA_MULTIPLIER = 1.6;
 
 		@Config.RangeDouble(min = 0, max = 10000)
-		@Config.Comment({"Chakra consumed when using the Hiraishin Teleport Behind."})
+		@Config.Comment({"Chakra consumed when using the Hiraishin Teleport Behind. (Default: 500)"})
 		public double HIRAISHIN_TELEPORT_BEHIND_CHAKRA_USAGE = 500;
 
 		@Config.RangeDouble(min = 0, max = 500)
-		@Config.Comment({"Maximum charge allowed for Shinra Tensei."})
+		@Config.Comment({"Maximum charge allowed for Shinra Tensei. (Default: 100)"})
 		public double MAX_SHINRA_TENSEI_POWER = 100;
 	}
 
 	public static class Items {
-		@Config.Comment({"Black Receivers cause slowness."})
+		@Config.Comment({"Black Receivers cause slowness. (Default: true)"})
 		public boolean BLACK_RECEIVER_SLOWNESS = true;
 
 		@Config.RangeDouble(min = 0, max = 256)
-		@Config.Comment({"Black Receivers Attack Damage."})
+		@Config.Comment({"Black Receivers Attack Damage. (Default: 10)"})
 		public double BLACK_RECEIVER_ATTACK_DAMAGE= 10;
 
 		@Config.RangeDouble(min = -256, max = 256)
-		@Config.Comment({"Black Receivers Attack Speed."})
+		@Config.Comment({"Black Receivers Attack Speed. (Default: -2.4)"})
 		public double BLACK_RECEIVER_ATTACK_SPEED= -2.4;
 	}
 
 	public static class WingedSusanoo {
 		@Config.RangeDouble(min = 1, max = 50)
+		@Config.Comment({"(Default: 8)"})
 		public float MODEL_SCALE = 8;
 
 		@Config.RangeDouble(min = 1, max = 200)
-		@Config.Comment({" Y Offset where player lies within Susanoo. (Adjust with MODEL_SCALE)"})
+		@Config.Comment({" Y Offset where player lies within Susanoo. (Adjust with MODEL_SCALE) (Default: 14)"})
 		public double PLAYER_Y_OFFSET = 14;
 		
 		@Config.RangeDouble(min = 1, max = 512)
+		@Config.Comment({"(Default: 43)"})
 		public float MAX_HEALTH = 43;
 
 		@Config.RangeDouble(min = 1, max = 100)
-		@Config.Comment({"Maximum Amenotejikara teleportation range."})
+		@Config.Comment({"Maximum Amenotejikara teleportation range. (Default: 12)"})
 		public double SWORD_REACH = 12;
 	}
 	public static class Dojutsu {
 
 		@Config.RangeInt(min = 0, max = 3600)
-		@Config.Comment("Sharingan's Lock On cooldown in seconds. (applied once Lock On effect runs out)")
+		@Config.Comment("Sharingan's Lock On cooldown in seconds. (applied once Lock On effect runs out) (Default: 60)")
 		public int SHARINGAN_LOCK_ON_COOLDOWN = 60;
 
 		@Config.RangeDouble(min = 1, max = 256)
-		@Config.Comment({"Sharingan's Lock On default range.", "Value is multiplied by 1.25x if Mangekyo, 1.5x if Eternal, and 2x if Rinnegan Tomoe."})
+		@Config.Comment({"Sharingan's Lock On default range.", "Value is multiplied by 1.25x if Mangekyo, 1.5x if Eternal, and 2x if Rinnegan Tomoe. (Default: 50)"})
 		public double SHARINGAN_LOCK_ON_RANGE = 50;
 	}
 }
