@@ -80,6 +80,9 @@ public class ModConfig extends ElementsNarutomodMod.ModElement {
 	@Config.Comment("Ninja XP gain multiplier (higher value gains NinjaXp faster. default=0.5)")
 	public static double NINJAXP_MULTIPLIER = 0.5D;
 
+	@Config.Comment("Max Chakra Multiplier an entity could have before being squished to death, (Default: 4)")
+	public static double MAX_CHAKRA_LIMIT_BEFORE_DEATH = 4;
+
 	public static class Techniques {
 		@Config.RangeDouble(min = 1, max = 256)
 		@Config.Comment({"Maximum Amenotejikara teleportation range."})

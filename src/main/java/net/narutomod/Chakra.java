@@ -29,7 +29,6 @@ import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.entity.EntityNinjaMob;
 import net.narutomod.gui.overlay.OverlayChakraDisplay;
 
-import java.util.Random;
 import java.util.Map;
 import java.util.Collection;
 import com.google.common.collect.Maps;
@@ -152,7 +151,7 @@ public class Chakra extends ElementsNarutomodMod.ModElement {
 		protected void onUpdate() {
 			double d = this.getAmount();
 			double d1 = this.getMax();
-			if (d > d1 * 6d && this.user.isEntityAlive()) {
+			if (d > d1 * ModConfig.MAX_CHAKRA_LIMIT_BEFORE_DEATH && this.user.isEntityAlive()) {
 				this.user.attackEntityFrom(DamageSource.CRAMMING, Float.MAX_VALUE);
 				return;
 			}
