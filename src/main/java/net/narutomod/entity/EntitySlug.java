@@ -74,6 +74,8 @@ public class EntitySlug extends ElementsNarutomodMod.ModElement {
 			this.isImmuneToFire = true;
 			this.enablePersistence();
 			this.postScaleFixup();
+			this.stepHeight = Math.max(1, this.height / 3);
+
 		}
 
 		public EntityCustom(EntityLivingBase summonerIn, float scale) {
@@ -82,6 +84,7 @@ public class EntitySlug extends ElementsNarutomodMod.ModElement {
 			this.setScale(scale);
 			this.isImmuneToFire = true;
 			this.enablePersistence();
+			this.stepHeight = Math.max(1, this.height / 3);
 		}
 
 		@Override
@@ -166,6 +169,32 @@ public class EntitySlug extends ElementsNarutomodMod.ModElement {
 			}
 		}
 
+		@Override
+		@Nullable
+		public EntityLivingBase getControllingPassenger() {
+			Entity passenger = super.getControllingPassenger();
+			return passenger instanceof EntityLivingBase && this.isSummoner(passenger) ? (EntityLivingBase) passenger : null;
+		}
+
+		@Override
+		public void travel(float strafe, float vertical, float forward) {
+			EntityLivingBase passenger = this.getControllingPassenger();
+			if (passenger instanceof EntityPlayer) {
+				++this.lifeSpan;
+				this.rotationYaw = passenger.rotationYaw;
+				this.rotationPitch = passenger.rotationPitch;
+				this.setRotation(this.rotationYaw, this.rotationPitch);
+				this.renderYawOffset = passenger.renderYawOffset;
+				this.rotationYawHead = passenger.getRotationYawHead();
+				this.jumpMovementFactor = passenger.getAIMoveSpeed() * 0.15F;
+				this.setAIMoveSpeed((float) ProcedureUtils.getModifiedSpeed(this));
+				forward = passenger.moveForward;
+				strafe = passenger.moveStrafing;
+			} else {
+				this.jumpMovementFactor = 0.02f;
+			}
+			super.travel(strafe, vertical, forward);
+		}
 		@Override
 		public boolean canSitOnShoulder() {
 			return this.getScale() <= 0.6f;

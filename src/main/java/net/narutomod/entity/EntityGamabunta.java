@@ -1,6 +1,8 @@
 
 package net.narutomod.entity;
 
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
@@ -16,6 +18,9 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.model.ModelBox;
 
 import net.narutomod.ElementsNarutomodMod;
+import net.narutomod.procedure.ProcedureUtils;
+
+import javax.annotation.Nullable;
 
 @ElementsNarutomodMod.ModElement.Tag
 public class EntityGamabunta extends ElementsNarutomodMod.ModElement {
@@ -38,12 +43,14 @@ public class EntityGamabunta extends ElementsNarutomodMod.ModElement {
 		public EntityCustom(World world) {
 			super(world);
 			this.postScaleFixup();
+			this.stepHeight = this.height / 3;
 		}
 
 		public EntityCustom(EntityLivingBase summonerIn) {
 			super(summonerIn);
 			this.postScaleFixup();
-			//this.summoner = summonerIn;
+			this.stepHeight = this.height / 3;
+			//			this.summoner = summonerIn;
 			//this.dontWander(true);
 		}
 
@@ -68,6 +75,32 @@ public class EntityGamabunta extends ElementsNarutomodMod.ModElement {
 			}
 		}*/
 
+		@Override
+		@Nullable
+		public EntityLivingBase getControllingPassenger() {
+			Entity passenger = super.getControllingPassenger();
+			return passenger instanceof EntityLivingBase && this.isSummoner(passenger) ? (EntityLivingBase) passenger : null;
+		}
+		
+		@Override
+		public void travel(float strafe, float vertical, float forward) {
+			EntityLivingBase passenger = this.getControllingPassenger();
+			if (passenger instanceof EntityPlayer) {
+				++this.lifeSpan;
+				this.rotationYaw = passenger.rotationYaw;
+				this.rotationPitch = passenger.rotationPitch;
+				this.setRotation(this.rotationYaw, this.rotationPitch);
+				this.renderYawOffset = passenger.renderYawOffset;
+				this.rotationYawHead = passenger.getRotationYawHead();
+				this.jumpMovementFactor = passenger.getAIMoveSpeed() * 0.15F;
+				this.setAIMoveSpeed((float) ProcedureUtils.getModifiedSpeed(this));
+				forward = passenger.moveForward;
+				strafe = passenger.moveStrafing;
+			} else {
+				this.jumpMovementFactor = 0.02f;
+			}
+			super.travel(strafe, vertical, forward);
+		}
 		@Override
 		public void onUpdate() {
 			super.onUpdate();
