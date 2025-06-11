@@ -347,9 +347,9 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                             ProcedureOuterPath.executeProcedure($_dependencies);
                             break;
                     }
-                } else if (pressType == 0 && which_path == 2) {
+                } else if (which_path == 2) {
                     Map<String, Object> $_dependencies = Maps.newHashMap();
-                    $_dependencies.put("is_pressed", pressType == 0);
+                    $_dependencies.put("is_pressed", pressType < 2);
                     $_dependencies.put("entity", entity);
                     $_dependencies.put("world", entity.world);
                     ProcedureAnimalPath.executeProcedure($_dependencies);

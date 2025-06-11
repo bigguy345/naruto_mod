@@ -1,6 +1,7 @@
 
 package net.narutomod.keybind;
 
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
 
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -65,29 +66,34 @@ public class KeyBindingSpecialJutsu2 extends ElementsNarutomodMod.ModElement {
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
-	public void onKeyInput(InputEvent.KeyInputEvent event) {
-		if (Minecraft.getMinecraft().currentScreen == null && this.keys.getKeyCode() > 0) {
-			this.processKeyBind();
+	public void onKeyInput(TickEvent.ClientTickEvent event) {
+		if (event.phase == TickEvent.Phase.END && Minecraft.getMinecraft().currentScreen == null) {
+			boolean isKeyDown = this.keys.isKeyDown();
+			if (isKeyDown || this.wasKeyDown) {
+				NarutomodMod.PACKET_HANDLER.sendToServer(new KeyBindingPressedMessage(isKeyDown));
+				pressAction(Minecraft.getMinecraft().player, isKeyDown);
+			}
+			this.wasKeyDown = isKeyDown;
 		}
 	}
 
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void onMouseEvent(InputEvent.MouseInputEvent event) {
-		if (Minecraft.getMinecraft().currentScreen == null && this.keys.getKeyCode() <= 0) {
-			this.processKeyBind();
-		}
-	}
-
-	@SideOnly(Side.CLIENT)
-	private void processKeyBind() {
-		boolean isKeyDown = this.keys.isKeyDown();
-		if (isKeyDown || this.wasKeyDown) {
-			NarutomodMod.PACKET_HANDLER.sendToServer(new KeyBindingPressedMessage(isKeyDown));
-			pressAction(Minecraft.getMinecraft().player, isKeyDown);
-		}
-		this.wasKeyDown = isKeyDown;
-	}
+	//	@SubscribeEvent
+	//	@SideOnly(Side.CLIENT)
+	//	public void onMouseEvent(InputEvent.MouseInputEvent event) {
+	//		if (Minecraft.getMinecraft().currentScreen == null && this.keys.getKeyCode() <= 0) {
+	//			this.processKeyBind();
+	//		}
+	//	}
+	//
+	//	@SideOnly(Side.CLIENT)
+	//	private void processKeyBind() {
+	//		boolean isKeyDown = this.keys.isKeyDown();
+	//		if (isKeyDown || this.wasKeyDown) {
+	//			NarutomodMod.PACKET_HANDLER.sendToServer(new KeyBindingPressedMessage(isKeyDown));
+	//			pressAction(Minecraft.getMinecraft().player, isKeyDown);
+	//		}
+	//		this.wasKeyDown = isKeyDown;
+	//	}
 
 	public static class KeyBindingPressedMessageHandler implements IMessageHandler<KeyBindingPressedMessage, IMessage> {
 		@Override
