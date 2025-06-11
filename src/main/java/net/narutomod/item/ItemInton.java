@@ -107,11 +107,13 @@ public class ItemInton extends ElementsNarutomodMod.ModElement {
 		}
 
 		public static boolean canTargetBeAffected(EntityLivingBase caster, EntityLivingBase target) {
-			if (target instanceof EntityTailedBeast.Base && !ItemSharingan.wearingAny(caster)) {
+			if (target instanceof EntityTailedBeast.Base && !ItemSharingan.wearingAny(caster)) 
 				return false;
-			} else if (ItemRinnegan.isWearing(target) && (!ItemRinnegan.isWearing(caster) || !ItemSharingan.isWearingEternal(caster)))
+			else if (ItemRinnegan.isWearing(target) && (!ItemRinnegan.isWearing(caster) || !ItemSharingan.isWearingEternal(caster)))
 				return false;
 			else if (ItemSharingan.isWearingEternal(target) && !ItemSharingan.isWearingEternal(caster))
+				return false;
+			else if (ItemSharingan.isWearingMangekyo(target) && !ItemSharingan.isWearingMangekyo(caster))
 				return false;
 			else {
 				ItemStack stack = ProcedureUtils.getMatchingItemStack(target, ItemNinjutsu.block);
