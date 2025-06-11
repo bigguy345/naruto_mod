@@ -65,7 +65,7 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 		this.experienceValue = 5;
 		this.isImmuneToFire = true;
 		//this.noClip = true;
-		this.stepHeight = 0.5F;
+		this.stepHeight = 1F;
 		this.setNoAI(true);
 		this.enablePersistence();
 		this.tasks.addTask(1, new EntityAILookIdle(this));
@@ -248,7 +248,6 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 			this.jumpMovementFactor = this.getAIMoveSpeed();
 			this.renderYawOffset = entity.rotationYaw;
 			this.rotationYawHead = entity.rotationYaw;
-			this.stepHeight = this.height / 3.0F;
 			if (entity instanceof EntityLivingBase) {
 				this.setAIMoveSpeed((float) this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue());
 				float forward = ((EntityLivingBase) entity).moveForward;
