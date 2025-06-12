@@ -6,12 +6,14 @@ import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.narutomod.ElementsNarutomodMod;
 import net.narutomod.goatee.util.AdvancementUtil;
 import net.narutomod.item.*;
+import net.narutomod.procedure.ProcedureUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,7 +110,7 @@ public class CommandDojutsuToggle extends ElementsNarutomodMod.ModElement {
 
                 if (ItemRinnegan.isRinnesharinganActivated(rinnegan))
                     ItemRinnegan.setRinneSharinganActivated(rinnegan, false);
-                else if (ItemRinnegan.isRinnegan(rinnegan) && (isOp || AdvancementUtil.has(player, "narutomod:rinnesharinganactivated")) || ItemTenseigan.isTenseigan(rinnegan) && (isOp || AdvancementUtil.has(player, "narutomod:tensei_byakugan_activated")))
+                else if (isOp || AdvancementUtil.has(player, "narutomod:rinnesharinganactivated") || ItemTenseigan.isTenseigan(rinnegan) && AdvancementUtil.has(player, "narutomod:tensei_byakugan_activated"))
                     ItemRinnegan.setRinneSharinganActivated(rinnegan, true);
             } else if (type == Level1.RINNEGANTOMOE) {
                 String error = "/dojutsutoggle rinnegantomoe <on | off | eternal> player";
@@ -127,11 +129,28 @@ public class CommandDojutsuToggle extends ElementsNarutomodMod.ModElement {
                     throw new CommandException("Invalid argument: " + s);
 
                 ItemRinneganTomoe.setTomoeStatus(tomoe, status, player);
+            } else if (type == Level1.TENSEIGANCLOAK) {
+                player = args.length > 1 ? getPlayer(server, sender, args[1]) : player;
+                ItemStack helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+                ItemStack tenseigan = ItemTenseigan.isTenseigan(player.getHeldItemMainhand()) ? player.getHeldItemMainhand() : ItemTenseigan.isTenseigan(helmet) ? helmet : ItemStack.EMPTY;
+                if (tenseigan.isEmpty())
+                    return;
+
+                NBTTagCompound nbt = tenseigan.getTagCompound();
+                if (ItemTenseigan.canUseChakraMode(tenseigan, player)) {
+                    nbt.setDouble("oldByakuganCount", nbt.getDouble("ByakuganCount"));
+                    nbt.setDouble("ByakuganCount", 4); //decrement under 5
+
+                    ItemStack eyestack = ProcedureUtils.getMatchingItemStack(player, ItemTenseiganChakraMode.block);
+                    if (eyestack != null)
+                        eyestack.shrink(1);
+                } else if (isOp || AdvancementUtil.has(player, "narutomod:tensei_byakugan_activated") && nbt.getDouble("oldByakuganCount") >= 5)
+                    nbt.setDouble("ByakuganCount", 5);
             }
         }
 
         public enum Level1 {
-            DODGE("dodge"), RINNESHARINGAN("rinnesharingan"), RINNEGANTOMOE("rinnegantomoe");
+            DODGE("dodge"), RINNESHARINGAN("rinnesharingan"), RINNEGANTOMOE("rinnegantomoe"), TENSEIGANCLOAK("tenseigancloak");
 
             private final String argString;
             private static final Map<String, Level1> COMMANDS = Maps.newHashMap();
