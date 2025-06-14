@@ -99,7 +99,7 @@ public class ProcedureMedicalScrollGUIOnButtonClicked extends ElementsNarutomodM
 									.isDone()
 							: false)) {
 						newstack = new ItemStack(ItemMangekyoSharinganEternal.helmet, (int) (1));
-						((ItemSharingan.Base) newstack.getItem()).copyOwner(newstack, stack0);
+						((ItemSharingan.Base) newstack.getItem()).setOwner(newstack, owner);
 						if (entity instanceof EntityPlayerMP) {
 							Container _current = ((EntityPlayerMP) entity).openContainer;
 							if (_current instanceof Supplier) {

@@ -147,7 +147,8 @@ public class ProcedureSharinganHelmetTickEvent extends ElementsNarutomodMod.ModE
 					} else {
 						mangekyo = new ItemStack(ItemMangekyoSharinganObito.helmet, (int) (1));
 					}
-					((ItemSharingan.Base) mangekyo.getItem()).copyOwner(mangekyo, itemstack);
+					EntityLivingBase owner = ((ItemDojutsu.Base) itemstack.getItem()).getOwner(itemstack, world);
+					((ItemSharingan.Base) mangekyo.getItem()).setOwner(mangekyo, owner);
 					if (entity instanceof EntityPlayer) {
 						ItemStack _setstack = (mangekyo);
 						_setstack.setCount(1);
