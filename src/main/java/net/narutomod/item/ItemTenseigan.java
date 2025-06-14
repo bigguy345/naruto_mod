@@ -101,7 +101,7 @@ public class ItemTenseigan extends ElementsNarutomodMod.ModElement {
 
 				armorModel.headwearHide = !(inTenseiganCloak && !((ItemTenseiganChakraMode.RangedItem) item.getItem()).isOnCooldown(living) || HUDItemStackWheel.IS_OPEN );//&& isS06p);
 				armorModel.headHide = !armorModel.headwearHide;
-				armorModel.hornMiddle.showModel = isRinneSharingan;
+				armorModel.hornMiddle.showModel = true;
 				armorModel.hornLeft.showModel = armorModel.hornRight.showModel = false;
 				return armorModel;
 			}
