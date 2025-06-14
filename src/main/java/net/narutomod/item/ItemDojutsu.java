@@ -27,6 +27,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.init.MobEffects;
 
+import net.narutomod.goatee.data.NarutoData;
 import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.NarutomodModVariables;
 import net.narutomod.ElementsNarutomodMod;
@@ -179,7 +180,7 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 		}
 	}
 	public static boolean hasAnyDojutsu(EntityPlayer player) {
-		return ProcedureUtils.hasAnyItemOfSubtype(player, Base.class);
+		return ProcedureUtils.hasAnyItemOfSubtype(player, Base.class) || NarutoData.get(player).dojutsuWheel.hasAny((stack) -> stack.getItem() instanceof Base);
 	}
 
 	public static boolean wearingAnyDojutsu(EntityLivingBase entity) {

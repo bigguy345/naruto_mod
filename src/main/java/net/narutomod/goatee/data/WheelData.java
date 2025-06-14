@@ -98,6 +98,14 @@ public class WheelData {
 
         return toDrop;
     }
+
+    public boolean hasAny(Predicate<ItemStack> condition) {
+        for (Segment data : wheelSegments)
+            if (condition.test(data.stack))
+                return true;
+
+        return false;
+    }
     
     public static class Segment {
         public WheelData parent;
