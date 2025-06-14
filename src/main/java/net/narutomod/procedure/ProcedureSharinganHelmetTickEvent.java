@@ -1,5 +1,6 @@
 package net.narutomod.procedure;
 
+import net.narutomod.goatee.util.AdvancementUtil;
 import net.narutomod.item.ItemSharingan;
 import net.narutomod.item.ItemMangekyoSharinganObito;
 import net.narutomod.item.ItemMangekyoSharingan;
@@ -139,9 +140,8 @@ public class ProcedureSharinganHelmetTickEvent extends ElementsNarutomodMod.ModE
 					}
 				}
 			}
-			if ((((itemstack).getItem() == new ItemStack(ItemSharingan.helmet, (int) (1)).getItem())
-					&& ((entity.getEntityData().getDouble((NarutomodModVariables.BATTLEXP))) >= 1000))) {
-				if ((PlayerTracker.Deaths.hasRecentNearby((EntityPlayer) entity, 40D, 6000D) && (!(world.isRemote)))) {
+			if (itemstack.getItem() == ItemSharingan.helmet && entity.getEntityData().getDouble(NarutomodModVariables.BATTLEXP) >= 1000) {
+				if (!AdvancementUtil.has((EntityPlayerMP) entity, "narutomod:mangekyosharinganopened") && true) {//PlayerTracker.Deaths.hasRecentNearby((EntityPlayer) entity, 40D, 6000D) && (!(world.isRemote))) {
 					if ((Math.random() < 0.5)) {
 						mangekyo = new ItemStack(ItemMangekyoSharingan.helmet, (int) (1));
 					} else {

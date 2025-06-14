@@ -99,6 +99,8 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		@Override
 		public void onArmorTick(World world, EntityPlayer entity, ItemStack itemstack) {
 			super.onArmorTick(world, entity, itemstack);
+			if (world.isRemote)
+				return;
 			int x = (int) entity.posX;
 			int y = (int) entity.posY;
 			int z = (int) entity.posZ;
@@ -112,7 +114,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 				$_dependencies.put("world", world);
 				ProcedureSharinganHelmetTickEvent.executeProcedure((HashMap) $_dependencies);
 			}
-			if (!world.isRemote && entity.ticksExisted % 6 == 1
+			if (entity.ticksExisted % 6 == 1
 			 && (!((Base)itemstack.getItem()).isEternal() || !this.isOwner(itemstack, entity))
 			 && (entity.getEntityData().getBoolean("amaterasu_active")
 			  || entity.getEntityData().getBoolean("susanoo_activated") || entity.getEntityData().getBoolean("kamui_teleport"))) {
