@@ -79,10 +79,11 @@ public class CommandSpeed extends ElementsNarutomodMod.ModElement {
 
             if (player.capabilities.isFlying) {
                 float speed = (float) parseDouble(args[0]);
-                float maxSpeed = 1;
 
                 ItemStack helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-                if (ItemRinnegan.isRinnesharinganActivated(helmet))
+
+                float maxSpeed = 1;
+                if (player.isCreative() || ItemRinnegan.isRinnesharinganActivated(helmet))
                     maxSpeed = 10;
                 else if (!ItemTenseigan.getHeldChakraCloak(player).isEmpty())
                     maxSpeed = 5;
