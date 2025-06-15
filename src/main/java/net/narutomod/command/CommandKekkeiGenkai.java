@@ -74,7 +74,7 @@ public class CommandKekkeiGenkai extends ElementsNarutomodMod.ModElement {
 
         @Override
         public String getUsage(ICommandSender var1) {
-            return "/kekkeigenkai <grant|revoke> <type> player";
+            return "/kekkeigenkai <grant|revoke> <type> <player>";
         }
 
         @Override
