@@ -845,3 +845,7 @@ dojutsuwheel.gui.extract_to_inventory=§6* §cCTRL-Extract §6extracts to invent
 dojutsuwheel.gui.deselect_slot=§6* §7Right-Click §6to deselect hovered slot
 
 hiraishin.teleport_behind.not_safe=Not safe to teleport!
+
+command.kekkei_genkai.already_has=%s already has %s
+command.kekkei_genkai.doesn't_have=%s doesn't have %s
+command.kekkei_genkai.removed=Revoked %s from %s
