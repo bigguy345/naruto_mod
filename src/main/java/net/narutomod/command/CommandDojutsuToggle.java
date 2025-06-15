@@ -136,6 +136,9 @@ public class CommandDojutsuToggle extends ElementsNarutomodMod.ModElement {
                 if (tenseigan.isEmpty())
                     return;
 
+                if (!((ItemDojutsu.Base) tenseigan.getItem()).isOwner(tenseigan, player) && !isOp)
+                    throw new CommandException("Not your Tenseigan!");
+
                 NBTTagCompound nbt = tenseigan.getTagCompound();
                 if (ItemTenseigan.canUseChakraMode(tenseigan, player)) {
                     nbt.setDouble("oldByakuganCount", nbt.getDouble("ByakuganCount"));
