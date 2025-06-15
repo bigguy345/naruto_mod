@@ -39,7 +39,7 @@ public class ProcedureFlightPotionExpires extends ElementsNarutomodMod.ModElemen
 				return false;
 			}
 		}.check()))) {
-			if (entity instanceof EntityPlayer) {
+			if (entity instanceof EntityPlayer && !((EntityPlayer) entity).isCreative()) {
 				((EntityPlayer) entity).capabilities.isFlying = (false);
 				((EntityPlayer) entity).capabilities.allowFlying = (false);
 				try {
