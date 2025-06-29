@@ -108,6 +108,17 @@ public enum KekkeiGenkai {
         public Item getItem() {
             return Math.random() < 0.5 ? ItemMangekyoSharingan.helmet : ItemMangekyoSharinganObito.helmet;
         }
+
+        public void remove(EntityPlayerMP player) {
+            if (AdvancementUtil.revoke(player, achievement)) {
+                ProcedureUtils.getAllItemsOfSubType(player, ItemSharingan.Base.class).forEach((stack -> {
+                    ItemSharingan.Base sharingan = (ItemSharingan.Base) stack.getItem();
+                    if (sharingan.isMangekyo() && !sharingan.isEternal() && sharingan.isOwner(stack, player))
+                        stack.shrink(1);
+                }));
+            }
+        }
+
     },
     ETERNAL_MANGEKYO(ItemMangekyoSharinganEternal.helmet, "narutomod:eternalmangekyoachieved"),
     RINNEGAN(ItemRinnegan.helmet, "narutomod:rinneganawakened");
