@@ -141,7 +141,7 @@ public class ProcedureSharinganHelmetTickEvent extends ElementsNarutomodMod.ModE
 				}
 			}
 			if (itemstack.getItem() == ItemSharingan.helmet && entity.getEntityData().getDouble(NarutomodModVariables.BATTLEXP) >= 1000) {
-				if (!AdvancementUtil.has((EntityPlayerMP) entity, "narutomod:mangekyosharinganopened") && true) {//PlayerTracker.Deaths.hasRecentNearby((EntityPlayer) entity, 40D, 6000D) && (!(world.isRemote))) {
+				if (!AdvancementUtil.has((EntityPlayerMP) entity, "narutomod:mangekyosharinganopened") && PlayerTracker.Deaths.hasRecentNearby((EntityPlayer) entity, 40D, 6000D) && (!(world.isRemote))) {//PlayerTracker.Deaths.hasRecentNearby((EntityPlayer) entity, 40D, 6000D) && (!(world.isRemote))) {
 					if ((Math.random() < 0.5)) {
 						mangekyo = new ItemStack(ItemMangekyoSharingan.helmet, (int) (1));
 					} else {
