@@ -75,56 +75,56 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static double getShinratenseiChakraUsage(EntityLivingBase entity) {
-		ItemStack stack = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		ItemStack stack =ItemDojutsu.getWorn(entity);
 		return isRinnegan(stack)
 		 ? ((ItemDojutsu.Base)stack.getItem()).isOwner(stack, entity)
 		  ? SHINRATENSEI_CHAKRA_USAGE : SHINRATENSEI_CHAKRA_USAGE * 2 : (Double.MAX_VALUE * 0.001d);
 	}
 
 	public static double getBanshoteninChakraUsage(EntityLivingBase entity) {
-		ItemStack stack = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		ItemStack stack =ItemDojutsu.getWorn(entity);
 		return isRinnegan(stack)
 		 ? ((ItemDojutsu.Base)stack.getItem()).isOwner(stack, entity)
 		  ? BANSHOTENIN_CHAKRA_USAGE : BANSHOTENIN_CHAKRA_USAGE * 2 : (Double.MAX_VALUE * 0.001d);
 	}
 
 	public static double getChibaukutenseiChakraUsage(EntityLivingBase entity) {
-		ItemStack stack = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		ItemStack stack =ItemDojutsu.getWorn(entity);
 		return isRinnegan(stack)
 		 ? ((ItemDojutsu.Base)stack.getItem()).isOwner(stack, entity)
 		  ? CHIBAKUTENSEI_CHAKRA_USAGE : CHIBAKUTENSEI_CHAKRA_USAGE * 2 : (Double.MAX_VALUE * 0.001d);
 	}
 
 	public static double getNarakaPathChakraUsage(EntityLivingBase entity) {
-		ItemStack stack = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		ItemStack stack =ItemDojutsu.getWorn(entity);
 		return isRinnegan(stack)
 		 ? ((ItemDojutsu.Base)stack.getItem()).isOwner(stack, entity)
 		  ? NARAKAPATH_CHAKRA_USAGE : NARAKAPATH_CHAKRA_USAGE * 2 : (Double.MAX_VALUE * 0.001d);
 	}
 
 	public static double getPretaPathChakraUsage(EntityLivingBase entity) {
-		ItemStack stack = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		ItemStack stack =ItemDojutsu.getWorn(entity);
 		return isRinnegan(stack)
 		 ? ((ItemDojutsu.Base)stack.getItem()).isOwner(stack, entity)
 		  ? PRETAPATH_CHAKRA_USAGE : PRETAPATH_CHAKRA_USAGE * 2 : (Double.MAX_VALUE * 0.001d);
 	}
 
 	public static double getAnimalPathChakraUsage(EntityLivingBase entity) {
-		ItemStack stack = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		ItemStack stack =ItemDojutsu.getWorn(entity);
 		return isRinnegan(stack)
 		 ? ((ItemDojutsu.Base)stack.getItem()).isOwner(stack, entity)
 		  ? ANIMALPATH_CHAKRA_USAGE : ANIMALPATH_CHAKRA_USAGE * 2 : (Double.MAX_VALUE * 0.001d);
 	}
 
 	public static double getOuterPathChakraUsage(EntityLivingBase entity) {
-		ItemStack stack = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		ItemStack stack =ItemDojutsu.getWorn(entity);
 		return isRinnegan(stack)
 		 ? ((ItemDojutsu.Base)stack.getItem()).isOwner(stack, entity)
 		  ? OUTERPATH_CHAKRA_USAGE : OUTERPATH_CHAKRA_USAGE * 2 : (Double.MAX_VALUE * 0.001d);
 	}
 
 	public static double getTengaishinseiChakraUsage(EntityLivingBase entity) {
-		ItemStack stack = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		ItemStack stack =ItemDojutsu.getWorn(entity);
 		return isRinnegan(stack)
 		 ? ((ItemDojutsu.Base)stack.getItem()).isOwner(stack, entity)
 		  ? TENGAISHINSEI_CHAKRA_USAGE : TENGAISHINSEI_CHAKRA_USAGE * 2 : (Double.MAX_VALUE * 0.001d);
@@ -306,7 +306,7 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 
 		public void onUpdatePost(EntityPlayer player) {
 			if (!player.world.isRemote && player.ticksExisted % 20 == 3) {
-				ItemStack helmetStack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+				ItemStack helmetStack = ItemDojutsu.getWorn(player);
 				GuiNinjaScroll.enableJutsu(player, (ItemJutsu.Base)ItemYoton.block, ItemYoton.SEALING9D, isRinnegan(helmetStack));
 				GuiNinjaScroll.enableJutsu(player, (ItemJutsu.Base)ItemYoton.block,
 				 ItemYoton.SEALING10, isRinnegan(helmetStack) && EntityTenTails.getBijuManager().isAddedToWorld(player.world));
@@ -489,7 +489,7 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static boolean isWearing(EntityLivingBase player) {
-		return isRinnegan(player.getItemStackFromSlot(EntityEquipmentSlot.HEAD));
+		return isRinnegan(ItemDojutsu.getWorn(player));
 	}
 	public static boolean isRinnesharinganActivated(ItemStack stack) {
 		return (stack.hasTagCompound() && stack.getTagCompound().getBoolean(RINNESHARINGAN_KEY));
@@ -500,7 +500,7 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static boolean wearingRinnesharingan(EntityLivingBase player) {
-		ItemStack itemstack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		ItemStack itemstack = ItemDojutsu.getWorn(player);
 		return isRinnegan(itemstack) && isRinnesharinganActivated(itemstack);
 	}
 

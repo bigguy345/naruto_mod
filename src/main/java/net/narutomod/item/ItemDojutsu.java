@@ -184,7 +184,7 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static boolean wearingAnyDojutsu(EntityLivingBase entity) {
-		return entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() instanceof Base;
+		return ItemDojutsu.getWorn(entity).getItem() instanceof Base;
 	}
 
 	public static ItemStack getWorn(EntityLivingBase entity) {
@@ -265,7 +265,7 @@ public static boolean dropOnForceDojutsuDrop(Item eye){
 			ItemStack item = event.getItemStack();
 
 			if (item.getItem() instanceof Base) {
-				ItemStack helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+				ItemStack helmet = ItemDojutsu.getWorn(player);
 				if (helmet.getItem() instanceof Base) {
 					int slot = ProcedureUtils.getSlotFor(item,player); 
 					player.inventory.armorInventory.set(3, item);

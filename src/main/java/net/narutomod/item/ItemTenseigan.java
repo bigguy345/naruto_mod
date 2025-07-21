@@ -73,7 +73,7 @@ public class ItemTenseigan extends ElementsNarutomodMod.ModElement {
 			@Override
 			public void onUpdatePost(EntityPlayer player) {
 				if (!player.world.isRemote && player.ticksExisted % 20 == 3) {
-					ItemStack helmetStack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+					ItemStack helmetStack = ItemDojutsu.getWorn(player);
 					GuiNinjaScroll.enableJutsu(player, (ItemJutsu.Base)ItemYoton.block, ItemYoton.SEALING9D, helmetStack.getItem() == helmet);
 					GuiNinjaScroll.enableJutsu(player, (ItemJutsu.Base)ItemYoton.block,
 					 ItemYoton.SEALING10, helmetStack.getItem() == helmet && EntityTenTails.getBijuManager().isAddedToWorld(player.world));
@@ -210,7 +210,7 @@ public class ItemTenseigan extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static boolean isWearing(EntityLivingBase player) {
-		return isTenseigan(player.getItemStackFromSlot(EntityEquipmentSlot.HEAD));
+		return isTenseigan(ItemDojutsu.getWorn(player));
 	}
 
 	public static ItemStack getHeldChakraCloak(EntityLivingBase player) {
@@ -226,7 +226,7 @@ public class ItemTenseigan extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static boolean isWearingFullArmor(EntityLivingBase entity) {
-		return entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == helmet
+		return ItemDojutsu.getWorn(entity).getItem() == helmet
 		 && entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() == body
 		 && entity.getItemStackFromSlot(EntityEquipmentSlot.LEGS).getItem() == legs;
 	}

@@ -31,6 +31,7 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import net.narutomod.item.ItemDojutsu;
 import net.narutomod.procedure.ProcedureAoeCommand;
 import net.narutomod.procedure.ProcedureOnLivingUpdate;
 import net.narutomod.procedure.ProcedureUtils;
@@ -122,7 +123,8 @@ public class EntityHakkeshoKeiten extends ElementsNarutomodMod.ModElement {
 				this.collideWithEntity(attacker);
 			}
 			return super.attackEntityFrom(source, amount);
-		}*/
+		}
+*/
 
 		private float getMaturity() {
 			return Math.min((float)this.ticksExisted / (float)this.matureTime, 1.0F);
@@ -183,7 +185,8 @@ public class EntityHakkeshoKeiten extends ElementsNarutomodMod.ModElement {
 				entity.attackEntityFrom(ItemJutsu.causeJutsuDamage(this, summoner),
 				 summoner instanceof EntityPlayer ? (float)PlayerTracker.getNinjaLevel((EntityPlayer)summoner) / 4.0F + 10F : 10F);
 			}
-		}*/
+		}
+*/
 
 		private void breakBlocks(List<? extends BlockPos> list) {
 			EntityLivingBase summoner = this.getSummoner();
@@ -203,7 +206,7 @@ public class EntityHakkeshoKeiten extends ElementsNarutomodMod.ModElement {
 				EntityLivingBase summoner = this.getSummoner();
 				if (summoner instanceof EntityPlayer) {
 					double cooldown = ProcedureUtils.getCooldownModifier((EntityPlayer)summoner) * this.ticksExisted * 5;
-					ItemStack _stack = summoner.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+					ItemStack _stack = ItemDojutsu.getWorn(summoner);
 					if (_stack.getItem() == ItemByakugan.helmet) {
 						if (!_stack.hasTagCompound()) {
 							_stack.setTagCompound(new NBTTagCompound());

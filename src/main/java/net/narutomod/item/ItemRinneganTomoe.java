@@ -139,7 +139,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
 
                     if (entity instanceof EntityPlayer) {
                         EntityPlayer player = (EntityPlayer) entity;
-                        ItemStack helmetStack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+                        ItemStack helmetStack = ItemDojutsu.getWorn(player);
                         GuiNinjaScroll.enableJutsu(player, (ItemJutsu.Base) ItemYoton.block, ItemYoton.SEALING9D, isRinnegan(helmetStack));
                         GuiNinjaScroll.enableJutsu(player, (ItemJutsu.Base) ItemYoton.block, ItemYoton.SEALING10, isRinnegan(helmetStack) && EntityTenTails.getBijuManager().isAddedToWorld(player.world));
 
@@ -493,7 +493,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
     }
 
     public static boolean isWearing(EntityLivingBase player) {
-        return isTomoe(player.getItemStackFromSlot(EntityEquipmentSlot.HEAD));
+        return isTomoe(ItemDojutsu.getWorn(player));
     }
 
     @SideOnly(Side.CLIENT)

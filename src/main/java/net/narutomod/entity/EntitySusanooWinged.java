@@ -36,14 +36,11 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 
 import net.narutomod.ModConfig;
+import net.narutomod.item.*;
 import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.procedure.ProcedureTotsukaSwordToolInHandTick;
 import net.narutomod.procedure.ProcedureKagutsuchiSwordToolInUseTick;
 import net.narutomod.potion.PotionAmaterasuFlame;
-import net.narutomod.item.ItemSharingan;
-import net.narutomod.item.ItemKamuiShuriken;
-import net.narutomod.item.ItemKagutsuchiSwordRanged;
-import net.narutomod.item.ItemTotsukaSword;
 import net.narutomod.NarutomodMod;
 import net.narutomod.ElementsNarutomodMod;
 
@@ -105,7 +102,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier("susanoo.maxhealth", ModConfig.WINGED_SUSANOO.MAX_HEALTH, 2));
 			this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(this.playerXp * 0.003d);
 			this.getEntityData().setDouble("entityModelScale", (double)MODELSCALE);
-			Item helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem();
+			Item helmet = ItemDojutsu.getWorn(player).getItem();
 			if (player instanceof EntityPlayer && helmet instanceof ItemSharingan.Base) {
 				if (((ItemSharingan.Base)helmet).isEternal() || ((ItemSharingan.Base)helmet).getSubType() == ItemSharingan.Type.AMATERASU) {
 					ItemHandlerHelper.giveItemToPlayer((EntityPlayer)player, kagutsuchi);

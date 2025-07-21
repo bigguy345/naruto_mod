@@ -95,7 +95,7 @@ public class CommandDojutsuToggle extends ElementsNarutomodMod.ModElement {
 
             if (type == Level1.DODGE) {
                 player = args.length > 1 ? getPlayer(server, sender, args[1]) : player;
-                ItemStack helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+                ItemStack helmet = ItemDojutsu.getWorn(player);
                 ItemStack sharingan = player.getHeldItemMainhand().getItem() instanceof ItemSharingan.Base ? player.getHeldItemMainhand() : helmet.getItem() instanceof ItemSharingan.Base ? helmet : ItemStack.EMPTY;
                 if (sharingan.isEmpty())
                     return;
@@ -103,7 +103,7 @@ public class CommandDojutsuToggle extends ElementsNarutomodMod.ModElement {
                 ItemSharingan.setDodgeEnabled(sharingan, !ItemSharingan.isDodgeEnabled(sharingan));
             } else if (type == Level1.RINNESHARINGAN) {
                 player = args.length > 1 ? getPlayer(server, sender, args[1]) : player;
-                ItemStack helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+                ItemStack helmet = ItemDojutsu.getWorn(player);
                 ItemStack rinnegan = ItemRinnegan.isRinnegan(player.getHeldItemMainhand()) ? player.getHeldItemMainhand() : ItemRinnegan.isRinnegan(helmet) ? helmet : ItemStack.EMPTY;
                 if (rinnegan.isEmpty())
                     return;
@@ -118,7 +118,7 @@ public class CommandDojutsuToggle extends ElementsNarutomodMod.ModElement {
                     throw new WrongUsageException(error);
 
                 player = args.length > 2 ? getPlayer(server, sender, args[2]) : player;
-                ItemStack helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+                ItemStack helmet = ItemDojutsu.getWorn(player);
                 ItemStack tomoe = ItemRinneganTomoe.isTomoe(player.getHeldItemMainhand()) ? player.getHeldItemMainhand() : ItemRinneganTomoe.isTomoe(helmet) ? helmet : ItemStack.EMPTY;
                 if (tomoe.isEmpty())
                     return;
@@ -131,7 +131,7 @@ public class CommandDojutsuToggle extends ElementsNarutomodMod.ModElement {
                 ItemRinneganTomoe.setTomoeStatus(tomoe, status, player);
             } else if (type == Level1.TENSEIGANCLOAK) {
                 player = args.length > 1 ? getPlayer(server, sender, args[1]) : player;
-                ItemStack helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+                ItemStack helmet = ItemDojutsu.getWorn(player);
                 ItemStack tenseigan = ItemTenseigan.isTenseigan(player.getHeldItemMainhand()) ? player.getHeldItemMainhand() : ItemTenseigan.isTenseigan(helmet) ? helmet : ItemStack.EMPTY;
                 if (tenseigan.isEmpty())
                     return;

@@ -90,7 +90,7 @@ public class ItemTenseiganChakraMode extends ElementsNarutomodMod.ModElement {
 
 		@Override
 		public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer entity, EnumHand hand) {
-			return entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == ItemTenseigan.helmet
+			return ItemDojutsu.getWorn(entity).getItem() == ItemTenseigan.helmet
 					? super.onItemRightClick(world, entity, hand)
 					: new ActionResult<ItemStack>(EnumActionResult.FAIL, entity.getHeldItem(hand));
 		}
@@ -115,7 +115,7 @@ public class ItemTenseiganChakraMode extends ElementsNarutomodMod.ModElement {
 						itemstack.shrink(1);
 					} else if (ItemTenseigan.getHeldChakraCloak(livingEntity).equals(itemstack)) {
 						livingEntity.addPotionEffect(new PotionEffect(PotionFlight.potion, 2, 1, false, false));
-						if (!livingEntity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).equals(eyestack)) {
+						if (!ItemDojutsu.getWorn(livingEntity).equals(eyestack)) {
 							ProcedureUtils.swapItemToSlot(livingEntity, EntityEquipmentSlot.HEAD, eyestack);
 						}
 						if (stack1.getItem() != ItemTenseigan.body) {

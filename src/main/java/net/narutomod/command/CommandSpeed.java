@@ -11,6 +11,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.narutomod.ElementsNarutomodMod;
+import net.narutomod.item.ItemDojutsu;
 import net.narutomod.item.ItemRinnegan;
 import net.narutomod.item.ItemTenseigan;
 
@@ -80,7 +81,7 @@ public class CommandSpeed extends ElementsNarutomodMod.ModElement {
             if (player.capabilities.isFlying) {
                 float speed = (float) parseDouble(args[0]);
 
-                ItemStack helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+                ItemStack helmet = ItemDojutsu.getWorn(player);
 
                 float maxSpeed = 1;
                 if (player.isCreative() || ItemRinnegan.isRinnesharinganActivated(helmet))

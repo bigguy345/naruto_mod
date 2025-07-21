@@ -30,11 +30,7 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 
-import net.narutomod.item.ItemTotsukaSword;
-import net.narutomod.item.ItemChokuto;
-import net.narutomod.item.ItemShuriken;
-import net.narutomod.item.ItemSharingan;
-import net.narutomod.item.ItemJutsu;
+import net.narutomod.item.*;
 import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.procedure.ProcedureSusanoo;
 import net.narutomod.PlayerTracker;
@@ -82,7 +78,7 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 			//this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE)
 			 //.applyModifier(new AttributeModifier("susanoo.damage", ((EntityPlayer)player).experienceLevel, 0));
 		}
-		ItemStack helmetstack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		ItemStack helmetstack = ItemDojutsu.getWorn(player);
 		if (helmetstack.getItem() instanceof ItemSharingan.Base) {
 			if (ProcedureUtils.isOriginalOwner(player, helmetstack)) {
 				this.chakraUsageModifier = 1d;

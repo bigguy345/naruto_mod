@@ -60,7 +60,7 @@ public final class NarutoWheelData extends AbstractPacket {
         name = ByteBufUtils.readUTF8String(in);
 
         WheelData.Segment seg = NarutoData.get(player).dojutsuWheel.get(slot);
-        ItemStack helmet = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+        ItemStack helmet = ItemDojutsu.getWorn(player);
 
         if (seg.stack.isEmpty()) {
             boolean swapWithHelmet = false;

@@ -8,6 +8,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EntityEquipmentSlot;
 
+import net.narutomod.item.ItemDojutsu;
 import net.narutomod.item.ItemRinnegan;
 import net.narutomod.item.ItemTenseigan;
 import net.narutomod.entity.EntityKingOfHell;
@@ -39,7 +40,7 @@ public class ProcedureNarakaPath extends ElementsNarutomodMod.ModElement {
 		}
 		if (!world.isRemote && entity instanceof EntityLivingBase) {
 			EntityLivingBase living = (EntityLivingBase)entity;
-			ItemStack stack = living.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+			ItemStack stack = ItemDojutsu.getWorn(living);
 			if (ItemRinnegan.isRinnegan(stack)) {
 				UUID entity_id = ProcedureUtils.getUniqueId(stack, "KoH_id");
 				if (entity_id == null) {

@@ -21,10 +21,7 @@ import net.narutomod.goatee.client.Sounds;
 import net.narutomod.goatee.data.NarutoData;
 import net.narutomod.goatee.data.WheelData;
 import net.narutomod.goatee.network.packets.NarutoSyncData;
-import net.narutomod.item.ItemJutsu;
-import net.narutomod.item.ItemRinnegan;
-import net.narutomod.item.ItemRinneganTomoe;
-import net.narutomod.item.ItemTenseigan;
+import net.narutomod.item.*;
 import net.narutomod.keybind.JutsuKeys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -336,7 +333,7 @@ public class HUDItemStackWheel extends GuiScreen {
 
         ItemStack oldItem = entity.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
         ItemStack oldOffhand = entity.getItemStackFromSlot(EntityEquipmentSlot.OFFHAND);
-        ItemStack oldHelmet = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+        ItemStack oldHelmet = ItemDojutsu.getWorn(entity);
         ItemStack oldChest = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
         ItemStack oldLegs = entity.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
 

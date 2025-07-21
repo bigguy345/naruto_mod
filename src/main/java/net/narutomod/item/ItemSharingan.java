@@ -141,7 +141,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 
 		// returns true if evaded, false if otherwise
 		public boolean onAttackEvent(LivingAttackEvent event, EntityLivingBase entity, EntityLivingBase attacker) {
-			if (isDodgeEnabled(entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD)) && entity.getRNG().nextFloat() <= 0.6f) {
+			if (isDodgeEnabled(ItemDojutsu.getWorn(entity)) && entity.getRNG().nextFloat() <= 0.6f) {
 		 		Entity immediateSource = event.getSource().getImmediateSource();
 				if (immediateSource == null)
 					return false;
@@ -271,7 +271,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static boolean wearingAny(EntityLivingBase entity) {
-		return entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() instanceof Base;
+		return ItemDojutsu.getWorn(entity).getItem() instanceof Base;
 	}
 
 	public static boolean isMangekyo(ItemStack stack) {
@@ -283,11 +283,11 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static boolean isWearingMangekyo(EntityLivingBase entity) {
-		return isMangekyo(entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD));
+		return isMangekyo(ItemDojutsu.getWorn(entity));
 	}
 
 	public static boolean isWearingEternal(EntityLivingBase entity) {
-		return isEternal(entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD));
+		return isEternal(ItemDojutsu.getWorn(entity));
 	}
 	
 	public static boolean isBlinded(ItemStack stack) {
@@ -355,7 +355,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			EntityLivingBase entity = event.getEntityLiving();
 			Entity attacker = event.getSource().getTrueSource();
 			if (wearingAny(entity) && ItemJutsu.canTarget(entity) && !entity.isRiding()) {
-				((Base)entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem()).onAttackEvent(event, entity, (EntityLivingBase)attacker);
+				((Base)ItemDojutsu.getWorn(entity).getItem()).onAttackEvent(event, entity, (EntityLivingBase)attacker);
 				if (entity instanceof EntityPlayer && !isAutoLockOn(entity)) 
 					lockOnTarget(entity, (EntityLivingBase) attacker, 300);
 			}
@@ -384,7 +384,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		}
 
 		private static int getAutoLockOnMaxTime(EntityLivingBase entity) {
-			ItemStack helmet = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+			ItemStack helmet = ItemDojutsu.getWorn(entity);
 			
 			int time = 30;
 			if (ItemRinneganTomoe.isTomoe(helmet)) {
@@ -436,7 +436,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			
 			if (isAutoLockOn(entity)) {
 				if (entity.ticksExisted % 20 == 0) {
-					ItemStack eye = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+					ItemStack eye = ItemDojutsu.getWorn(entity);
 					int time = getAutoLockOnTime(entity);
 					EntityLivingBase target = getLockedTarget(entity);
 

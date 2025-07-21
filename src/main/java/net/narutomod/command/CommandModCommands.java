@@ -8,6 +8,7 @@ import net.narutomod.ElementsNarutomodMod;
 import net.narutomod.entity.EntityBijuManager;
 import net.narutomod.entity.EntityGedoStatue;
 import net.narutomod.entity.EntitySusanooBase;
+import net.narutomod.item.ItemDojutsu;
 import net.narutomod.item.ItemSharingan;
 import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.procedure.ProcedureLocateEntityCommandExecuted;
@@ -140,7 +141,7 @@ public class CommandModCommands extends ElementsNarutomodMod.ModElement {
 				} else if (cmd[0].equals(Level1.SUSANOOCOLOR.toString())) {
 					if (cmd.length == 1)
 						throw new WrongUsageException(TextFormatting.RED + "hexColor i.e #ffffff");
-					ItemStack stack = ((EntityPlayer)entity).getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+					ItemStack stack = ItemDojutsu.getWorn(((EntityPlayer)entity));
 					if (stack.getItem() instanceof ItemSharingan.Base) {
 						int color = new Random().nextInt();
 						if (cmd.length >= 2)

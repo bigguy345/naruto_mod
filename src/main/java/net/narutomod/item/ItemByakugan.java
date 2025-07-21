@@ -60,25 +60,25 @@ public class ItemByakugan extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static double getByakuganChakraUsage(EntityLivingBase entity) {
-		ItemStack stack = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		ItemStack stack =ItemDojutsu.getWorn(entity);
 		return stack.getItem() == helmet ? ((ItemDojutsu.Base)helmet).isOwner(stack, entity) ? BYAKUGAN_CHAKRA_USAGE 
 		 : BYAKUGAN_CHAKRA_USAGE * 2 : (Double.MAX_VALUE * 0.001d);
 	}
 
 	public static double getRokujuyonshoChakraUsage(EntityLivingBase entity) {
-		ItemStack stack = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		ItemStack stack =ItemDojutsu.getWorn(entity);
 		return stack.getItem() == helmet && ((ItemDojutsu.Base)helmet).isOwner(stack, entity) ? ROKUJUYONSHO_CHAKRA_USAGE 
 		 : (Double.MAX_VALUE * 0.001d);
 	}
 
 	public static double getKaitenChakraUsage(EntityLivingBase entity) {
-		ItemStack stack = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		ItemStack stack =ItemDojutsu.getWorn(entity);
 		return stack.getItem() == helmet && ((ItemDojutsu.Base)helmet).isOwner(stack, entity) ? KAITEN_CHAKRA_USAGE 
 		 : (Double.MAX_VALUE * 0.001d);
 	}
 
 	public static double getKushoChakraUsage(EntityLivingBase entity) {
-		ItemStack stack = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		ItemStack stack =ItemDojutsu.getWorn(entity);
 		return stack.getItem() == helmet && ((ItemDojutsu.Base)helmet).isOwner(stack, entity) ? KUSHO_CHAKRA_USAGE 
 		 : (Double.MAX_VALUE * 0.001d);
 	}
@@ -265,7 +265,7 @@ public class ItemByakugan extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static boolean wearingAny(EntityLivingBase entity) {
-		return entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == helmet;
+		return ItemDojutsu.getWorn(entity).getItem() == helmet;
 	}
 
 	public static boolean isRinnesharinganActivated(ItemStack stack) {

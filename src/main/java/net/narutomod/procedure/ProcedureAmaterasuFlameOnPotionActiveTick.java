@@ -1,5 +1,6 @@
 package net.narutomod.procedure;
 
+import net.narutomod.item.ItemDojutsu;
 import net.narutomod.potion.PotionAmaterasuFlame;
 import net.narutomod.item.ItemSharingan;
 import net.narutomod.Particles;
@@ -33,7 +34,7 @@ public class ProcedureAmaterasuFlameOnPotionActiveTick extends ElementsNarutomod
 		double w = 0;
 		double h = 0;
 		double amp = 0;
-		ItemStack stack = ((EntityLivingBase) entity).getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		ItemStack stack = ItemDojutsu.getWorn(((EntityLivingBase) entity));
 		if ((stack.getItem() instanceof ItemSharingan.Base && ((((ItemSharingan.Base) stack.getItem()).getSubType() == ItemSharingan.Type.AMATERASU)
 				|| ((ItemSharingan.Base) stack.getItem()).isEternal()))) {
 			((EntityLivingBase) entity).removePotionEffect(PotionAmaterasuFlame.potion);

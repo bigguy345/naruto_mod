@@ -28,6 +28,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.init.MobEffects;
 
+import net.narutomod.item.ItemDojutsu;
 import net.narutomod.potion.PotionAmaterasuFlame;
 import net.narutomod.item.ItemMangekyoSharingan;
 import net.narutomod.ElementsNarutomodMod;
@@ -118,7 +119,7 @@ public class EntitySusanooSkeleton extends ElementsNarutomodMod.ModElement {
 		@Override
 		protected void collideWithEntity(Entity entity) {
 			if (!this.world.isRemote && this.getOwnerPlayer() != null
-			 && this.getOwnerPlayer().getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == ItemMangekyoSharingan.helmet
+			 && ItemDojutsu.getWorn(this.getOwnerPlayer()).getItem() == ItemMangekyoSharingan.helmet
 			 && entity instanceof EntityLivingBase && !entity.equals(this.getOwnerPlayer()))
 				((EntityLivingBase) entity).addPotionEffect(new PotionEffect(PotionAmaterasuFlame.potion, 200, 0, false, false));
 			super.collideWithEntity(entity);

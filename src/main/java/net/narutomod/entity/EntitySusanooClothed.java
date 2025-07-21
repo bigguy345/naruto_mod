@@ -226,7 +226,7 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 		protected void collideWithEntity(Entity entity) {
 			if (!this.world.isRemote && entity instanceof EntityLivingBase && !entity.equals(this.getOwnerPlayer())) {
 				if (this.getOwnerPlayer() != null 
-				 && (this.getOwnerPlayer().getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == ItemMangekyoSharingan.helmet || ItemSharingan.isWearingEternal(getOwnerPlayer())))
+				 &&  ItemDojutsu.getWorn(this.getOwnerPlayer()).getItem() == ItemMangekyoSharingan.helmet || ItemSharingan.isWearingEternal(getOwnerPlayer()))
 					((EntityLivingBase) entity).addPotionEffect(new PotionEffect(PotionAmaterasuFlame.potion, 200, this.hasLegs() ? 2 : 1, false, false));
 			}
 			super.collideWithEntity(entity);
