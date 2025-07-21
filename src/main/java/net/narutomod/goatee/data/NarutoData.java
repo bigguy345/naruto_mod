@@ -2,20 +2,22 @@ package net.narutomod.goatee.data;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.narutomod.goatee.network.PacketHandler;
-import net.narutomod.goatee.network.packets.NarutoSyncData;
+import net.narutomod.goatee.data.inventory.DojutsuItemHandler;
 
 import static net.narutomod.goatee.data.capability.NarutoCapabilities.NARUTO_DATA_CAPABILITY;
 
 public class NarutoData {
     public EntityPlayer player;
     public WheelData dojutsuWheel = new WheelData("DojutsuWheel");
+    public final DojutsuItemHandler dojutsuSlotHandler = new DojutsuItemHandler();
+
 
     public NarutoData() {
     }
@@ -24,15 +26,22 @@ public class NarutoData {
         this.player = dojutsuWheel.player = player;
     }
 
+    public ItemStack getDojutsuSlot() {
+        return dojutsuSlotHandler.getStackInSlot(0);
+    }
+
     public NBTTagCompound writeToNBT() {
         NBTTagCompound compound = new NBTTagCompound();
         dojutsuWheel.writeToNBT(compound);
+        compound.setTag("dojutsuSlot", dojutsuSlotHandler.serializeNBT());
 
         return compound;
     }
 
     public void readFromNBT(NBTTagCompound compound) {
         dojutsuWheel.readFromNBT(compound);
+        dojutsuSlotHandler.deserializeNBT(compound.getCompoundTag("dojutsuSlot"));
+
     }
 
     public static NarutoData get(EntityPlayer player) {

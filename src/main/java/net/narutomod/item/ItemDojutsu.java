@@ -187,6 +187,20 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 		return entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() instanceof Base;
 	}
 
+	public static ItemStack getWorn(EntityLivingBase entity) {
+		return entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+	}
+
+	public static ItemStack getWorn(EntityPlayer player) {
+		NarutoData data = NarutoData.get(player);
+		if (data != null && !data.getDojutsuSlot().isEmpty())
+			return data.getDojutsuSlot();
+
+
+		return getWorn(player);
+	}
+
+
 	public static long getMostRecentWornTime(EntityLivingBase entity) {
 		return entity.getEntityData().getLong(NarutomodModVariables.MostRecentWornDojutsuTime);
 	}
