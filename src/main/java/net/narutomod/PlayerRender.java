@@ -531,7 +531,6 @@ public class PlayerRender extends ElementsNarutomodMod.ModElement {
 				return;
 
 			NarutoData data = NarutoData.get((EntityPlayer) entityIn);
-			data.dojutsuSlotHandler.setStackInSlot(0,new ItemStack(ItemRinneganTomoe.helmet));
 			if (data == null || data.getDojutsuSlot().isEmpty())
 				return;
 
