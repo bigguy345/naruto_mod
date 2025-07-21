@@ -197,7 +197,7 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 			return data.getDojutsuSlot();
 
 
-		return getWorn(player);
+		return getWorn((EntityLivingBase) player);
 	}
 
 
