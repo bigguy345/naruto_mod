@@ -54,6 +54,7 @@ import net.minecraft.init.Items;
 import net.minecraft.potion.Potion;
 
 import net.narutomod.entity.EntityNinjaMob;
+import net.narutomod.item.ItemDojutsu;
 import net.narutomod.item.ItemJutsu;
 import net.narutomod.PlayerTracker;
 import net.narutomod.PlayerRender;
@@ -580,6 +581,11 @@ public class ProcedureUtils extends ElementsNarutomodMod.ModElement {
 
 	public static void swapItemToSlot(EntityPlayer entity, EntityEquipmentSlot slot, ItemStack itemstack) {
 		ItemStack itemstack1 = entity.getItemStackFromSlot(slot);
+
+		boolean dojutsu = slot == EntityEquipmentSlot.HEAD && itemstack.getItem() instanceof ItemDojutsu.Base;
+		if (dojutsu)
+			itemstack1 = ItemDojutsu.getWorn(entity);
+			
 		//ItemStack itemstack2 = getItemStackIgnoreDurability(entity.inventory, itemstack);
 		ItemStack itemstack2 = getMatchingItemStack(entity, itemstack);
 		if (itemstack2 != null && !itemstack2.isEmpty()) {
