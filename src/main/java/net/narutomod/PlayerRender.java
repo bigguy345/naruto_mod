@@ -49,9 +49,11 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.Minecraft;
 
 import net.narutomod.entity.EntityShieldBase;
+import net.narutomod.goatee.data.NarutoData;
 import net.narutomod.item.ItemDojutsu;
 import net.narutomod.item.ItemOnBody;
 import net.narutomod.item.ItemBijuCloak;
+import net.narutomod.item.ItemRinneganTomoe;
 import net.narutomod.procedure.ProcedureOnLivingUpdate;
 import net.narutomod.procedure.ProcedureSync;
 import net.narutomod.procedure.ProcedureUtils;
@@ -478,6 +480,7 @@ public class PlayerRender extends ElementsNarutomodMod.ModElement {
 	        this.renderArmorLayer(entitylivingbaseIn, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale, EntityEquipmentSlot.LEGS);
 	        this.renderArmorLayer(entitylivingbaseIn, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale, EntityEquipmentSlot.FEET);
 	        this.renderArmorLayer(entitylivingbaseIn, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale, EntityEquipmentSlot.HEAD);
+			
 		}
 
 	    private void renderArmorLayer(EntityLivingBase entityIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale, EntityEquipmentSlot slotIn) {
@@ -519,6 +522,54 @@ public class PlayerRender extends ElementsNarutomodMod.ModElement {
 	            }
 	        }
 	    }
+
+		/**
+		 * IS CALLED FROM THE DOJUTSU SLOT ADDON !!
+		 */
+		private void renderDojutsuSlot(EntityLivingBase entityIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale, EntityEquipmentSlot slotIn) {
+			if (!(entityIn instanceof EntityPlayer))
+				return;
+
+			NarutoData data = NarutoData.get((EntityPlayer) entityIn);
+			data.dojutsuSlotHandler.setStackInSlot(0,new ItemStack(ItemRinneganTomoe.helmet));
+			if (data == null || data.getDojutsuSlot().isEmpty())
+				return;
+
+			ItemStack eye = data.getDojutsuSlot();
+			ItemArmor itemarmor = (ItemArmor) eye.getItem();
+			boolean isDojutsu = true;
+			
+			ModelBiped model = this.getModelFromSlot(slotIn);
+			model = getArmorModelHook(entityIn, eye, slotIn, model);
+			ModelBiped wearerModel = (ModelBiped) this.renderer.getMainModel();
+			model.setModelAttributes(wearerModel);
+			Vector2f vec2f = this.renderer.getRevisedLimbSwingAmount(model, entityIn, limbSwing, limbSwingAmount, partialTicks);
+			limbSwing = vec2f.x;
+			limbSwingAmount = vec2f.y;
+			model.setLivingAnimations(entityIn, limbSwing, limbSwingAmount, partialTicks);
+			this.setModelSlotVisible(model, slotIn);
+			this.renderer.bindTexture(this.getArmorResource(entityIn, eye, slotIn, null));
+			if (itemarmor.hasOverlay(eye)) { // Allow this for anything, not only cloth
+				if (isDojutsu) //fix sharingans being tinted by susanooColor
+					GlStateManager.color(0, 0, 0, 1.0F);
+				else {
+					int i = itemarmor.getColor(eye);
+					float f = (float) (i >> 16 & 255) / 255.0F;
+					float f1 = (float) (i >> 8 & 255) / 255.0F;
+					float f2 = (float) (i & 255) / 255.0F;
+					GlStateManager.color(f, f1, f2, 1.0F);
+				}
+				this.renderArmorModel(model, entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+				this.renderer.bindTexture(this.getArmorResource(entityIn, eye, slotIn, "overlay"));
+			}
+			{ // Non-colored
+				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+				this.renderArmorModel(model, entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+			} // Default
+			if (eye.hasEffect()) {
+				renderEnchantedGlint(this.renderer, entityIn, model, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
+			}
+		}
 
 		private void renderArmorModel(ModelBiped model, Entity entityIn, float f0, float f1, float f2, float f3, float f4, float f5) {
 			if ((model.bipedRightArm.showModel || model.bipedLeftArm.showModel)
