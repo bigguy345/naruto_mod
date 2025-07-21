@@ -1,0 +1,18 @@
+{
+  "package": "net.narutomod.goatee.mixin.early",
+  "required": true,
+  "refmap": "mixins.narutomod.refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8.5",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+//    "mc.MixinContainerCreative",
+  //  "mc.MixinContainerPlayer",
+//    "mc.MixinEntityPlayer",
+  //  "mc.MixinGuiContainerCreative",
+   // "mc.MixinGuiInventory"
+  ],
+  "server": [],
+  "client": [
+  ]
+}
