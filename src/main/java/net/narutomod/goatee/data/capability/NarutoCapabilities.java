@@ -52,9 +52,10 @@ public class NarutoCapabilities {
 
         EntityPlayer player = event.player;
         if (event.side == Side.SERVER && event.phase == TickEvent.Phase.START) {
-            if (player.ticksExisted % 10 == 0) {
+            NarutoData.get(player).tick();
+
+            if (player.ticksExisted % 10 == 0) 
                 NarutoSyncData.syncTrackingClients(NarutoData.get(player));
-            }
         }
     }
 

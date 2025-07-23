@@ -16,7 +16,7 @@ import static net.narutomod.goatee.data.capability.NarutoCapabilities.NARUTO_DAT
 public class NarutoData {
     public EntityPlayer player;
     public WheelData dojutsuWheel = new WheelData("DojutsuWheel");
-    public final DojutsuItemHandler dojutsuSlotHandler = new DojutsuItemHandler();
+    public DojutsuItemHandler dojutsuSlotHandler;
 
 
     public NarutoData() {
@@ -24,10 +24,13 @@ public class NarutoData {
 
     public NarutoData(EntityPlayer player) {
         this.player = dojutsuWheel.player = player;
+        dojutsuSlotHandler = new DojutsuItemHandler(player);
     }
 
     public ItemStack getDojutsuSlot() {
-        return dojutsuSlotHandler.getStackInSlot(0);
+        if (dojutsuSlotHandler != null)
+            return dojutsuSlotHandler.getStackInSlot(0);
+        return ItemStack.EMPTY;
     }
 
     public NBTTagCompound writeToNBT() {
