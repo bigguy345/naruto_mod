@@ -7,7 +7,7 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
     }
 }
-        
+
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 
@@ -18,7 +18,7 @@ archivesBaseName = "modid"
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-	mappings channel: 'snapshot', version: '20171003-1.12'
+    mappings channel: 'snapshot', version: '20171003-1.12'
 
     runs {
         client {
