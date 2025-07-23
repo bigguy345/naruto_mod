@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.Entity;
+import net.narutomod.item.ItemDojutsu;
 
 import java.util.Map;
 
@@ -46,7 +47,7 @@ public class ProcedureHakkeshoKaiten extends ElementsNarutomodMod.ModElement {
 		double cooldown = 0;
 		double ticksExisted = 0;
 		ItemStack helmetstack = ItemStack.EMPTY;
-		helmetstack = ((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.armorInventory.get(3) : ItemStack.EMPTY);
+		helmetstack = ((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(((EntityPlayer) entity)) : ItemStack.EMPTY);
 		if (((helmetstack).hasTagCompound() && (helmetstack).getTagCompound().getBoolean((NarutomodModVariables.RINNESHARINGAN_ACTIVATED)))) {
 			cooldown = (double) (entity.getEntityData().getDouble("press_time"));
 			if ((is_pressed)) {

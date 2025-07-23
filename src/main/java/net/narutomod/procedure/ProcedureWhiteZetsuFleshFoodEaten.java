@@ -65,7 +65,7 @@ public class ProcedureWhiteZetsuFleshFoodEaten extends ElementsNarutomodMod.ModE
 									.getAdvancement(new ResourceLocation("narutomod:eternalmangekyoachieved")))
 							.isDone()
 					: false)
-					&& (((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.armorInventory.get(3) : ItemStack.EMPTY)
+					&& (((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(((EntityPlayer) entity)) : ItemStack.EMPTY)
 							.getItem() == new ItemStack(ItemMangekyoSharinganEternal.helmet, (int) (1)).getItem()))
 					&& (((!(((entity instanceof EntityPlayerMP) && ((entity).world instanceof WorldServer))
 							? ((EntityPlayerMP) entity).getAdvancements()

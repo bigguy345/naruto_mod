@@ -18,6 +18,7 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.Entity;
+import net.narutomod.item.ItemDojutsu;
 
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class ProcedureEightTrigrams64Palms extends ElementsNarutomodMod.ModEleme
 		double cooldown = 0;
 		boolean f1 = false;
 		ItemStack helmetstack = ItemStack.EMPTY;
-		helmetstack = ((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.armorInventory.get(3) : ItemStack.EMPTY);
+		helmetstack = ((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(((EntityPlayer) entity)) : ItemStack.EMPTY);
 		f1 = ProcedureUtils.isOriginalOwner((EntityPlayer) entity, helmetstack);
 		if (((!(world.isRemote)) && (((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).capabilities.isCreativeMode : false)
 				|| ((PlayerTracker.getBattleXp((EntityPlayer) entity) >= 1000) && (f1))))) {

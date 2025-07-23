@@ -32,6 +32,7 @@ import net.narutomod.ElementsNarutomodMod;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
 import com.google.common.collect.Lists;
+import net.narutomod.item.ItemDojutsu;
 
 @ElementsNarutomodMod.ModElement.Tag
 public class OverlayByakuganView extends ElementsNarutomodMod.ModElement {
@@ -107,7 +108,7 @@ public class OverlayByakuganView extends ElementsNarutomodMod.ModElement {
 			if (!event.isCancelable() && event.getType() == RenderGameOverlayEvent.ElementType.HELMET) {
 				Minecraft mc = Minecraft.getMinecraft();
 				EntityPlayer player = mc.player;
-				if (player.inventory.armorInventory.get(3).getItem() == ItemByakugan.helmet && byakuganActivated) {
+				if (ItemDojutsu.getWorn(player).getItem() == ItemByakugan.helmet && byakuganActivated) {
 					int sWidth = event.getResolution().getScaledWidth();
 					int sHeight = event.getResolution().getScaledHeight();
 					int color = 0x1AFFFFFF;

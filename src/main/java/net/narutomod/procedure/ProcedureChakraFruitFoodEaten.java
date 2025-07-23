@@ -46,7 +46,7 @@ public class ProcedureChakraFruitFoodEaten extends ElementsNarutomodMod.ModEleme
 		ItemStack stack = ItemStack.EMPTY;
 		ItemStack onhead = ItemStack.EMPTY;
 		EntityPlayer player = (EntityPlayer) entity;
-		onhead = player.inventory.armorInventory.get(3);
+		onhead = ItemDojutsu.getWorn(player);
 		if (ItemRinnegan.hasRinnegan(player)) {
 			if (player.inventory.hasItemStack(new ItemStack(ItemRinnegan.helmet))) {
 				ItemStack _stack = ProcedureUtils.getItemStackIgnoreDurability(player.inventory, new ItemStack(ItemRinnegan.helmet));

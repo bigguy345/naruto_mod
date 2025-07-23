@@ -41,7 +41,7 @@ public class ProcedurePowerIncreaseOnKeyPressed extends ElementsNarutomodMod.Mod
 		ItemStack itemmainhand = ItemStack.EMPTY;
 		ItemStack itemoffhand = ItemStack.EMPTY;
 		if ((!(world.isRemote))) {
-			helmet = ((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.armorInventory.get(3) : ItemStack.EMPTY);
+			helmet = ((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(((EntityPlayer) entity)) : ItemStack.EMPTY);
 			itemmainhand = ((entity instanceof EntityLivingBase) ? ((EntityLivingBase) entity).getHeldItemMainhand() : ItemStack.EMPTY);
 			itemoffhand = ((entity instanceof EntityLivingBase) ? ((EntityLivingBase) entity).getHeldItemOffhand() : ItemStack.EMPTY);
 			if (itemmainhand.getItem() instanceof ItemJutsu.Base) {

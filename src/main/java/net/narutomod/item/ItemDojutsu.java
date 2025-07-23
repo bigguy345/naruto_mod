@@ -268,7 +268,7 @@ public static boolean dropOnForceDojutsuDrop(Item eye){
 				ItemStack helmet = ItemDojutsu.getWorn(player);
 				if (helmet.getItem() instanceof Base) {
 					int slot = ProcedureUtils.getSlotFor(item,player); 
-					player.inventory.armorInventory.set(3, item);
+					player.setItemStackToSlot(EntityEquipmentSlot.HEAD, item);
 					player.inventory.mainInventory.set(slot, helmet);
 				}
 			}

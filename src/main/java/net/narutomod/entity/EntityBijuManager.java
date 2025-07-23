@@ -19,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 
 import net.narutomod.item.ItemBijuCloak;
+import net.narutomod.item.ItemDojutsu;
 import net.narutomod.item.ItemSenjutsu;
 import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.Chakra;
@@ -551,7 +552,7 @@ public abstract class EntityBijuManager<T extends EntityTailedBeast.Base> {
 				this.chakraBeforeCloak = cp.getAmount();
 				cp.consume(-d1, true);
 				this.cloakCD = l;
-				if (this.jinchurikiPlayer.inventory.armorInventory.get(3).getItem() != ItemBijuCloak.helmet) {
+				if (ItemDojutsu.getWorn(jinchurikiPlayer).getItem() != ItemBijuCloak.helmet) {
 					ItemStack stack = new ItemStack(ItemBijuCloak.helmet);
 					stack.setTagCompound(new NBTTagCompound());
 					stack.getTagCompound().setInteger("Tails", this.tails);
@@ -601,7 +602,8 @@ public abstract class EntityBijuManager<T extends EntityTailedBeast.Base> {
 				} else if (this.cloakLevel == 1) {
 					chakra.consume(-d, true);
 					this.saveAndResetWearingTicks(this.cloakLevel++);
-				} else {
+				}
+ else {
 					T biju = this.spawnEntity(this.jinchurikiPlayer);
 					if (biju != null) {
 						ItemBijuCloak.clearCloakItems(this.jinchurikiPlayer);

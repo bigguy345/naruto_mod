@@ -127,7 +127,7 @@ public class JutsuKeys {
 			this.keyId = in.readByte();
 			this.pressType = in.readByte();
 
-			ItemStack helmet = player.inventory.armorInventory.get(3);
+			ItemStack helmet = ItemDojutsu.getWorn(player);
 
 			if (ItemSharingan.wearingAny(player) && keyId == 10 && pressType == 0)
 				((ItemSharingan.Base) helmet.getItem()).lockOnLookingAt(player, helmet);

@@ -4,6 +4,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.narutomod.item.ItemDojutsu;
 import net.narutomod.world.WorldKamuiDimension;
 import net.narutomod.item.ItemMangekyoSharinganObito;
 import net.narutomod.gui.overlay.OverlayByakuganView;
@@ -75,8 +76,8 @@ public class ProcedureKamuiJikukanIdo extends ElementsNarutomodMod.ModElement {
 		double timer = 0;
 		double chakraAmount = 0;
 		double chakraUsage = 0;
-		if ((((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.armorInventory.get(3) : ItemStack.EMPTY).hasTagCompound()
-				&& ((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.armorInventory.get(3) : ItemStack.EMPTY).getTagCompound()
+		if ((((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(((EntityPlayer) entity)) : ItemStack.EMPTY).hasTagCompound()
+				&& ((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(((EntityPlayer) entity)) : ItemStack.EMPTY).getTagCompound()
 						.getBoolean("sharingan_blinded"))) {
 			if ((entity.getEntityData().getBoolean("kamui_teleport"))) {
 				OverlayByakuganView.sendCustomData(entity, false, 70);

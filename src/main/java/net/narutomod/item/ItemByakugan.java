@@ -273,7 +273,7 @@ public class ItemByakugan extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static boolean wearingRinnesharingan(EntityPlayer player) {
-		ItemStack itemstack = player.inventory.armorInventory.get(3);
+		ItemStack itemstack = ItemDojutsu.getWorn(player);
 		return itemstack.getItem() == helmet && isRinnesharinganActivated(itemstack);
 	}
 

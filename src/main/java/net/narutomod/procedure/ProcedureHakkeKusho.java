@@ -13,6 +13,7 @@ import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.block.Block;
 
+import net.narutomod.item.ItemDojutsu;
 import net.narutomod.item.ItemJutsu;
 import net.narutomod.item.ItemByakugan;
 import net.narutomod.Chakra;
@@ -81,7 +82,7 @@ public class ProcedureHakkeKusho extends ElementsNarutomodMod.ModElement {
 		}
 		EntityPlayer player = (EntityPlayer) entity;
 		if (!player.isCreative()
-		 && (PlayerTracker.getBattleXp(player) < XP_REQUIRED || !ProcedureUtils.isOriginalOwner(player, player.inventory.armorInventory.get(3))))
+		 && (PlayerTracker.getBattleXp(player) < XP_REQUIRED || !ProcedureUtils.isOriginalOwner(player, ItemDojutsu.getWorn(player))))
 			return;
 		boolean is_pressed = ((Boolean) dependencies.get("is_pressed")).booleanValue();
 		int pressDuration = ProcedureAirPunch.getPressDuration(player);

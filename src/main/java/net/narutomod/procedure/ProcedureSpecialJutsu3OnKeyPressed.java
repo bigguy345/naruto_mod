@@ -39,7 +39,7 @@ public class ProcedureSpecialJutsu3OnKeyPressed extends ElementsNarutomodMod.Mod
 		if (((world.isRemote) || ((EntityPlayer) entity).isSpectator())) {
 			return;
 		}
-		helmet = ((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.armorInventory.get(3) : ItemStack.EMPTY);
+		helmet = ((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(((EntityPlayer) entity)) : ItemStack.EMPTY);
 		if ((helmet.getItem() instanceof ItemDojutsu.Base
 				&& ((ItemDojutsu.Base) helmet.getItem()).onJutsuKey3(is_pressed, helmet, (EntityPlayer) entity))) {
 			return;

@@ -1,5 +1,6 @@
 package net.narutomod.procedure;
 
+import net.narutomod.item.ItemDojutsu;
 import net.narutomod.item.ItemTenseigan;
 import net.narutomod.item.ItemRinnegan;
 import net.narutomod.ElementsNarutomodMod;
@@ -38,7 +39,7 @@ public class ProcedureAsuraPathArmorBodyTickEvent extends ElementsNarutomodMod.M
 		ItemStack itemstack = (ItemStack) dependencies.get("itemstack");
 		World world = (World) dependencies.get("world");
 		double ticks_used = 0;
-		ItemStack helmet = entity instanceof EntityPlayer ? ((EntityPlayer) entity).inventory.armorInventory.get(3) : ItemStack.EMPTY;
+		ItemStack helmet = entity instanceof EntityPlayer ? ItemDojutsu.getWorn(((EntityPlayer) entity)) : ItemStack.EMPTY;
 
 		if (!(ItemRinnegan.isRinnegan(helmet) || ItemTenseigan.isTenseigan(helmet))) {
 			itemstack.shrink(1);

@@ -1,9 +1,6 @@
 package net.narutomod.procedure;
 
-import net.narutomod.item.ItemUchiha;
-import net.narutomod.item.ItemSharingan;
-import net.narutomod.item.ItemMangekyoSharinganObito;
-import net.narutomod.item.ItemMangekyoSharingan;
+import net.narutomod.item.*;
 import net.narutomod.ElementsNarutomodMod;
 
 import net.minecraft.world.World;
@@ -37,11 +34,11 @@ public class ProcedureUchihaBodyTickEvent extends ElementsNarutomodMod.ModElemen
 				.getItem() == new ItemStack(ItemUchiha.legs, (int) (1)).getItem())
 				&& (((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.armorInventory.get(0) : ItemStack.EMPTY)
 						.getItem() == new ItemStack(ItemUchiha.boots, (int) (1)).getItem()))
-				&& ((((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.armorInventory.get(3) : ItemStack.EMPTY)
+				&& ((((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(((EntityPlayer) entity)) : ItemStack.EMPTY)
 						.getItem() == new ItemStack(ItemSharingan.helmet, (int) (1)).getItem())
-						|| ((((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.armorInventory.get(3) : ItemStack.EMPTY)
+						|| ((((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(((EntityPlayer) entity)) : ItemStack.EMPTY)
 								.getItem() == new ItemStack(ItemMangekyoSharingan.helmet, (int) (1)).getItem())
-								|| (((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.armorInventory.get(3) : ItemStack.EMPTY)
+								|| (((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(((EntityPlayer) entity)) : ItemStack.EMPTY)
 										.getItem() == new ItemStack(ItemMangekyoSharinganObito.helmet, (int) (1)).getItem()))))) {
 			if ((!(world.isRemote))) {
 				if (entity instanceof EntityLivingBase)

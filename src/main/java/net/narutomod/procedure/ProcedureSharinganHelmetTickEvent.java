@@ -1,5 +1,6 @@
 package net.narutomod.procedure;
 
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.narutomod.goatee.util.AdvancementUtil;
 import net.narutomod.item.ItemSharingan;
 import net.narutomod.item.ItemMangekyoSharinganObito;
@@ -101,7 +102,7 @@ public class ProcedureSharinganHelmetTickEvent extends ElementsNarutomodMod.ModE
 							ItemHandlerHelper.giveItemToPlayer(((EntityPlayer) entity), _setstack);
 						}
 						if (entity instanceof EntityPlayer) {
-							((EntityPlayer) entity).inventory.armorInventory.set(3, new ItemStack(Blocks.AIR, (int) (1)));
+							((EntityPlayer) entity).setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(Blocks.AIR, (int) (1)));
 							if (entity instanceof EntityPlayerMP)
 								((EntityPlayerMP) entity).inventory.markDirty();
 						}

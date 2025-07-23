@@ -1,5 +1,6 @@
 package net.narutomod.procedure;
 
+import net.narutomod.item.ItemDojutsu;
 import net.narutomod.potion.PotionAmaterasuFlame;
 import net.narutomod.item.ItemMangekyoSharinganEternal;
 import net.narutomod.item.ItemMangekyoSharingan;
@@ -43,9 +44,9 @@ public class ProcedureKagutsuchiSwordToolInUseTick extends ElementsNarutomodMod.
 		double random = 0;
 		double y1 = 0;
 		if (((!(entity instanceof EntitySusanooWinged.EntityCustom))
-				&& (!((((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.armorInventory.get(3) : ItemStack.EMPTY)
+				&& (!((((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(((EntityPlayer) entity)) : ItemStack.EMPTY)
 						.getItem() == new ItemStack(ItemMangekyoSharingan.helmet, (int) (1)).getItem())
-						|| (((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.armorInventory.get(3) : ItemStack.EMPTY)
+						|| (((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(((EntityPlayer) entity)) : ItemStack.EMPTY)
 								.getItem() == new ItemStack(ItemMangekyoSharinganEternal.helmet, (int) (1)).getItem()))))) {
 			if (entity instanceof EntityLivingBase)
 				((EntityLivingBase) entity).addPotionEffect(new PotionEffect(PotionAmaterasuFlame.potion, (int) 1, (int) 4));

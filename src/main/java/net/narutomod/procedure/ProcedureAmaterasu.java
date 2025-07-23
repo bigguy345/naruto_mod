@@ -1,5 +1,6 @@
 package net.narutomod.procedure;
 
+import net.narutomod.item.ItemDojutsu;
 import net.narutomod.potion.PotionAmaterasuFlame;
 import net.narutomod.item.ItemMangekyoSharingan;
 import net.narutomod.block.BlockAmaterasuBlock;
@@ -66,7 +67,7 @@ public class ProcedureAmaterasu extends ElementsNarutomodMod.ModElement {
 		double chakraAmount = 0;
 		double chakraUsage = 0;
 		ItemStack eye = ItemStack.EMPTY;
-		eye = ((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.armorInventory.get(3) : ItemStack.EMPTY);
+		eye = ((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(((EntityPlayer) entity)) : ItemStack.EMPTY);
 		if (((eye).hasTagCompound() && (eye).getTagCompound().getBoolean("sharingan_blinded"))) {
 			entity.getEntityData().setBoolean("amaterasu_active", (false));
 			return;
