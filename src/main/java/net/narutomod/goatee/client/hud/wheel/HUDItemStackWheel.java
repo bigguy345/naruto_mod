@@ -333,10 +333,16 @@ public class HUDItemStackWheel extends GuiScreen {
 
         ItemStack oldItem = entity.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
         ItemStack oldOffhand = entity.getItemStackFromSlot(EntityEquipmentSlot.OFFHAND);
-        ItemStack oldHelmet = ItemDojutsu.getWorn(entity);
+        ItemStack oldMcHelmet = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
         ItemStack oldChest = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
         ItemStack oldLegs = entity.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
 
+        ItemStack oldDojutsu = ItemDojutsu.getWorn(entity);
+        boolean inDojutsuSlot = !data.getDojutsuSlot().isEmpty();
+
+        if (inDojutsuSlot)
+            entity.inventory.armorInventory.set(EntityEquipmentSlot.HEAD.getIndex(), ItemStack.EMPTY);
+        
         if (!(oldItem.getItem() instanceof ItemJutsu.Base))
             entity.inventory.mainInventory.set(entity.inventory.currentItem, ItemStack.EMPTY);
 
@@ -345,11 +351,18 @@ public class HUDItemStackWheel extends GuiScreen {
 
         int oldTomoeSlot = -1;
         if (hoveredSlot != -1) {
-            if (ItemRinneganTomoe.isTomoe(oldHelmet) && ItemRinneganTomoe.getCompatibleStatus(selectedItem) != -1 && !ItemRinnegan.isRinnesharinganActivated(oldHelmet)) {
-                oldTomoeSlot = ItemRinneganTomoe.getTomoeStatus(oldHelmet);
-                ItemRinneganTomoe.setTomoeStatus(oldHelmet, ItemRinneganTomoe.getCompatibleStatus(selectedItem));
+            if (ItemRinneganTomoe.isTomoe(oldDojutsu) && ItemRinneganTomoe.getCompatibleStatus(selectedItem) != -1 && !ItemRinnegan.isRinnesharinganActivated(oldDojutsu)) {
+                oldTomoeSlot = ItemRinneganTomoe.getTomoeStatus(oldDojutsu);
+                ItemRinneganTomoe.setTomoeStatus(oldDojutsu, ItemRinneganTomoe.getCompatibleStatus(selectedItem));
             } else {
                 entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, selectedItem);
+
+                if (!data.getDojutsuSlot().isEmpty()) { // A must for the dojutsu slot addon (fixes flickering in wheel when only mc helmet slot has dojutsu)
+                    entity.inventory.armorInventory.set(EntityEquipmentSlot.HEAD.getIndex(), ItemStack.EMPTY);
+
+                    if (selectedItem.isEmpty())
+                        data.dojutsuSlotHandler.setStackInSlot(0, ItemStack.EMPTY);
+                }
 
                 if (ItemTenseigan.isTenseigan(selectedItem)) {
                     entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ItemTenseigan.body));
@@ -429,14 +442,20 @@ public class HUDItemStackWheel extends GuiScreen {
         }
 
         if (oldTomoeSlot != -1)
-            ItemRinneganTomoe.setTomoeStatus(oldHelmet, oldTomoeSlot);
+            ItemRinneganTomoe.setTomoeStatus(oldDojutsu, oldTomoeSlot);
 
         entity.inventory.mainInventory.set(entity.inventory.currentItem, oldItem);
         entity.inventory.offHandInventory.set(0, oldOffhand);
-        entity.inventory.armorInventory.set(EntityEquipmentSlot.HEAD.getIndex(), oldHelmet);
         entity.inventory.armorInventory.set(EntityEquipmentSlot.CHEST.getIndex(), oldChest);
         entity.inventory.armorInventory.set(EntityEquipmentSlot.LEGS.getIndex(), oldLegs);
-        
+        entity.inventory.armorInventory.set(EntityEquipmentSlot.HEAD.getIndex(), oldMcHelmet);
+
+        if (data.getDojutsuSlot().isEmpty())  // Fixes delay in dojutsu slot addon
+            data.dojutsuSlotHandler.setStackInSlot(0, ItemStack.EMPTY);
+
+        if (inDojutsuSlot)
+            data.dojutsuSlotHandler.setStackInSlot(0, oldDojutsu);
+
         IS_OPEN = false;
     }
 
