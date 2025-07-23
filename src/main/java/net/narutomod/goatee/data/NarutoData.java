@@ -47,6 +47,15 @@ public class NarutoData {
 
     }
 
+    public void tick() {
+        if (dojutsuWheel != null) {
+            dojutsuWheel.forEach((slot,stack) -> {
+                if(!stack.isEmpty())
+                    stack.updateAnimation(player.world, player, slot, false);
+            
+            });
+        }
+    }
     public static NarutoData get(EntityPlayer player) {
         return player.getCapability(NARUTO_DATA_CAPABILITY, null);
     }

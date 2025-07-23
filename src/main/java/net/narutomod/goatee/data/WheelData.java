@@ -1,6 +1,5 @@
 package net.narutomod.goatee.data;
 
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -10,6 +9,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 @Mod.EventBusSubscriber
@@ -17,8 +17,6 @@ public class WheelData {
     public String NAME;
     public EntityPlayer player;
     private Segment[] wheelSegments = new Segment[6];
-    
-
 
     public WheelData(String name) {
         NAME = name;
@@ -39,6 +37,19 @@ public class WheelData {
         NBTTagCompound wheelNbt = compound.getCompoundTag(NAME);
         for (int i = 0; i < wheelSegments.length; i++)
             wheelSegments[i].readFromNBT(wheelNbt.getCompoundTag(i + ""));
+    }
+
+    public int size() {
+        return wheelSegments.length;
+    }
+
+    public Segment[] getSegments() {
+        return wheelSegments;
+    }
+
+    public void forEach(BiConsumer<Integer, ItemStack> consumer) {
+        for (Segment s : wheelSegments)
+            consumer.accept(s.slot,s.stack);
     }
 
     public Segment get(int slot) {
