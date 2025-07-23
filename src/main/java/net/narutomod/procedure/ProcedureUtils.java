@@ -54,6 +54,8 @@ import net.minecraft.init.Items;
 import net.minecraft.potion.Potion;
 
 import net.narutomod.entity.EntityNinjaMob;
+import net.narutomod.goatee.data.NarutoData;
+import net.narutomod.goatee.data.WheelData;
 import net.narutomod.item.ItemDojutsu;
 import net.narutomod.item.ItemJutsu;
 import net.narutomod.PlayerTracker;
@@ -238,8 +240,7 @@ public class ProcedureUtils extends ElementsNarutomodMod.ModElement {
 	
 	@Nullable
 	public static ItemStack getItemStackIgnoreDurability(InventoryPlayer inventory, ItemStack itemStackIn) {
-		List<NonNullList<ItemStack>> allInv = Arrays.<NonNullList<ItemStack>>asList(inventory.mainInventory, inventory.armorInventory,
-				inventory.offHandInventory);
+		List<NonNullList<ItemStack>> allInv = getAllInventories(inventory.player);
 		for (List<ItemStack> list : allInv) {
 			Iterator iterator = list.iterator();
 			while (iterator.hasNext()) {
@@ -254,7 +255,7 @@ public class ProcedureUtils extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static boolean hasItem(EntityPlayer player, Item item) {
-		List<NonNullList<ItemStack>> allInv = Arrays.asList(player.inventory.mainInventory, player.inventory.armorInventory, player.inventory.offHandInventory);
+		List<NonNullList<ItemStack>> allInv = getAllInventories(player);
 		for (List<ItemStack> list : allInv) {
 			Iterator iterator = list.iterator();
 			while (iterator.hasNext()) {
@@ -287,8 +288,7 @@ public class ProcedureUtils extends ElementsNarutomodMod.ModElement {
 
 	@Nullable
 	public static ItemStack getMatchingItemStack(EntityPlayer player, ItemStack itemStackIn) {
-		List<NonNullList<ItemStack>> allInv = Arrays.<NonNullList<ItemStack>>asList(player.inventory.mainInventory,
-		 player.inventory.armorInventory, player.inventory.offHandInventory);
+		List<NonNullList<ItemStack>> allInv = getAllInventories(player);
 		for (List<ItemStack> list : allInv) {
 			Iterator iterator = list.iterator();
 			while (iterator.hasNext()) {
@@ -323,10 +323,29 @@ public class ProcedureUtils extends ElementsNarutomodMod.ModElement {
 		return null;
 	}
 
+	public static List<NonNullList<ItemStack>> getAllInventories(EntityPlayer player) {
+		List<NonNullList<ItemStack>> invs = new ArrayList<>();
+		invs.add(player.inventory.mainInventory);
+		invs.add(player.inventory.armorInventory);
+		invs.add(player.inventory.offHandInventory);
+
+		// Wrap your slot as a one-item NonNullList so it's compatible
+		if (NarutoData.get(player) != null) {
+			WheelData data = NarutoData.get(player).dojutsuWheel;
+			if (data != null) {
+				NonNullList<ItemStack> dojutsuWheelInv = NonNullList.withSize(data.size(), ItemStack.EMPTY);
+				data.forEach((slot, stack) -> dojutsuWheelInv.set(slot, stack));
+				invs.add(dojutsuWheelInv);
+			}
+
+			invs.add(NonNullList.withSize(1, NarutoData.get(player).getDojutsuSlot()));
+		}
+
+		return invs;
+	}
 	@Nullable
 	public static ItemStack getMatchingItemstackIgnoreDurability(EntityPlayer player, ItemStack stackIn) {
-		List<NonNullList<ItemStack>> allInv = Arrays.<NonNullList<ItemStack>>asList(player.inventory.mainInventory,
-		 player.inventory.armorInventory, player.inventory.offHandInventory);
+		List<NonNullList<ItemStack>> allInv = getAllInventories(player);
 		for (List<ItemStack> list : allInv) {
 			Iterator iterator = list.iterator();
 			while (iterator.hasNext()) {
@@ -342,8 +361,7 @@ public class ProcedureUtils extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static boolean hasAnyItemOfSubtype(EntityPlayer player, Class<? extends Item> itemType) {
-		List<NonNullList<ItemStack>> allInv = Arrays.<NonNullList<ItemStack>>asList(player.inventory.mainInventory, 
-		 player.inventory.armorInventory, player.inventory.offHandInventory);
+		List<NonNullList<ItemStack>> allInv = getAllInventories(player);
 		for (List<ItemStack> list : allInv) {
 			Iterator iterator = list.iterator();
 			while (iterator.hasNext()) {
@@ -357,8 +375,7 @@ public class ProcedureUtils extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static List<ItemStack> getAllItemsOfSubType(EntityPlayer player, Class<? extends Item> itemType) {
-		List<NonNullList<ItemStack>> allInv = Arrays.<NonNullList<ItemStack>>asList(player.inventory.mainInventory, 
-		 player.inventory.armorInventory, player.inventory.offHandInventory);
+		List<NonNullList<ItemStack>> allInv = getAllInventories(player);
 		List<ItemStack> itemlist = Lists.newArrayList();
 		for (List<ItemStack> list : allInv) {
 			Iterator iterator = list.iterator();
