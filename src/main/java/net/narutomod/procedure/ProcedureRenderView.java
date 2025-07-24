@@ -24,6 +24,7 @@ import net.narutomod.NarutomodMod;
 import net.narutomod.ElementsNarutomodMod;
 
 import io.netty.buffer.ByteBuf;
+import net.narutomod.item.ItemRinnegan;
 
 @ElementsNarutomodMod.ModElement.Tag
 public class ProcedureRenderView extends ElementsNarutomodMod.ModElement {
@@ -152,7 +153,8 @@ public class ProcedureRenderView extends ElementsNarutomodMod.ModElement {
 	public static void sendToPlayer(Entity entity, int cticks, int dticks, float r, float g, float b, float den) {
 		if (entity instanceof EntityPlayerMP) {
 			NarutomodMod.PACKET_HANDLER.sendTo(new Message(cticks, dticks, -1, r, g, b, den, 0f), (EntityPlayerMP)entity);
-		} else if (entity instanceof EntityPlayer && entity.world.isRemote) {
+		}
+ else if (entity instanceof EntityPlayer && entity.world.isRemote) {
 			if (cticks >= 0) {
 				instance.shouldChangeColor = entity.world.getTotalWorldTime() + cticks;
 				instance.newRed = r;
@@ -161,9 +163,15 @@ public class ProcedureRenderView extends ElementsNarutomodMod.ModElement {
 			}
 			if (dticks >= 0) {
 				instance.shouldChangeDensity = entity.world.getTotalWorldTime() + dticks;
-				instance.newDensity = den;
+				instance.newDensity = applyDensity((EntityPlayer) entity, den);
 			}
 		}
+	}
+
+	private static float applyDensity(EntityPlayer entity, float density) {
+		if (ItemRinnegan.isWearing(entity))
+			density = 0.01f;
+		return density;
 	}
 
 	public static void changeFog(Entity entity, double range, boolean color, boolean density, float r, float g, float b, float den) {
