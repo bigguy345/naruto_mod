@@ -86,6 +86,16 @@ public enum KekkeiGenkai {
             giveItem(ItemSuiton.block, player);
         }
     },
+    MEDICAL(ItemIryoJutsu.block, "narutomod:achievementmedicalgenin") {
+        public void giveExtras(EntityPlayer player) {
+            player.getEntityData().setBoolean("MedicalNinjaChecked", true);
+        }
+
+        public void removeExtras(EntityPlayer player) {
+            player.getEntityData().removeTag("MedicalNinjaChecked");
+        }
+    },
+
 
     //////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////
@@ -177,8 +187,12 @@ public enum KekkeiGenkai {
             AdvancementUtil.revoke(player, achievement);
 
         player.inventory.clearMatchingItems(item, -1, -1, null);
+        removeExtras(player);
     }
 
+    public void removeExtras(EntityPlayer player) {
+    }
+    
     public static void giveItem(Item item, EntityPlayer player) {
         if (!ProcedureUtils.hasItem(player, item)) {
             ItemStack stack = new ItemStack(item, 1);
@@ -192,7 +206,7 @@ public enum KekkeiGenkai {
     public static List<KekkeiGenkai> getRandomlyObtainable() {
         List<KekkeiGenkai> list = new ArrayList<>(Arrays.asList(KekkeiGenkai.values()));
 
-        list.removeAll(Arrays.asList(KekkeiGenkai.WOOD, KekkeiGenkai.MANGEKYO, KekkeiGenkai.ETERNAL_MANGEKYO, KekkeiGenkai.RINNEGAN, KekkeiGenkai.TENSEIGAN));
+        list.removeAll(Arrays.asList(WOOD, MEDICAL, MANGEKYO, ETERNAL_MANGEKYO, RINNEGAN, TENSEIGAN));
         return list;
     }
 
