@@ -102,8 +102,7 @@ public enum KekkeiGenkai {
     // Dojutsu
     BYAKUGAN(ItemByakugan.helmet, "narutomod:byakuganopened"),
     TENSEIGAN(ItemTenseigan.helmet, "narutomod:tenseigan_achieved") {
-        public ItemStack createItemStack(EntityLivingBase player) {
-            ItemStack stack = super.createItemStack(player);
+        public ItemStack applyToItemStack(ItemStack stack, EntityLivingBase player) {
             stack.getTagCompound().setDouble("ByakuganCount", 5);
             return stack;
         }
@@ -141,10 +140,15 @@ public enum KekkeiGenkai {
         this.achievement = achievement;
     }
 
+    public Item getItem() {
+        return item;
+    }
+
     public void give(EntityPlayer player) {
         if (!AdvancementUtil.has((EntityPlayerMP) player, achievement) || achievement.isEmpty()) {
             giveExtras(player);
-            ItemHandlerHelper.giveItemToPlayer(player, createItemStack(player));
+            ItemStack stack = createItemStack(item, player);
+            ItemHandlerHelper.giveItemToPlayer(player, applyToItemStack(stack, player));
             grantAdvancement((EntityPlayerMP) player);
         }
     }
@@ -153,24 +157,7 @@ public enum KekkeiGenkai {
 
     }
 
-    public Item getItem() {
-        return item;
-    }
-
-    public ItemStack createItemStack(EntityLivingBase player) {
-        ItemStack stack = new ItemStack(getItem(), 1);
-
-        if (!stack.hasTagCompound())
-            stack.setTagCompound(new NBTTagCompound());
-
-        if (item instanceof ItemDojutsu.Base) {
-            ((ItemDojutsu.Base) item).setOwner(stack, player);
-            player.getEntityData().setLong(NarutomodModVariables.MostRecentWornDojutsuTime, player.world.getTotalWorldTime());
-        } else if (item instanceof ItemJutsu.Base) {
-            ((ItemJutsu.Base) item).setOwner(stack, player);
-            ((ItemJutsu.Base) item).setIsAffinity(stack, true);
-        }
-
+    public ItemStack applyToItemStack(ItemStack stack, EntityLivingBase player) {
         return stack;
     }
 
@@ -192,14 +179,26 @@ public enum KekkeiGenkai {
 
     public void removeExtras(EntityPlayer player) {
     }
-    
+
+    public static ItemStack createItemStack(Item item, EntityLivingBase player) {
+        ItemStack stack = new ItemStack(item, 1);
+
+        if (!stack.hasTagCompound())
+            stack.setTagCompound(new NBTTagCompound());
+
+        if (item instanceof ItemDojutsu.Base) {
+            ((ItemDojutsu.Base) item).setOwner(stack, player);
+            player.getEntityData().setLong(NarutomodModVariables.MostRecentWornDojutsuTime, player.world.getTotalWorldTime());
+        } else if (item instanceof ItemJutsu.Base) {
+            ((ItemJutsu.Base) item).setOwner(stack, player);
+            ((ItemJutsu.Base) item).setIsAffinity(stack, true);
+        }
+
+        return stack;
+    }
     public static void giveItem(Item item, EntityPlayer player) {
         if (!ProcedureUtils.hasItem(player, item)) {
-            ItemStack stack = new ItemStack(item, 1);
-            if (item instanceof ItemJutsu.Base)
-                ((ItemJutsu.Base) stack.getItem()).setIsAffinity(stack, true);
-
-            ItemHandlerHelper.giveItemToPlayer(player, stack);
+            ItemHandlerHelper.giveItemToPlayer(player, createItemStack(item, player));
         }
     }
 
