@@ -59,15 +59,6 @@ sourceSets {
 }
 
 
-jar {
-    manifest {
-        attributes(
-                'FMLCorePlugin': 'net.narutomod.goatee.mixin.early.NarutoEarlyMixins',
-                'FMLCorePluginContainsMod': 'false', // Set to true if the plugin also has @Mod
-        )
-    }
-}
-
 
 repositories {
     maven {
@@ -77,27 +68,9 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2855'
-
-    annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
-    annotationProcessor 'com.google.guava:guava:32.1.2-jre'
-    annotationProcessor 'com.google.code.gson:gson:2.8.9'
-
-    implementation('zone.rong:mixinbooter:10.6') {
-        transitive = false
-    }
-    annotationProcessor('zone.rong:mixinbooter:10.6') {
-        transitive = false
-    }
-
-  //  implementation((project.files("libs/dojutsuslot-1.0.0.jar")))
     //  implementation((project.files("libs/mixinbooter-9.1.jar")))
 }
 
 apply from: 'mcreator.gradle'
 
-tasks.whenTaskAdded { task ->
-    if (task.name == "runClient" || task.name == "runServer") {
-        task.jvmArgs += "-Dfml.coreMods.load=net.narutomod.goatee.mixin.early.NarutoEarlyMixins"
-    }
-}
 
