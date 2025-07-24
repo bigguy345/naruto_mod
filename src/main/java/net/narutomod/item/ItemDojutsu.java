@@ -217,6 +217,10 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 
 		return true;
 	}
+
+	public static boolean isDojutsu(ItemStack stack) {
+		return stack.getItem() instanceof ItemDojutsu.Base;
+	}
 	
 public static boolean dropOnForceDojutsuDrop(Item eye){
 		return eye == ItemByakugan.helmet || eye == ItemSharingan.helmet||eye == ItemMangekyoSharingan.helmet||eye == ItemMangekyoSharinganObito.helmet;
@@ -258,14 +262,24 @@ public static boolean dropOnForceDojutsuDrop(Item eye){
 			EntityPlayer player = event.getEntityPlayer();
 			if (player.world.isRemote)
 				return;
-			ItemStack item = event.getItemStack();
+			ItemStack toEquip = event.getItemStack();
 
-			if (item.getItem() instanceof Base) {
-				ItemStack helmet = ItemDojutsu.getWorn(player);
-				if (helmet.getItem() instanceof Base) {
-					int slot = ProcedureUtils.getSlotFor(item,player); 
-					player.setItemStackToSlot(EntityEquipmentSlot.HEAD, item);
-					player.inventory.mainInventory.set(slot, helmet);
+			if (toEquip.getItem() instanceof Base) {
+				ItemStack wornHelmet = ItemDojutsu.getWorn(player);
+				if (!wornHelmet.isEmpty()) {
+					int slot = ProcedureUtils.getSlotFor(toEquip, player);
+
+					boolean emptyBefore = NarutoData.get(player).getDojutsuSlot().isEmpty(); //DOJUTSU SLOT COMPAT
+					player.setItemStackToSlot(EntityEquipmentSlot.HEAD, toEquip.copy());
+					boolean emptyAfter = NarutoData.get(player).getDojutsuSlot().isEmpty();
+
+					if (!(emptyBefore && !emptyAfter))
+						player.inventory.mainInventory.set(slot, wornHelmet);
+
+
+					if (emptyBefore && !emptyAfter && !isDojutsu(wornHelmet))
+						toEquip.shrink(1);
+
 				}
 			}
 		}
