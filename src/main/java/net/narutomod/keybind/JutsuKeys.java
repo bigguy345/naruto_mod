@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.narutomod.entity.EntityBijuManager;
 import net.narutomod.entity.EntityHiraishin;
 import net.narutomod.goatee.client.hud.wheel.HUDItemStackWheel;
 import net.narutomod.goatee.data.NarutoData;
@@ -27,6 +28,8 @@ import java.util.List;
 @Mod.EventBusSubscriber(value = Side.CLIENT)
 public class JutsuKeys {
 	public static List<Key> jutsuKeys = new ArrayList<>();
+	
+	private static Key keyBijuu = new Key(3, "key.bijuu_cloak", Keyboard.KEY_NONE, "key.mcreator.category");
 	private static Key key4 = new Key(4, "key.jutsu.4", Keyboard.KEY_NUMPAD4, "key.mcreator.category");
 	private static Key key5 = new Key(5, "key.jutsu.5", Keyboard.KEY_NUMPAD5, "key.mcreator.category");
 	private static Key key6 = new Key(6, "key.jutsu.6", Keyboard.KEY_NUMPAD6, "key.mcreator.category");
@@ -129,6 +132,7 @@ public class JutsuKeys {
 
 			ItemStack helmet = ItemDojutsu.getWorn(player);
 
+
 			if (ItemSharingan.wearingAny(player) && keyId == 10 && pressType == 0)
 				((ItemSharingan.Base) helmet.getItem()).lockOnLookingAt(player, helmet);
 			else if ((helmet.getItem() instanceof ItemDojutsu.Base)) {
@@ -143,6 +147,11 @@ public class JutsuKeys {
 				else if (keyId == 7)
 					eye.onJutsuKey7(pressType, helmet, player);
 			}
+
+
+			if (keyId == 3 && EntityBijuManager.isJinchuriki(player) && pressType == 2)
+				EntityBijuManager.toggleBijuCloak(player);
+		
 		}
 	}
 }
