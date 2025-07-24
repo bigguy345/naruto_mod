@@ -47,6 +47,7 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.RenderItem;
 
+import net.narutomod.Chakra;
 import net.narutomod.ModConfig;
 import net.narutomod.entity.EntityRendererRegister;
 import net.narutomod.potion.PotionHeaviness;
@@ -113,12 +114,38 @@ public class ItemBlackReceiver extends ElementsNarutomodMod.ModElement {
 		public void onPlayerStoppedUsing(ItemStack itemstack, World world, EntityLivingBase entityLivingBase, int timeLeft) {
 			if (!world.isRemote && entityLivingBase instanceof EntityPlayerMP) {
 				EntityPlayerMP entity = (EntityPlayerMP) entityLivingBase;
-				EntityArrowCustom.shoot(entity, null, 2.0f);
+				float speed = getSpeed(entity);
+				if (!Chakra.pathway(entity).consume(getChakraUsage(getDamage(entityLivingBase), speed)))
+					return;
+				EntityArrowCustom.shoot(entity, null, speed);
 				itemstack.damageItem(1, entity);
-				entity.getCooldownTracker().setCooldown(itemstack.getItem(), 10);
+				entity.getCooldownTracker().setCooldown(itemstack.getItem(), getUsageCooldown(entity));
 			}
 		}
 
+		public static double getChakraUsage(int power, float speed) {
+			if (power == 10 && speed == 2) // default
+				return 100;
+			return power * speed * 20; // 0 * 20 *10
+		}
+
+		public static int getUsageCooldown(EntityLivingBase entity) {
+			if (entity.getEntityData().hasKey("blackReceiverCD"))
+				return entity.getEntityData().getInteger("blackReceiverCD");
+			return 10;
+		}
+
+		public static int getDamage(EntityLivingBase entity) {
+			if (entity.getEntityData().hasKey("blackReceiverDamage"))
+				return entity.getEntityData().getInteger("blackReceiverDamage");
+			return 10;
+		}
+
+		public static int getSpeed(EntityLivingBase entity) {
+			if (entity.getEntityData().hasKey("blackReceiverSpeed"))
+				return entity.getEntityData().getInteger("blackReceiverSpeed");
+			return 2;
+		}
 		@Override
 		public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
 			super.hitEntity(stack, target, attacker);
@@ -261,7 +288,7 @@ public class ItemBlackReceiver extends ElementsNarutomodMod.ModElement {
 			entityarrow.shoot(vec.x, vec.y, vec.z, power, 0);
 			entityarrow.setSilent(true);
 			entityarrow.setIsCritical(true);
-			entityarrow.setDamage(10);
+			entityarrow.setDamage(RangedItem.getDamage(shooter));
 			entityarrow.setKnockbackStrength(0);
 			shooter.world.playSound(null, shooter.posX, shooter.posY, shooter.posZ,
 			 net.minecraft.util.SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:hand_shoot")),
