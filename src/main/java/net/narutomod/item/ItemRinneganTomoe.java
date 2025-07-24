@@ -79,9 +79,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                 super.onArmorTick(world, player, itemstack);
                 if (world.isRemote)
                     return;
-
-                player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 2, 2, false, false));
-
+                
                 boolean flag = player.capabilities.allowFlying || player.isCreative() || player.dimension == WorldKamuiDimension.DIMID;
                 if (player.capabilities.allowFlying != flag) {
                     player.capabilities.allowFlying = flag;
@@ -95,19 +93,22 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                     ProcedureWhenPlayerAttcked.setInvulnerable(player, 2);
                 }
 
-                int tomoeStatus = getTomoeStatus(itemstack);
+                if (player.ticksExisted % 60 == 0) {
+                    int tomoeStatus = getTomoeStatus(itemstack);
 
-                if (tomoeStatus == SHARINGAN_ON_STATUS) {
-                    player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 20, 9, false, false));
-                    player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 20, 3, false, false));
-                } else if (tomoeStatus == ETERNAL_ON_STATUS) {
-                    player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 20, 15, false, false));
-                    player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 20, 7, false, false));
-                    player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 20, 3, false, false));
-                    player.addPotionEffect(new PotionEffect(PotionReach.potion, 20, 0, false, false));
+                    if (tomoeStatus == SHARINGAN_ON_STATUS) {
+                        player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 9, false, false));
+                        player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 4, false, false));
+                        player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 4, false, false));
+                    } else if (tomoeStatus == ETERNAL_ON_STATUS) {
+                        player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 15, false, false));
+                        player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 8, false, false));
+                        player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 6, false, false));
+                        player.addPotionEffect(new PotionEffect(PotionReach.potion, 100, 1, false, false));
 
-                    if (!isRinnesharinganActivated(itemstack))
-                        Chakra.pathway(player).consume(getEternalChakraUsage(itemstack, player));
+                        if (!isRinnesharinganActivated(itemstack))
+                            Chakra.pathway(player).consume(getEternalChakraUsage(itemstack, player));
+                    }
                 }
 
                 int x = (int) player.posX;

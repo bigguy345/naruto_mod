@@ -1,5 +1,7 @@
 package net.narutomod.item;
 
+import net.minecraft.init.MobEffects;
+import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
@@ -80,6 +82,12 @@ public class ItemMangekyoSharinganObito extends ElementsNarutomodMod.ModElement 
 						Chakra.pathway(entity).consume(getIntangibleChakraUsage(entity));
 						ProcedureWhenPlayerAttcked.setInvulnerable(entity, 2);
 						//entity.getEntityData().setDouble(NarutomodModVariables.InvulnerableTime, 2.0d);
+					}
+
+					if(entity.ticksExisted % 60 == 0) {
+						entity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 1, false, false));
+						entity.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 3, false, false));
+						entity.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 2, false, false));
 					}
 				}
 			}

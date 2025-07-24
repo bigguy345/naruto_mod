@@ -62,6 +62,12 @@ public class ItemMangekyoSharinganEternal extends ElementsNarutomodMod.ModElemen
 						Chakra.pathway(entity).consume(ItemMangekyoSharinganObito.getIntangibleChakraUsage(entity));
 						entity.getEntityData().setDouble(NarutomodModVariables.InvulnerableTime, 2.0d);
 					}
+
+					if(entity.ticksExisted % 60 == 0) {
+						entity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 2, false, false));
+						entity.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 4, false, false));
+						entity.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 3, false, false));
+					}
 				}
 			}
 

@@ -1,5 +1,6 @@
 package net.narutomod.item;
 
+import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
@@ -121,6 +122,14 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			 	((Base)itemstack.getItem()).canDamage = true;
 				itemstack.damageItem(this.isOwner(itemstack, entity) ? 3 : 9, entity);
 				((Base)itemstack.getItem()).canDamage = false;
+			}
+
+			if(entity.ticksExisted % 60 == 0) {
+				entity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 0, false, false));
+				entity.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 2, false, false));
+				entity.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 1, false, false));
+
+
 			}
 		}
 
