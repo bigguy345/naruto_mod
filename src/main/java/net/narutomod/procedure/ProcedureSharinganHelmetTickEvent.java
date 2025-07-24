@@ -97,8 +97,8 @@ public class ProcedureSharinganHelmetTickEvent extends ElementsNarutomodMod.ModE
 						|| ((entity.getEntityData().getDouble((NarutomodModVariables.BATTLEXP))) < 300))) {
 					if ((!(world.isRemote))) {
 						if (entity instanceof EntityPlayer) {
-							ItemStack _setstack = (itemstack);
-							_setstack.setCount(1);
+							ItemStack _setstack = itemstack.copy();
+							itemstack.shrink(1);
 							ItemHandlerHelper.giveItemToPlayer(((EntityPlayer) entity), _setstack);
 						}
 						if (entity instanceof EntityPlayer) {
