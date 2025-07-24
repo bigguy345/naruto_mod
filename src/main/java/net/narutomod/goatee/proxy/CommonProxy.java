@@ -20,7 +20,7 @@ public class CommonProxy {
     }
 
     public void postInit(FMLPostInitializationEvent event) {
-        PacketHandler.Instance = new PacketHandler();
+        PacketHandler.Instance.register();
     }
 
     public EntityPlayer getClientPlayer() {

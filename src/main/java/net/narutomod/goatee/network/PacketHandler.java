@@ -24,7 +24,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 public final class PacketHandler {
-    public static PacketHandler Instance;
+    public static PacketHandler Instance = new PacketHandler();
 
     public Map<String, AbstractPacket> map = new Hashtable<>();
     public Map<String, FMLEventChannel> channels = new Hashtable<>();
@@ -35,7 +35,6 @@ public final class PacketHandler {
         map.put(NarutoSyncData.packetName, new NarutoSyncData());
         map.put(JutsuKeys.Packet.packetName, new JutsuKeys.Packet());
         map.put(TeleportBehindPacket.packetName, new TeleportBehindPacket());
-        this.register();
     }
 
     public void register() {
@@ -45,6 +44,10 @@ public final class PacketHandler {
             eventChannel.register(this);
             channels.put(channel, eventChannel);
         }
+    }
+
+    public void register(String packetName, AbstractPacket packet) {
+        map.put(packetName, packet);
     }
 
     @SubscribeEvent
