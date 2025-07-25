@@ -90,18 +90,26 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 			return this.armorModel;
 		}
 
+		public boolean useAdvancedModel() {
+			return false;
+		}
+		
 		public String getRightEyeTexture(ItemStack stack, Entity entity, SideData side) {
-			return null;
+			return getArmorTexture(stack, entity, EntityEquipmentSlot.HEAD, null);
 		}
 
 		public String getLeftEyeTexture(ItemStack stack, Entity entity, SideData side) {
-			return null;
+			return getArmorTexture(stack, entity, EntityEquipmentSlot.HEAD, null);
 		}
 
 		public String getRinnesharinganTexture(ItemStack stack, Entity entity) {
-			return null;
+			return getArmorTexture(stack, entity, EntityEquipmentSlot.HEAD, null);
 		}
 
+		public SideData getSideData(SideData.Side side, ItemStack stack) {
+			return new SideData(side, stack, this);
+		}
+		
 		public boolean isOwner(ItemStack stack, EntityLivingBase entity) {
 			return ProcedureUtils.isOriginalOwner(entity, stack);
 		}

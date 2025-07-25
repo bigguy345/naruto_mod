@@ -43,6 +43,7 @@ import net.minecraft.block.material.Material;
 
 import net.narutomod.ModConfig;
 import net.narutomod.goatee.client.Sounds;
+import net.narutomod.goatee.client.model.ModelDojutsu;
 import net.narutomod.potion.PotionLockOn;
 import net.narutomod.procedure.ProcedureSharinganHelmetTickEvent;
 import net.narutomod.procedure.ProcedureSync;
@@ -92,9 +93,15 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		@SideOnly(Side.CLIENT)
 		@Override
 		public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {
-			ItemDojutsu.ClientModel.ModelHelmetSnug armorModel = (ItemDojutsu.ClientModel.ModelHelmetSnug)super.getArmorModel(living, stack, slot, defaultModel);
-			armorModel.highlightHide = isBlinded(stack);
-			return armorModel;
+			if (data.useAdvancedModel(stack)) {
+				ModelDojutsu model = ModelDojutsu.getModel(living, stack, this);
+				model.rightEye.showModel = model.leftEye.showModel = !isBlinded(stack);
+				return model;
+			} else {
+				ItemDojutsu.ClientModel.ModelHelmetSnug armorModel = (ItemDojutsu.ClientModel.ModelHelmetSnug) super.getArmorModel(living, stack, slot, defaultModel);
+				armorModel.highlightHide = isBlinded(stack);
+				return armorModel;
+			}
 		}
 
 		@Override

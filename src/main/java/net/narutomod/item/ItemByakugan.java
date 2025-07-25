@@ -28,6 +28,7 @@ import net.minecraft.client.Minecraft;
 
 import net.narutomod.entity.EntityEightTrigrams;
 import net.narutomod.entity.EntityHakkeshoKeiten;
+import net.narutomod.goatee.client.model.ModelDojutsu;
 import net.narutomod.gui.overlay.OverlayByakuganView;
 import net.narutomod.procedure.*;
 import net.narutomod.creativetab.TabModTab;
@@ -97,11 +98,18 @@ public class ItemByakugan extends ElementsNarutomodMod.ModElement {
 			@SideOnly(Side.CLIENT)
 			@Override
 			public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {
-				ItemDojutsu.ClientModel.ModelHelmetSnug armorModel = (ItemDojutsu.ClientModel.ModelHelmetSnug)super.getArmorModel(living, stack, slot, defaultModel);
-				armorModel.headwearHide = true;
-				armorModel.onface.showModel = living.getEntityData().getBoolean("byakugan_activated") || EntityEightTrigrams.EntityCustom.isActivated(living)
-				 || living.getRidingEntity() instanceof EntityHakkeshoKeiten.EntityCustom;
-				return armorModel;
+				boolean showFace = living.getEntityData().getBoolean("byakugan_activated") || EntityEightTrigrams.EntityCustom.isActivated(living) || living.getRidingEntity() instanceof EntityHakkeshoKeiten.EntityCustom;
+				if (data.useAdvancedModel(stack)) {//data.useAdvancedModel(stack)
+					ModelDojutsu model = ModelDojutsu.getModel(living, stack, this);
+					model.headwearHide = true;
+					model.onface.showModel = showFace;
+					return model;
+				} else {
+					ItemDojutsu.ClientModel.ModelHelmetSnug armorModel = (ItemDojutsu.ClientModel.ModelHelmetSnug) super.getArmorModel(living, stack, slot, defaultModel);
+					armorModel.headwearHide = true;
+					armorModel.onface.showModel = showFace;
+					return armorModel;
+				}
 			}
 
 			@Override

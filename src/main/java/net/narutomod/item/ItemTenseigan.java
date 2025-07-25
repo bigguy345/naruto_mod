@@ -33,6 +33,7 @@ import net.narutomod.entity.EntityPretaShield;
 import net.narutomod.entity.EntityTenTails;
 import net.narutomod.goatee.client.Sounds;
 import net.narutomod.goatee.client.hud.wheel.HUDItemStackWheel;
+import net.narutomod.goatee.client.model.ModelDojutsu;
 import net.narutomod.gui.GuiNinjaScroll;
 import net.narutomod.procedure.*;
 import net.narutomod.creativetab.TabModTab;
@@ -89,21 +90,38 @@ public class ItemTenseigan extends ElementsNarutomodMod.ModElement {
 			@SideOnly(Side.CLIENT)
 			@Override
 			public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {
-				ItemDojutsu.ClientModel.ModelHelmetSnug armorModel = (ItemDojutsu.ClientModel.ModelHelmetSnug)super.getArmorModel(living, stack, slot, defaultModel);
 				ItemStack item = getHeldChakraCloak(living);
 				boolean inTenseiganCloak = !item.isEmpty();
 				boolean isRinneSharingan = ItemRinnegan.isRinnesharinganActivated(stack);
-				
-				armorModel.headwearShine = true;
-				armorModel.isSo6 = isRinneSharingan || inTenseiganCloak || HUDItemStackWheel.IS_OPEN;
-				armorModel.onface.showModel = inTenseiganCloak;
-				armorModel.foreheadHide = !isRinneSharingan;
 
-				armorModel.headwearHide = !(inTenseiganCloak && !((ItemTenseiganChakraMode.RangedItem) item.getItem()).isOnCooldown(living) || HUDItemStackWheel.IS_OPEN );//&& isS06p);
-				armorModel.headHide = !armorModel.headwearHide;
-				armorModel.hornMiddle.showModel = true;
-				armorModel.hornLeft.showModel = armorModel.hornRight.showModel = false;
-				return armorModel;
+				if (data.useAdvancedModel(stack)) {
+					ModelDojutsu model = ModelDojutsu.getModel(living, stack, this);
+
+					model.headwearShine = true;
+					model.isS06P = isRinneSharingan || inTenseiganCloak || HUDItemStackWheel.IS_OPEN;
+					model.onface.showModel = inTenseiganCloak;
+					model.foreheadHide = !isRinneSharingan;
+
+					model.headwearHide = !(inTenseiganCloak && !((ItemTenseiganChakraMode.RangedItem) item.getItem()).isOnCooldown(living) || HUDItemStackWheel.IS_OPEN);//&& isS06p);
+					model.eyeBaseL.showModel = model.eyeBaseR.showModel = !inTenseiganCloak;
+					model.hornMiddle.showModel = true;
+					model.hornLeft.showModel = model.hornRight.showModel = false;
+					return model;
+				} else {
+					ItemDojutsu.ClientModel.ModelHelmetSnug armorModel = (ItemDojutsu.ClientModel.ModelHelmetSnug) super.getArmorModel(living, stack, slot, defaultModel);
+
+
+					armorModel.headwearShine = true;
+					armorModel.isSo6 = isRinneSharingan || inTenseiganCloak || HUDItemStackWheel.IS_OPEN;
+					armorModel.onface.showModel = inTenseiganCloak;
+					armorModel.foreheadHide = !isRinneSharingan;
+
+					armorModel.headwearHide = !(inTenseiganCloak && !((ItemTenseiganChakraMode.RangedItem) item.getItem()).isOnCooldown(living) || HUDItemStackWheel.IS_OPEN);//&& isS06p);
+					armorModel.headHide = !armorModel.headwearHide;
+					armorModel.hornMiddle.showModel = true;
+					armorModel.hornLeft.showModel = armorModel.hornRight.showModel = false;
+					return armorModel;
+				}
 			}
 
 			@Override

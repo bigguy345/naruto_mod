@@ -196,7 +196,8 @@ public class ModelDojutsu extends ModelBiped {
 
         if (isS06P) {
             RenderUtils.disableLightMap();
-
+            GlStateManager.depthMask(false);
+            
             bindTexture(rinnesharinganTexture);
             this.bipedHead.render(scale);
 
@@ -211,8 +212,8 @@ public class ModelDojutsu extends ModelBiped {
             }
 
             RenderUtils.enableLightmap(entityIn);
+            GlStateManager.depthMask(true);
         }
-
 
         if (!this.highlightHide) {
             this.copyModelAngles(this.bipedHead, this.eyeBaseR);
@@ -255,6 +256,7 @@ public class ModelDojutsu extends ModelBiped {
             RenderUtils.enableLightmap(entityIn);
         }
 
+
         GlStateManager.alphaFunc(0x204, 0.1f);
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
@@ -282,21 +284,14 @@ public class ModelDojutsu extends ModelBiped {
     private static ModelDojutsu model;
 
     @SideOnly(Side.CLIENT)
-    public ModelBiped getModel(EntityLivingBase living, ItemStack stack, ItemDojutsu.Base eye) {
-        if (model == null)
+    public static ModelDojutsu getModel(EntityLivingBase living, ItemStack stack, ItemDojutsu.Base eye) {
+       if (model == null)
             model = new ModelDojutsu();
 
         model.isSneak = living.isSneaking();
         model.isRiding = living.isRiding();
         model.isChild = living.isChild();
-        
-        boolean rinnesharingan = ItemRinnegan.isRinnesharinganActivated(stack);
-        model.isS06P = rinnesharingan;
-        model.headwearShine = rinnesharingan;
-        model.hornMiddle.showModel = false;
-        model.onface.showModel = false;
-        if (living.ticksExisted % 20 == 6)
-            model.foreheadHide = !rinnesharingan || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180.0;
+       // model.headwearShine = false;
 
         SideData left = eye.data.getLeft(stack);
         SideData right = eye.data.getRight(stack);

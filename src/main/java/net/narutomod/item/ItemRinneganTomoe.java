@@ -60,6 +60,7 @@ import java.util.UUID;
 
 import static net.narutomod.item.ItemRinnegan.isRinnegan;
 import static net.narutomod.item.ItemRinnegan.isRinnesharinganActivated;
+import static net.narutomod.item.ItemSharingan.isBlinded;
 
 @ElementsNarutomodMod.ModElement.Tag
 public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
@@ -136,6 +137,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                 if (world.isRemote)
                     return;
 
+
                 if (entity.ticksExisted % 20 == 0) {
                     UUID uuid = ProcedureUtils.getUniqueId(itemstack, "KoH_id");
                     if (uuid != null) {
@@ -179,43 +181,18 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                 return true;
             }
 
-            @SideOnly(Side.CLIENT)
-            private ModelDojutsu model;
-
-            @SideOnly(Side.CLIENT)
-            public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {
-                //   if (model == null)
-                model = new ModelDojutsu();
-
-                model.isSneak = living.isSneaking();
-                model.isRiding = living.isRiding();
-                model.isChild = living.isChild();
-
-
-                boolean rinnesharingan = ItemRinnegan.isRinnesharinganActivated(stack);
-                model.isS06P = rinnesharingan;
-                model.headwearShine = rinnesharingan;
-                model.hornMiddle.showModel = false;
-                model.onface.showModel = false;
-                if (living.ticksExisted % 20 == 6)
-                    model.foreheadHide = !rinnesharingan || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180.0;
-
-                SideData left = data.getLeft(stack);
-                SideData right = data.getRight(stack);
-
-                model.leftTexture = getLeftEyeTexture(stack, living, left);
-                model.rightTexture = getRightEyeTexture(stack, living, right);
-                model.rinnesharinganTexture = getRinnesharinganTexture(stack, living);
-
-                if (left.hasColor())
-                    model.leftColor = left.getColor();
-
-                if (right.hasColor())
-                    model.rightColor = right.getColor();
-
-                return model;
+            public boolean useAdvancedModel() {
+                return true;
             }
 
+            @SideOnly(Side.CLIENT)
+            @Override
+            public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {
+                ModelDojutsu model = (ModelDojutsu) super.getArmorModel(living, stack, slot, defaultModel);
+                model.rightEye.showModel = !isBlinded(stack); //sharingan blindness
+                return model;
+            }
+            
             public String getRightEyeTexture(ItemStack stack, Entity entity, SideData side) {
                 if (sharinganOn(stack))
                     return "narutomod:textures/rinnegantomoehelmet_sharingan.png";

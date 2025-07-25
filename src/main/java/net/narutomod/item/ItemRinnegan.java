@@ -34,6 +34,7 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.entity.AbstractClientPlayer;
 
 import net.narutomod.goatee.client.Sounds;
+import net.narutomod.goatee.client.model.ModelDojutsu;
 import net.narutomod.gui.GuiNinjaScroll;
 import net.narutomod.entity.EntityKingOfHell;
 import net.narutomod.entity.EntityPretaShield;
@@ -253,13 +254,23 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 		@SideOnly(Side.CLIENT)
 		@Override
 		public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {
-			ItemDojutsu.ClientModel.ModelHelmetSnug model = (ItemDojutsu.ClientModel.ModelHelmetSnug)super.getArmorModel(living, stack, slot, defaultModel);
 			boolean isS06p = isRinnesharinganActivated(stack);
-			model.isSo6 = model.headwearShine = model.onface.showModel = isS06p;
-			model.hornMiddle.showModel = false;
-			model.foreheadHide = !isS06p || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180d;
+			
+			if (data.useAdvancedModel(stack)) {
+				ModelDojutsu model = ModelDojutsu.getModel(living, stack, this);
+				model.isS06P = model.headwearShine = model.onface.showModel = isS06p;
+				model.hornMiddle.showModel = false;
+				model.foreheadHide = !isS06p || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180d;
 
-			return model;
+				return model;
+			} else {
+				ItemDojutsu.ClientModel.ModelHelmetSnug model = (ItemDojutsu.ClientModel.ModelHelmetSnug) super.getArmorModel(living, stack, slot, defaultModel);
+				model.isSo6 = model.headwearShine = model.onface.showModel = isS06p;
+				model.hornMiddle.showModel = false;
+				model.foreheadHide = !isS06p || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180d;
+
+				return model;
+			}
 		}
 			
 		@Override

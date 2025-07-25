@@ -38,7 +38,7 @@ public class DojutsuData {
             return null;
 
         ItemDojutsu.Base eye = (ItemDojutsu.Base) stack.getItem();
-        return new SideData(SideData.Side.LEFT, stack, eye);
+        return eye.getSideData(SideData.Side.LEFT, stack);
     }
 
     public static SideData getRight(ItemStack stack) {
@@ -46,6 +46,14 @@ public class DojutsuData {
             return null;
 
         ItemDojutsu.Base eye = (ItemDojutsu.Base) stack.getItem();
-        return new SideData(SideData.Side.RIGHT, stack, eye);
+        return eye.getSideData(SideData.Side.RIGHT, stack);
+    }
+
+    public boolean useAdvancedModel(ItemStack stack) {
+        return eye.useAdvancedModel() || stack.getTagCompound().getBoolean("useAdvancedModel");
+    }
+
+    public void useAdvancedModel(ItemStack stack, boolean use) {
+        stack.getTagCompound().setBoolean("useAdvancedModel", use);
     }
 }
