@@ -81,380 +81,388 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
     
     public void initElements() {
         ItemArmor.ArmorMaterial enuma = EnumHelper.addArmorMaterial("RINNEGANTOMOE", "narutomod:rinnegantomoe_", 25, new int[]{2, 5, 6, 15}, 0, null, 2.0F);
-        this.elements.items.add(() -> new ItemSharingan.Base(enuma) {
+        this.elements.items.add(() -> new Base(enuma).setUnlocalizedName("rinnegantomoehelmet").setRegistryName("rinnegantomoehelmet").setCreativeTab(TabModTab.tab));
+    }
 
-            public void onArmorTick(World world, EntityPlayer player, ItemStack itemstack) {
-                super.onArmorTick(world, player, itemstack);
-                if (world.isRemote)
-                    return;
-                
-                boolean flag = player.capabilities.allowFlying || player.isCreative() || player.dimension == WorldKamuiDimension.DIMID;
-                if (player.capabilities.allowFlying != flag) {
-                    player.capabilities.allowFlying = flag;
-                    player.sendPlayerAbilities();
+    public static class Base extends ItemSharingan.Base {
+        public Base(ItemArmor.ArmorMaterial material) {
+            super(material);
+        }
+
+        public void onArmorTick(World world, EntityPlayer player, ItemStack itemstack) {
+            super.onArmorTick(world, player, itemstack);
+            if (world.isRemote)
+                return;
+
+            boolean flag = player.capabilities.allowFlying || player.isCreative() || player.dimension == WorldKamuiDimension.DIMID;
+            if (player.capabilities.allowFlying != flag) {
+                player.capabilities.allowFlying = flag;
+                player.sendPlayerAbilities();
+            }
+            if (player.getEntityData().getBoolean("kamui_teleport")) {
+                Chakra.pathway(player).consume(ItemMangekyoSharinganObito.getTeleportChakraUsage(player));
+            }
+            if (player.getEntityData().getBoolean("kamui_intangible")) {
+                Chakra.pathway(player).consume(ItemMangekyoSharinganObito.getIntangibleChakraUsage(player));
+                ProcedureWhenPlayerAttcked.setInvulnerable(player, 2);
+            }
+
+            applyEffects(player, itemstack);
+
+            int x = (int) player.posX;
+            int y = (int) player.posY;
+            int z = (int) player.posZ;
+            HashMap $_dependencies = new HashMap();
+            $_dependencies.put("entity", player);
+            $_dependencies.put("x", x);
+            $_dependencies.put("y", y);
+            $_dependencies.put("z", z);
+            $_dependencies.put("itemstack", itemstack);
+            $_dependencies.put("world", world);
+            ProcedureRinneganHelmetTickEvent.executeProcedure($_dependencies);
+        }
+
+        public void applyEffects(EntityPlayer player, ItemStack itemstack) {
+            if (player.ticksExisted % 60 == 0) {
+                int tomoeStatus = getTomoeStatus(itemstack);
+
+                if (tomoeStatus == SHARINGAN_ON_STATUS) {
+                    player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 9, false, false));
+                    player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 4, false, false));
+                    player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 4, false, false));
+                } else if (tomoeStatus == ETERNAL_ON_STATUS) {
+                    player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 15, false, false));
+                    player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 8, false, false));
+                    player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 6, false, false));
+                    player.addPotionEffect(new PotionEffect(PotionReach.potion, 100, 1, false, false));
+
+                    if (!isRinnesharinganActivated(itemstack))
+                        Chakra.pathway(player).consume(getEternalChakraUsage(itemstack, player));
                 }
-                if (player.getEntityData().getBoolean("kamui_teleport")) {
-                    Chakra.pathway(player).consume(ItemMangekyoSharinganObito.getTeleportChakraUsage(player));
-                }
-                if (player.getEntityData().getBoolean("kamui_intangible")) {
-                    Chakra.pathway(player).consume(ItemMangekyoSharinganObito.getIntangibleChakraUsage(player));
-                    ProcedureWhenPlayerAttcked.setInvulnerable(player, 2);
-                }
+            }
+        }
 
-                if (player.ticksExisted % 60 == 0) {
-                    int tomoeStatus = getTomoeStatus(itemstack);
+        public void onUpdate(ItemStack itemstack, World world, Entity entity, int par4, boolean par5) {
+            super.onUpdate(itemstack, world, entity, par4, par5);
+            if (world.isRemote)
+                return;
 
-                    if (tomoeStatus == SHARINGAN_ON_STATUS) {
-                        player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 9, false, false));
-                        player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 4, false, false));
-                        player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 4, false, false));
-                    } else if (tomoeStatus == ETERNAL_ON_STATUS) {
-                        player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 15, false, false));
-                        player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 8, false, false));
-                        player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 6, false, false));
-                        player.addPotionEffect(new PotionEffect(PotionReach.potion, 100, 1, false, false));
 
-                        if (!isRinnesharinganActivated(itemstack))
-                            Chakra.pathway(player).consume(getEternalChakraUsage(itemstack, player));
+            if (entity.ticksExisted % 20 == 0) {
+                UUID uuid = ProcedureUtils.getUniqueId(itemstack, "KoH_id");
+                if (uuid != null) {
+                    Entity koh = ((WorldServer) world).getEntityFromUuid(uuid);
+                    if (!(koh instanceof EntityKingOfHell.EntityCustom) || !koh.isEntityAlive()) {
+                        ProcedureUtils.removeUniqueIdTag(itemstack, "KoH_id");
                     }
                 }
 
-                int x = (int) player.posX;
-                int y = (int) player.posY;
-                int z = (int) player.posZ;
-                HashMap $_dependencies = new HashMap();
-                $_dependencies.put("entity", player);
-                $_dependencies.put("x", x);
-                $_dependencies.put("y", y);
-                $_dependencies.put("z", z);
-                $_dependencies.put("itemstack", itemstack);
-                $_dependencies.put("world", world);
-                ProcedureRinneganHelmetTickEvent.executeProcedure($_dependencies);
-            }
+                if (entity instanceof EntityPlayer) {
+                    EntityPlayer player = (EntityPlayer) entity;
+                    ItemStack helmetStack = ItemDojutsu.getWorn(player);
+                    GuiNinjaScroll.enableJutsu(player, (ItemJutsu.Base) ItemYoton.block, ItemYoton.SEALING9D, isRinnegan(helmetStack));
+                    GuiNinjaScroll.enableJutsu(player, (ItemJutsu.Base) ItemYoton.block, ItemYoton.SEALING10, isRinnegan(helmetStack) && EntityTenTails.getBijuManager().isAddedToWorld(player.world));
 
-            public void onUpdate(ItemStack itemstack, World world, Entity entity, int par4, boolean par5) {
-                super.onUpdate(itemstack, world, entity, par4, par5);
-                if (world.isRemote)
-                    return;
-
-
-                if (entity.ticksExisted % 20 == 0) {
-                    UUID uuid = ProcedureUtils.getUniqueId(itemstack, "KoH_id");
-                    if (uuid != null) {
-                        Entity koh = ((WorldServer) world).getEntityFromUuid(uuid);
-                        if (!(koh instanceof EntityKingOfHell.EntityCustom) || !koh.isEntityAlive()) {
-                            ProcedureUtils.removeUniqueIdTag(itemstack, "KoH_id");
+                    if (!(isRinnegan(helmetStack))) {
+                        player.inventory.clearMatchingItems(ItemAsuraCanon.block, -1, -1, null);
+                        if (player.getRidingEntity() instanceof EntityPretaShield.EntityCustom) {
+                            player.getRidingEntity().setDead();
                         }
                     }
-
-                    if (entity instanceof EntityPlayer) {
-                        EntityPlayer player = (EntityPlayer) entity;
-                        ItemStack helmetStack = ItemDojutsu.getWorn(player);
-                        GuiNinjaScroll.enableJutsu(player, (ItemJutsu.Base) ItemYoton.block, ItemYoton.SEALING9D, isRinnegan(helmetStack));
-                        GuiNinjaScroll.enableJutsu(player, (ItemJutsu.Base) ItemYoton.block, ItemYoton.SEALING10, isRinnegan(helmetStack) && EntityTenTails.getBijuManager().isAddedToWorld(player.world));
-
-                        if (!(isRinnegan(helmetStack))) {
-                            player.inventory.clearMatchingItems(ItemAsuraCanon.block, -1, -1, null);
-                            if (player.getRidingEntity() instanceof EntityPretaShield.EntityCustom) {
-                                player.getRidingEntity().setDead();
-                            }
-                        }
-                    }
-                }
-
-                if (itemstack.hasTagCompound() && itemstack.getTagCompound().hasKey("amenotejikaraDisable")) { //important as to not switch on the same shift click that stores target 
-                    int counter = itemstack.getTagCompound().getInteger("amenotejikaraDisable") - 1;
-                    itemstack.getTagCompound().setInteger("amenotejikaraDisable", counter);
-                    if (counter <= 0) {
-                        itemstack.getTagCompound().removeTag("amenotejikaraDisable");
-                    }
                 }
             }
 
-            @Override
-            public boolean isMangekyo() {
-                return true;
+            if (itemstack.hasTagCompound() && itemstack.getTagCompound().hasKey("amenotejikaraDisable")) { //important as to not switch on the same shift click that stores target 
+                int counter = itemstack.getTagCompound().getInteger("amenotejikaraDisable") - 1;
+                itemstack.getTagCompound().setInteger("amenotejikaraDisable", counter);
+                if (counter <= 0) {
+                    itemstack.getTagCompound().removeTag("amenotejikaraDisable");
+                }
             }
+        }
 
-            @Override
-            public boolean isEternal() {
-                return true;
-            }
+        @Override
+        public boolean isMangekyo() {
+            return true;
+        }
 
-            public boolean useAdvancedModel() {
-                return true;
-            }
+        @Override
+        public boolean isEternal() {
+            return true;
+        }
 
-            @SideOnly(Side.CLIENT)
-            @Override
-            public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {
-                ModelDojutsu model = (ModelDojutsu) super.getArmorModel(living, stack, slot, defaultModel);
-                model.rightEye.showModel = !isBlinded(stack); //sharingan blindness
-                return model;
-            }
-            
-            public String getRightEyeTexture(ItemStack stack, Entity entity, SideData side) {
-                if (sharinganOn(stack))
-                    return "narutomod:textures/rinnegantomoehelmet_sharingan.png";
-                else if (eternalOn(stack))
-                    return "narutomod:textures/rinnegantomoehelmet_eternal.png";
+        public boolean useAdvancedModel() {
+            return true;
+        }
 
-                return "narutomod:textures/rinnegantomoehelmet_off.png";
-            }
+        @SideOnly(Side.CLIENT)
+        @Override
+        public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {
+            ModelDojutsu model = (ModelDojutsu) super.getArmorModel(living, stack, slot, defaultModel);
+            model.rightEye.showModel = !isBlinded(stack); //sharingan blindness
+            return model;
+        }
 
-            public String getLeftEyeTexture(ItemStack stack, Entity entity, SideData side) {
+        public String getRightEyeTexture(ItemStack stack, Entity entity, SideData side) {
+            if (sharinganOn(stack))
+                return "narutomod:textures/rinnegantomoehelmet_sharingan.png";
+            else if (eternalOn(stack))
                 return "narutomod:textures/rinnegantomoehelmet_eternal.png";
-            }
 
-            public String getRinnesharinganTexture(ItemStack stack, Entity entity) {
+            return "narutomod:textures/rinnegantomoehelmet_off.png";
+        }
+
+        public String getLeftEyeTexture(ItemStack stack, Entity entity, SideData side) {
+            return "narutomod:textures/rinnegantomoehelmet_eternal.png";
+        }
+
+        public String getRinnesharinganTexture(ItemStack stack, Entity entity) {
+            return "narutomod:textures/rinnesharingantomoehelmet.png";
+        }
+
+
+        //            @SideOnly(Side.CLIENT)
+        //            public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {
+        //                ItemDojutsu.ClientModel.ModelHelmetSnug model = (ItemDojutsu.ClientModel.ModelHelmetSnug) super.getArmorModel(living, stack, slot, defaultModel);
+        //                boolean isS06p = isRinnesharinganActivated(stack);
+        //                model.isSo6 = model.hornMiddle.showModel = model.headwearShine = model.onface.showModel = isS06p;
+        //                model.foreheadHide = !isS06p || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180d;
+        //                
+        //                return model;
+        //            }
+
+        public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
+            if (isRinnesharinganActivated(stack))
                 return "narutomod:textures/rinnesharingantomoehelmet.png";
+            else if (sharinganOn(stack))
+                return "narutomod:textures/rinnegantomoehelmet_sharingan.png";
+            else if (eternalOn(stack))
+                return "narutomod:textures/rinnegantomoehelmet_eternal.png";
+
+            return "narutomod:textures/rinnegantomoehelmet_off.png";
+        }
+
+        public int getColor(ItemStack stack) {
+            if (isRinnesharinganActivated(stack)) //set rinnesharingan color here
+                return 0xffffff;
+            return super.getColor(stack);
+        }
+
+        public int getMaxDamage() {
+            return 0;
+        }
+
+        public boolean isDamageable() {
+            return false;
+        }
+
+        public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+            String status = "item.rinnegantomoehelmet.status_" + (sharinganOn(stack) ? "on" : eternalOn(stack) ? "eternal" : "off");
+            tooltip.add(TextFormatting.DARK_GRAY + I18n.translateToLocal("item.rinnegantomoehelmet.sharingan_status") + TextFormatting.RED + I18n.translateToLocal(status));
+
+            super.addInformation(stack, worldIn, tooltip, flagIn);
+            if (isRinnesharinganActivated(stack))
+                tooltip.add(TextFormatting.RED + I18n.translateToLocal("advancements.rinnesharinganactivated.title") + TextFormatting.WHITE);
+            tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu1") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.mangekyo.amaterasu.jutsu1"));
+            tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu2") + ": " + TextFormatting.GRAY + I18n.translateToLocal("entity.susanooclothed.name"));
+            tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu3") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.mangekyo.kamui.jutsu1"));
+            tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.jutsu.4") + ": " + TextFormatting.GRAY + I18n.translateToLocal("chattext.shinratensei"));
+            tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.jutsu.5") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.rinnegan.jutsu2"));
+            tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.jutsu.6") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.rinnegan.jutsu3"));
+            tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.jutsu.7") + ": " + TextFormatting.GRAY + I18n.translateToLocal("item.ninjutsu.amenotejikara"));
+        }
+
+        public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
+            Multimap multimap = super.getAttributeModifiers(slot, stack);
+            if (slot == EntityEquipmentSlot.HEAD && ItemRinneganTomoe.isRinneganTomoeActivated(stack)) {
+                multimap.put(SharedMonsterAttributes.MAX_HEALTH.getName(), new AttributeModifier(ItemRinneganTomoe.RINNEGANTOMOE_MODIFIER, "rinnegantomoe.maxhealth", 380.0, 0));
             }
 
+            return multimap;
+        }
 
-            //            @SideOnly(Side.CLIENT)
-            //            public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {
-            //                ItemDojutsu.ClientModel.ModelHelmetSnug model = (ItemDojutsu.ClientModel.ModelHelmetSnug) super.getArmorModel(living, stack, slot, defaultModel);
-            //                boolean isS06p = isRinnesharinganActivated(stack);
-            //                model.isSo6 = model.hornMiddle.showModel = model.headwearShine = model.onface.showModel = isS06p;
-            //                model.foreheadHide = !isS06p || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180d;
-            //                
-            //                return model;
-            //            }
+        public String getItemStackDisplayName(ItemStack stack) {
+            return TextFormatting.LIGHT_PURPLE + super.getItemStackDisplayName(stack) + TextFormatting.WHITE;
+        }
 
-            public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
-                if (isRinnesharinganActivated(stack))
-                    return "narutomod:textures/rinnesharingantomoehelmet.png";
-                else if (sharinganOn(stack))
-                    return "narutomod:textures/rinnegantomoehelmet_sharingan.png";
-                else if (eternalOn(stack))
-                    return "narutomod:textures/rinnegantomoehelmet_eternal.png";
+        public SoundEvent getActivationSound(ItemStack eye) {
+            if (sharinganOff(eye) && !isRinnesharinganActivated(eye))
+                return Sounds.get("rinnegansfx");
 
-                return "narutomod:textures/rinnegantomoehelmet_off.png";
-            }
+            return Sounds.get("rinnesharingansfx");
+        }
 
-            public int getColor(ItemStack stack) {
-                if (isRinnesharinganActivated(stack)) //set rinnesharingan color here
-                    return 0xffffff;
-                return super.getColor(stack);
-            }
-
-            public int getMaxDamage() {
-                return 0;
-            }
-
-            public boolean isDamageable() {
+        @Override
+        public boolean onJutsuKey1(boolean is_pressed, ItemStack stack, EntityPlayer entity) {
+            if (!eternalOn(stack))
                 return false;
-            }
 
-            public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-                String status = "item.rinnegantomoehelmet.status_" + (sharinganOn(stack) ? "on" : eternalOn(stack) ? "eternal" : "off");
-                tooltip.add(TextFormatting.DARK_GRAY + I18n.translateToLocal("item.rinnegantomoehelmet.sharingan_status") + TextFormatting.RED + I18n.translateToLocal(status));
+            Map<String, Object> $_dependencies = Maps.newHashMap();
+            $_dependencies.put("is_pressed", is_pressed);
+            $_dependencies.put("entity", entity);
+            $_dependencies.put("world", entity.world);
+            $_dependencies.put("x", (int) entity.posX);
+            $_dependencies.put("y", (int) entity.posY);
+            $_dependencies.put("z", (int) entity.posZ);
+            ProcedureAmaterasu.executeProcedure($_dependencies);
+            return true;
+        }
 
-                super.addInformation(stack, worldIn, tooltip, flagIn);
-                if (isRinnesharinganActivated(stack))
-                    tooltip.add(TextFormatting.RED + I18n.translateToLocal("advancements.rinnesharinganactivated.title") + TextFormatting.WHITE);
-                tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu1") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.mangekyo.amaterasu.jutsu1"));
-                tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu2") + ": " + TextFormatting.GRAY + I18n.translateToLocal("entity.susanooclothed.name"));
-                tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu3") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.mangekyo.kamui.jutsu1"));
-                tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.jutsu.4") + ": " + TextFormatting.GRAY + I18n.translateToLocal("chattext.shinratensei"));
-                tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.jutsu.5") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.rinnegan.jutsu2"));
-                tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.jutsu.6") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.rinnegan.jutsu3"));
-                tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.jutsu.7") + ": " + TextFormatting.GRAY + I18n.translateToLocal("item.ninjutsu.amenotejikara"));
-            }
-
-            public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
-                Multimap multimap = super.getAttributeModifiers(slot, stack);
-                if (slot == EntityEquipmentSlot.HEAD && ItemRinneganTomoe.isRinneganTomoeActivated(stack)) {
-                    multimap.put(SharedMonsterAttributes.MAX_HEALTH.getName(), new AttributeModifier(ItemRinneganTomoe.RINNEGANTOMOE_MODIFIER, "rinnegantomoe.maxhealth", 380.0, 0));
-                }
-
-                return multimap;
-            }
-
-            public String getItemStackDisplayName(ItemStack stack) {
-                return TextFormatting.LIGHT_PURPLE + super.getItemStackDisplayName(stack) + TextFormatting.WHITE;
-            }
-
-            public SoundEvent getActivationSound(ItemStack eye) {
-                if (sharinganOff(eye) && !isRinnesharinganActivated(eye))
-                    return Sounds.get("rinnegansfx");
-                
-                return Sounds.get("rinnesharingansfx");
-            }
-
-            @Override
-            public boolean onJutsuKey1(boolean is_pressed, ItemStack stack, EntityPlayer entity) {
-                if (!eternalOn(stack))
-                    return false;
-                
+        @Override
+        public boolean onJutsuKey2(boolean is_pressed, ItemStack stack, EntityPlayer entity) {
+            if (!is_pressed) {
                 Map<String, Object> $_dependencies = Maps.newHashMap();
-                $_dependencies.put("is_pressed", is_pressed);
                 $_dependencies.put("entity", entity);
                 $_dependencies.put("world", entity.world);
+                ProcedureSusanoo.executeProcedure($_dependencies);
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onJutsuKey3(boolean is_pressed, ItemStack stack, EntityPlayer entity) {
+            if (!eternalOn(stack))
+                return false;
+
+            Map<String, Object> $_dependencies = Maps.newHashMap();
+            $_dependencies.put("is_pressed", is_pressed);
+            $_dependencies.put("entity", entity);
+            $_dependencies.put("world", entity.world);
+            if (entity.world.provider.getDimension() == WorldKamuiDimension.DIMID && !entity.isSneaking()) {
+                ProcedureGrabEntity.executeProcedure($_dependencies);
+            } else {
                 $_dependencies.put("x", (int) entity.posX);
                 $_dependencies.put("y", (int) entity.posY);
                 $_dependencies.put("z", (int) entity.posZ);
-                ProcedureAmaterasu.executeProcedure($_dependencies);
-                return true;
+                ProcedureKamuiJikukanIdo.executeProcedure($_dependencies);
             }
+            return true;
+        }
 
-            @Override
-            public boolean onJutsuKey2(boolean is_pressed, ItemStack stack, EntityPlayer entity) {
-                if (!is_pressed) {
-                    Map<String, Object> $_dependencies = Maps.newHashMap();
-                    $_dependencies.put("entity", entity);
-                    $_dependencies.put("world", entity.world);
-                    ProcedureSusanoo.executeProcedure($_dependencies);
-                }
-                return true;
-            }
-            
-            
-            @Override
-            public boolean onJutsuKey3(boolean is_pressed, ItemStack stack, EntityPlayer entity) {
-                if (!eternalOn(stack))
-                    return false;
-                
-                Map<String, Object> $_dependencies = Maps.newHashMap();
-                $_dependencies.put("is_pressed", is_pressed);
-                $_dependencies.put("entity", entity);
-                $_dependencies.put("world", entity.world);
-                if (entity.world.provider.getDimension() == WorldKamuiDimension.DIMID && !entity.isSneaking()) {
-                    ProcedureGrabEntity.executeProcedure($_dependencies);
-                } else {
-                    $_dependencies.put("x", (int)entity.posX);
-                    $_dependencies.put("y", (int)entity.posY);
-                    $_dependencies.put("z", (int)entity.posZ);
-                    ProcedureKamuiJikukanIdo.executeProcedure($_dependencies);
-                }
-                return true;
-            }
+        @Override
+        public boolean onJutsuKey4(byte pressType, ItemStack stack, EntityPlayer entity) {
+            Map<String, Object> $_dependencies = Maps.newHashMap();
+            $_dependencies.put("is_pressed", pressType == 1);
+            $_dependencies.put("entity", entity);
+            $_dependencies.put("world", entity.world);
+            $_dependencies.put("x", (int) entity.posX);
+            $_dependencies.put("y", (int) entity.posY);
+            $_dependencies.put("z", (int) entity.posZ);
+            ProcedureShinraTenseiOnKeyPressed.executeProcedure($_dependencies);
+            return true;
+        }
 
-            @Override
-            public boolean onJutsuKey4(byte pressType, ItemStack stack, EntityPlayer entity) {
-                Map<String, Object> $_dependencies = Maps.newHashMap();
-                $_dependencies.put("is_pressed", pressType == 1);
-                $_dependencies.put("entity", entity);
-                $_dependencies.put("world", entity.world);
-                $_dependencies.put("x", (int) entity.posX);
-                $_dependencies.put("y", (int) entity.posY);
-                $_dependencies.put("z", (int) entity.posZ);
-                ProcedureShinraTenseiOnKeyPressed.executeProcedure($_dependencies);
-                return true;
-            }
-
-            @Override
-            public boolean onJutsuKey5(byte pressType, ItemStack stack, EntityPlayer entity) {
-                int which_path = stack.hasTagCompound() ? (int) stack.getTagCompound().getDouble("which_path") : -1;
-                if (pressType == 2) {
-                    Map<String, Object> $_dependencies = Maps.newHashMap();
-                    $_dependencies.put("is_pressed", pressType == 0);
-                    $_dependencies.put("entity", entity);
-                    $_dependencies.put("world", entity.world);
-                    switch (which_path) {
-                        case 0:
-                            if (entity.isSneaking()) {
-                                Vec3d vec1 = entity.getPositionEyes(1f);
-                                Vec3d vec2 = vec1.add(entity.getLookVec().scale(100));
-                                RayTraceResult rtr = entity.world.rayTraceBlocks(vec1, vec2, false, false, true);
-                                $_dependencies.put("x", rtr.getBlockPos().getX());
-                                $_dependencies.put("y", rtr.getBlockPos().getY());
-                                $_dependencies.put("z", rtr.getBlockPos().getZ());
-                                ProcedureMeteorStrike.executeProcedure($_dependencies);
-                            } else {
-                                $_dependencies.put("x", (int) entity.posX);
-                                $_dependencies.put("y", (int) entity.posY);
-                                $_dependencies.put("z", (int) entity.posZ);
-                                ProcedureChibakuTenseiOnKeyPressed.executeProcedure($_dependencies);
-                            }
-                            break;
-                        case 4:
-                            ProcedureNarakaPath.executeProcedure($_dependencies);
-                            break;
-                        case 3:
-                            ProcedurePretaPath.executeProcedure($_dependencies);
-                            break;
-                        case 2:
-                            ProcedureAnimalPath.executeProcedure($_dependencies);
-                            break;
-                        case 5:
-                            Vec3d vec1 = entity.getPositionEyes(1f);
-                            Vec3d vec2 = vec1.add(entity.getLookVec().scale(5));
-                            RayTraceResult rtr = entity.world.rayTraceBlocks(vec1, vec2, false, false, true);
-                            $_dependencies.put("x", rtr.getBlockPos().getX());
-                            $_dependencies.put("y", (int) entity.posY);
-                            $_dependencies.put("z", rtr.getBlockPos().getZ());
-                            ProcedureOuterPath.executeProcedure($_dependencies);
-                            break;
-                    }
-                } else if (which_path == 2) {
-                    Map<String, Object> $_dependencies = Maps.newHashMap();
-                    $_dependencies.put("is_pressed", pressType < 2);
-                    $_dependencies.put("entity", entity);
-                    $_dependencies.put("world", entity.world);
-                    ProcedureAnimalPath.executeProcedure($_dependencies);
-                }
-                return true;
-            }
-
-            @Override
-            public boolean onJutsuKey6(byte pressType, ItemStack stack, EntityPlayer entity) {
+        @Override
+        public boolean onJutsuKey5(byte pressType, ItemStack stack, EntityPlayer entity) {
+            int which_path = stack.hasTagCompound() ? (int) stack.getTagCompound().getDouble("which_path") : -1;
+            if (pressType == 2) {
                 Map<String, Object> $_dependencies = Maps.newHashMap();
                 $_dependencies.put("is_pressed", pressType == 0);
                 $_dependencies.put("entity", entity);
-                ProcedureBanShoTenin.executeProcedure($_dependencies);
-                return true;
-            }
-
-            @Override
-            public boolean onJutsuKey7(byte pressType, ItemStack stack, EntityPlayer entity) {
-                if (pressType == 0) {
-                    if (!entity.world.isRemote && !stack.getTagCompound().getBoolean("amenotejikaraStoreTarget") && !entity.isPotionActive(PotionSpaceInversion.potion)) {
-                        Entity hit = ProcedureUtils.objectEntityLookingAt(entity, ModConfig.TECHNIQUES.AMENOTEJIKARA_RANGE).entityHit;
-                        ItemNinjutsu.Amenotejikara.setTarget(stack, hit);
-
-                        if (hit != null) {
-                            if (entity.isSneaking()) { //shift clicking stores the target, which can be switched to on the next click
-                                stack.getTagCompound().setBoolean("amenotejikaraStoreTarget", true);
-                                stack.getTagCompound().setInteger("amenotejikaraDisable", 5);
-                                entity.sendStatusMessage(new TextComponentTranslation("amenotejikara.target.next_switch", hit.getDisplayName()), true);
-                            } else
-                                entity.sendStatusMessage(new TextComponentTranslation("amenotejikara.target.switching", hit.getDisplayName()), true);
+                $_dependencies.put("world", entity.world);
+                switch (which_path) {
+                    case 0:
+                        if (entity.isSneaking()) {
+                            Vec3d vec1 = entity.getPositionEyes(1f);
+                            Vec3d vec2 = vec1.add(entity.getLookVec().scale(100));
+                            RayTraceResult rtr = entity.world.rayTraceBlocks(vec1, vec2, false, false, true);
+                            $_dependencies.put("x", rtr.getBlockPos().getX());
+                            $_dependencies.put("y", rtr.getBlockPos().getY());
+                            $_dependencies.put("z", rtr.getBlockPos().getZ());
+                            ProcedureMeteorStrike.executeProcedure($_dependencies);
+                        } else {
+                            $_dependencies.put("x", (int) entity.posX);
+                            $_dependencies.put("y", (int) entity.posY);
+                            $_dependencies.put("z", (int) entity.posZ);
+                            ProcedureChibakuTenseiOnKeyPressed.executeProcedure($_dependencies);
                         }
+                        break;
+                    case 4:
+                        ProcedureNarakaPath.executeProcedure($_dependencies);
+                        break;
+                    case 3:
+                        ProcedurePretaPath.executeProcedure($_dependencies);
+                        break;
+                    case 2:
+                        ProcedureAnimalPath.executeProcedure($_dependencies);
+                        break;
+                    case 5:
+                        Vec3d vec1 = entity.getPositionEyes(1f);
+                        Vec3d vec2 = vec1.add(entity.getLookVec().scale(5));
+                        RayTraceResult rtr = entity.world.rayTraceBlocks(vec1, vec2, false, false, true);
+                        $_dependencies.put("x", rtr.getBlockPos().getX());
+                        $_dependencies.put("y", (int) entity.posY);
+                        $_dependencies.put("z", rtr.getBlockPos().getZ());
+                        ProcedureOuterPath.executeProcedure($_dependencies);
+                        break;
+                }
+            } else if (which_path == 2) {
+                Map<String, Object> $_dependencies = Maps.newHashMap();
+                $_dependencies.put("is_pressed", pressType < 2);
+                $_dependencies.put("entity", entity);
+                $_dependencies.put("world", entity.world);
+                ProcedureAnimalPath.executeProcedure($_dependencies);
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onJutsuKey6(byte pressType, ItemStack stack, EntityPlayer entity) {
+            Map<String, Object> $_dependencies = Maps.newHashMap();
+            $_dependencies.put("is_pressed", pressType == 0);
+            $_dependencies.put("entity", entity);
+            ProcedureBanShoTenin.executeProcedure($_dependencies);
+            return true;
+        }
+
+        @Override
+        public boolean onJutsuKey7(byte pressType, ItemStack stack, EntityPlayer entity) {
+            if (pressType == 0) {
+                if (!entity.world.isRemote && !stack.getTagCompound().getBoolean("amenotejikaraStoreTarget") && !entity.isPotionActive(PotionSpaceInversion.potion)) {
+                    Entity hit = ProcedureUtils.objectEntityLookingAt(entity, ModConfig.TECHNIQUES.AMENOTEJIKARA_RANGE).entityHit;
+                    ItemNinjutsu.Amenotejikara.setTarget(stack, hit);
+
+                    if (hit != null) {
+                        if (entity.isSneaking()) { //shift clicking stores the target, which can be switched to on the next click
+                            stack.getTagCompound().setBoolean("amenotejikaraStoreTarget", true);
+                            stack.getTagCompound().setInteger("amenotejikaraDisable", 5);
+                            entity.sendStatusMessage(new TextComponentTranslation("amenotejikara.target.next_switch", hit.getDisplayName()), true);
+                        } else
+                            entity.sendStatusMessage(new TextComponentTranslation("amenotejikara.target.switching", hit.getDisplayName()), true);
                     }
-                } else if (pressType == 2) {
-                    ItemNinjutsu.AMENOTEJIKARA.jutsu.createJutsu(stack, entity, 100);
                 }
+            } else if (pressType == 2) {
+                ItemNinjutsu.AMENOTEJIKARA.jutsu.createJutsu(stack, entity, 100);
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onSwitchJutsuKey(boolean is_pressed, ItemStack stack, EntityPlayer entity) {
+            if (is_pressed)
+                return false;
+
+            if (entity.getRidingEntity() instanceof EntitySusanooBase) {
+                ProcedureSusanoo.upgradeRinneganTomoe(entity, stack);
                 return true;
             }
-            
-            @Override
-            public boolean onSwitchJutsuKey(boolean is_pressed, ItemStack stack, EntityPlayer entity) {
-                if (is_pressed)
-                    return false;
 
-                if (entity.getRidingEntity() instanceof EntitySusanooBase) {
-                    ProcedureSusanoo.upgradeRinneganTomoe(entity, stack);
-                    return true;
-                }
-
-                int i = (stack.hasTagCompound() ? (int) stack.getTagCompound().getDouble("which_path") : -1) + 1;
-                if (i > 5) {
-                    i = 0;
-                }
-                if (!stack.hasTagCompound()) {
-                    stack.setTagCompound(new NBTTagCompound());
-                }
-                stack.getTagCompound().
-
-                        setDouble("which_path", i);
-                if (!entity.world.isRemote) {
-                    entity.sendStatusMessage(new TextComponentString(I18n.translateToLocal(String.format("chattext.rinnegan.path%d", i))), true);
-                }
-
-                return true;
+            int i = (stack.hasTagCompound() ? (int) stack.getTagCompound().getDouble("which_path") : -1) + 1;
+            if (i > 5) {
+                i = 0;
             }
-        }.setUnlocalizedName("rinnegantomoehelmet").setRegistryName("rinnegantomoehelmet").setCreativeTab(TabModTab.tab));
+            if (!stack.hasTagCompound()) {
+                stack.setTagCompound(new NBTTagCompound());
+            }
+            stack.getTagCompound().
+
+                    setDouble("which_path", i);
+            if (!entity.world.isRemote) {
+                entity.sendStatusMessage(new TextComponentString(I18n.translateToLocal(String.format("chattext.rinnegan.path%d", i))), true);
+            }
+
+            return true;
+        }
     }
 
     public static boolean isRinneganTomoeActivated(ItemStack stack) {
