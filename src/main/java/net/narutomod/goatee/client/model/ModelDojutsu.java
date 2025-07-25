@@ -166,11 +166,11 @@ public class ModelDojutsu extends ModelBiped {
         leftEye = new ModelRenderer(this);
         leftEye.setRotationPoint(0.0F, 0.0F, 0.0F);
 
-        this.eyeBaseR.cubeList.add(new ModelBox(this.eyeBaseR, 8, 8, -4F, -8F, -4.0F, 4, 8, 0, 0.01F, false));
-        this.rightEye.cubeList.add(new ModelBox(this.rightEye, 24, 0, -4F, -8F, -4.06F, 4, 8, 0, 0.01F, false));
+        this.eyeBaseR.cubeList.add(new ModelBox(this.eyeBaseR, 8, 8, -4F, -8F, -4.1F, 4, 8, 0, 0.1F, false));
+        this.rightEye.cubeList.add(new ModelBox(this.rightEye, 24, 0, -4F, -8F, -4.1F, 4, 8, 0, 0.1F, false));
 
-        this.eyeBaseL.cubeList.add(new ModelBox(eyeBaseL, 4, 8, 0.075f, -8F, -4.06f, 4, 8, 0, 0.01f, false));
-        this.leftEye.cubeList.add(new ModelBox(this.leftEye, 28, 0, 0F, -8F, -4.06F, 4, 8, 0, 0.01F, false));
+        this.eyeBaseL.cubeList.add(new ModelBox(eyeBaseL, 4, 8, 0.1f, -8F, -4.2f, 4, 8, 0, 0.1f, false));
+        this.leftEye.cubeList.add(new ModelBox(this.leftEye, 28, 0, 0F, -8F, -4.1F, 4, 8, 0, 0.1F, false));
 
         RenderUtils.flipQuads(eyeBaseL.cubeList.get(0)); // eyeBaseL normals are flipped for some reason, this unflips
     }
@@ -210,8 +210,7 @@ public class ModelDojutsu extends ModelBiped {
             this.copyModelAngles(this.bipedHead, this.rightEye);
             this.copyModelAngles(this.bipedHead, this.leftEye);
 
-            // bindTexture(getTexture(eyeBaseLTexture));    
-
+            //   leftTexture = "narutomod:textures/rinneganhelmet.png";
             bindTexture(leftTexture);
             GlStateManager.color(1, 1, 1, 1);
             eyeBaseL.render(scale);
@@ -224,6 +223,7 @@ public class ModelDojutsu extends ModelBiped {
             this.leftEye.render(scale);
             RenderUtils.enableLightmap(entityIn);
 
+            // rightTexture= "narutomod:textures/rinneganhelmet.png";
             bindTexture(rightTexture);
             GlStateManager.color(1, 1, 1, 1);
             eyeBaseR.render(scale);
