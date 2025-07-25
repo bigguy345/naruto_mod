@@ -45,6 +45,7 @@ import net.narutomod.entity.EntityTenTails;
 import net.narutomod.goatee.client.Sounds;
 import net.narutomod.goatee.client.model.ModelDojutsu;
 import net.narutomod.goatee.data.EyeData;
+import net.narutomod.goatee.data.SideData;
 import net.narutomod.gui.GuiNinjaScroll;
 import net.narutomod.potion.PotionReach;
 import net.narutomod.potion.PotionSpaceInversion;
@@ -199,32 +200,36 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                 if (living.ticksExisted % 20 == 6)
                     model.foreheadHide = !rinnesharingan || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180.0;
 
-                if (EyeData.LEFT.hasColor(stack))
-                    model.leftColor = EyeData.LEFT.getColor(stack);
+                SideData left = data.getLeft(stack);
+                SideData right = data.getRight(stack);
 
-                if (EyeData.RIGHT.hasColor(stack))
-                    model.rightColor = EyeData.RIGHT.getColor(stack);
+                model.leftTexture = getLeftEyeTexture(stack, living, left);
+                model.rightTexture = getRightEyeTexture(stack, living, right);
+                model.rinnesharinganTexture = getRinnesharinganTexture(stack, living);
 
-                model.leftTexture = getLeftEyeTexture(stack, living, slot);
-                model.rightTexture = getRightEyeTexture(stack, living, slot);
-                model.rinnesharinganTexture = getRinnesharinganTexture(stack, living, slot);
+                if (left.hasColor())
+                    model.leftColor = left.getColor();
+
+                if (right.hasColor())
+                    model.rightColor = right.getColor();
+
                 return model;
             }
 
-            public String getRightEyeTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot) {
+            public String getRightEyeTexture(ItemStack stack, Entity entity, SideData side) {
                 if (sharinganOn(stack))
                     return "narutomod:textures/rinnegantomoehelmet_sharingan.png";
                 else if (eternalOn(stack))
                     return "narutomod:textures/rinnegantomoehelmet_eternal.png";
 
-                return "narutomod:textures/mangekyosharinganhelmet_obito.png";
+                return "narutomod:textures/rinnegantomoehelmet_off.png";
             }
 
-            public String getLeftEyeTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot) {
-                return "narutomod:textures/rinneganhelmet.png";
+            public String getLeftEyeTexture(ItemStack stack, Entity entity, SideData side) {
+                return "narutomod:textures/rinnegantomoehelmet_eternal.png";
             }
 
-            public String getRinnesharinganTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot) {
+            public String getRinnesharinganTexture(ItemStack stack, Entity entity) {
                 return "narutomod:textures/rinnesharingantomoehelmet.png";
             }
 

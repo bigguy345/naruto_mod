@@ -10,8 +10,18 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.narutomod.PlayerTracker;
 import net.narutomod.goatee.client.RenderUtils;
+import net.narutomod.goatee.data.SideData;
+import net.narutomod.item.ItemDojutsu;
+import net.narutomod.item.ItemRinnegan;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -211,6 +221,10 @@ public class ModelDojutsu extends ModelBiped {
             this.copyModelAngles(this.bipedHead, this.leftEye);
 
             //   leftTexture = "narutomod:textures/rinneganhelmet.png";
+            //   leftTexture = "narutomod:textures/rinneganhelmet.png";
+            //   leftTexture = "narutomod:textures/rinneganhelmet.png";
+            //   leftTexture = "narutomod:textures/rinneganhelmet.png";
+
             bindTexture(leftTexture);
             GlStateManager.color(1, 1, 1, 1);
             eyeBaseL.render(scale);
@@ -223,7 +237,11 @@ public class ModelDojutsu extends ModelBiped {
             this.leftEye.render(scale);
             RenderUtils.enableLightmap(entityIn);
 
-            // rightTexture= "narutomod:textures/rinneganhelmet.png";
+            //            rightTexture = "narutomod:textures/mangekyosharinganhelmet_obito.png";
+            //            rightTexture = "narutomod:textures/rinneganhelmet.png";
+            //            rightTexture = "narutomod:textures/sharinganhelmet.png";
+            //            rightTexture = "narutomod:textures/tenseiganhelmet.png";
+            //            rightTexture = "narutomod:textures/byakuganhelmet.png";
             bindTexture(rightTexture);
             GlStateManager.color(1, 1, 1, 1);
             eyeBaseR.render(scale);
@@ -260,4 +278,40 @@ public class ModelDojutsu extends ModelBiped {
 
         return resourcelocation;
     }
+
+    private static ModelDojutsu model;
+
+    @SideOnly(Side.CLIENT)
+    public ModelBiped getModel(EntityLivingBase living, ItemStack stack, ItemDojutsu.Base eye) {
+        if (model == null)
+            model = new ModelDojutsu();
+
+        model.isSneak = living.isSneaking();
+        model.isRiding = living.isRiding();
+        model.isChild = living.isChild();
+        
+        boolean rinnesharingan = ItemRinnegan.isRinnesharinganActivated(stack);
+        model.isS06P = rinnesharingan;
+        model.headwearShine = rinnesharingan;
+        model.hornMiddle.showModel = false;
+        model.onface.showModel = false;
+        if (living.ticksExisted % 20 == 6)
+            model.foreheadHide = !rinnesharingan || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180.0;
+
+        SideData left = eye.data.getLeft(stack);
+        SideData right = eye.data.getRight(stack);
+
+        model.leftTexture = left.hasTexture() ? left.getTexture() : eye.getLeftEyeTexture(stack, living, left);
+        model.rightTexture = right.hasTexture() ? right.getTexture() : eye.getRightEyeTexture(stack, living, right);
+        model.rinnesharinganTexture = eye.getRinnesharinganTexture(stack, living);
+
+        if (left.hasColor())
+            model.leftColor = left.getColor();
+
+        if (right.hasColor())
+            model.rightColor = right.getColor();
+
+        return model;
+    }
+
 }

@@ -1,9 +1,12 @@
 
 package net.narutomod.item;
 
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -27,11 +30,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.init.MobEffects;
 
+import net.narutomod.goatee.data.DojutsuData;
 import net.narutomod.goatee.data.NarutoData;
+import net.narutomod.goatee.data.SideData;
 import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.NarutomodModVariables;
 import net.narutomod.ElementsNarutomodMod;
 
+import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -42,6 +48,8 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 	}
 
 	public abstract static class Base extends ItemArmor {
+		public DojutsuData data = new DojutsuData(this);
+		
 		@SideOnly(Side.CLIENT)
 		private ModelBiped armorModel;
 
@@ -80,6 +88,18 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 			this.armorModel.isRiding = living.isRiding();
 			this.armorModel.isChild = living.isChild();
 			return this.armorModel;
+		}
+
+		public String getRightEyeTexture(ItemStack stack, Entity entity, SideData side) {
+			return null;
+		}
+
+		public String getLeftEyeTexture(ItemStack stack, Entity entity, SideData side) {
+			return null;
+		}
+
+		public String getRinnesharinganTexture(ItemStack stack, Entity entity) {
+			return null;
 		}
 
 		public boolean isOwner(ItemStack stack, EntityLivingBase entity) {
@@ -187,6 +207,10 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 		return ItemDojutsu.getWorn(entity).getItem() instanceof Base;
 	}
 
+	public static boolean is(ItemStack stack) {
+		return stack.getItem() instanceof Base;
+	}
+	
 	public static ItemStack getWorn(EntityLivingBase entity) {
 		if (entity instanceof EntityPlayer) {
 			NarutoData data = NarutoData.get((EntityPlayer) entity);
@@ -195,6 +219,14 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 		}
 		
 		return entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+	}
+
+	public static DojutsuData getWornData(EntityLivingBase entity) {
+		ItemStack worn = getWorn(entity);
+		if (worn.getItem() instanceof Base)
+			return ((Base) worn.getItem()).data;
+
+		return null;
 	}
 
 	public static long getMostRecentWornTime(EntityLivingBase entity) {
