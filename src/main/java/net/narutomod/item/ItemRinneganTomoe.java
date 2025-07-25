@@ -33,13 +33,18 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.narutomod.*;
+import net.narutomod.Chakra;
+import net.narutomod.ElementsNarutomodMod;
+import net.narutomod.ModConfig;
+import net.narutomod.PlayerTracker;
 import net.narutomod.creativetab.TabModTab;
 import net.narutomod.entity.EntityKingOfHell;
 import net.narutomod.entity.EntityPretaShield;
 import net.narutomod.entity.EntitySusanooBase;
 import net.narutomod.entity.EntityTenTails;
 import net.narutomod.goatee.client.Sounds;
+import net.narutomod.goatee.client.model.ModelDojutsu;
+import net.narutomod.goatee.data.EyeData;
 import net.narutomod.gui.GuiNinjaScroll;
 import net.narutomod.potion.PotionReach;
 import net.narutomod.potion.PotionSpaceInversion;
@@ -52,7 +57,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static net.narutomod.item.ItemRinnegan.*;
+import static net.narutomod.item.ItemRinnegan.isRinnegan;
+import static net.narutomod.item.ItemRinnegan.isRinnesharinganActivated;
 
 @ElementsNarutomodMod.ModElement.Tag
 public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
@@ -173,14 +179,65 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             }
 
             @SideOnly(Side.CLIENT)
+            private ModelDojutsu model;
+
+            @SideOnly(Side.CLIENT)
             public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {
-                ItemDojutsu.ClientModel.ModelHelmetSnug model = (ItemDojutsu.ClientModel.ModelHelmetSnug) super.getArmorModel(living, stack, slot, defaultModel);
-                boolean isS06p = isRinnesharinganActivated(stack);
-                model.isSo6 = model.hornMiddle.showModel = model.headwearShine = model.onface.showModel = isS06p;
-                model.foreheadHide = !isS06p || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180d;
-                
+                //   if (model == null)
+                model = new ModelDojutsu();
+
+                model.isSneak = living.isSneaking();
+                model.isRiding = living.isRiding();
+                model.isChild = living.isChild();
+
+
+                boolean rinnesharingan = ItemRinnegan.isRinnesharinganActivated(stack);
+                model.isS06P = rinnesharingan;
+                model.headwearShine = rinnesharingan;
+                model.hornMiddle.showModel = false;
+                model.onface.showModel = false;
+                if (living.ticksExisted % 20 == 6)
+                    model.foreheadHide = !rinnesharingan || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180.0;
+
+                if (EyeData.LEFT.hasColor(stack))
+                    model.leftColor = EyeData.LEFT.getColor(stack);
+
+                if (EyeData.RIGHT.hasColor(stack))
+                    model.rightColor = EyeData.RIGHT.getColor(stack);
+
+                model.leftTexture = getLeftEyeTexture(stack, living, slot);
+                model.rightTexture = getRightEyeTexture(stack, living, slot);
+                model.rinnesharinganTexture = getRinnesharinganTexture(stack, living, slot);
                 return model;
             }
+
+            public String getRightEyeTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot) {
+                if (sharinganOn(stack))
+                    return "narutomod:textures/rinnegantomoehelmet_sharingan.png";
+                else if (eternalOn(stack))
+                    return "narutomod:textures/rinnegantomoehelmet_eternal.png";
+
+                return "narutomod:textures/mangekyosharinganhelmet_obito.png";
+            }
+
+            public String getLeftEyeTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot) {
+                return "narutomod:textures/rinneganhelmet.png";
+            }
+
+            public String getRinnesharinganTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot) {
+                return "narutomod:textures/rinnesharingantomoehelmet.png";
+            }
+
+
+            //            @SideOnly(Side.CLIENT)
+            //            public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {
+            //                ItemDojutsu.ClientModel.ModelHelmetSnug model = (ItemDojutsu.ClientModel.ModelHelmetSnug) super.getArmorModel(living, stack, slot, defaultModel);
+            //                boolean isS06p = isRinnesharinganActivated(stack);
+            //                model.isSo6 = model.hornMiddle.showModel = model.headwearShine = model.onface.showModel = isS06p;
+            //                model.foreheadHide = !isS06p || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180d;
+            //                
+            //                return model;
+            //            }
 
             public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
                 if (isRinnesharinganActivated(stack))
