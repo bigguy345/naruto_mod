@@ -210,7 +210,9 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
         }
 
         public String getRightEyeTexture(ItemStack stack, Entity entity, SideData side) {
-            if (sharinganOn(stack))
+            if (isRinnesharinganActivated(stack))
+                return "narutomod:textures/rinnesharingantomoehelmet.png";
+            else if (sharinganOn(stack))
                 return "narutomod:textures/rinnegantomoehelmet_sharingan.png";
             else if (eternalOn(stack))
                 return "narutomod:textures/rinnegantomoehelmet_eternal.png";
