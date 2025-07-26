@@ -44,7 +44,6 @@ import net.narutomod.entity.EntitySusanooBase;
 import net.narutomod.entity.EntityTenTails;
 import net.narutomod.goatee.client.Sounds;
 import net.narutomod.goatee.client.model.ModelDojutsu;
-import net.narutomod.goatee.data.EyeData;
 import net.narutomod.goatee.data.SideData;
 import net.narutomod.gui.GuiNinjaScroll;
 import net.narutomod.potion.PotionReach;
@@ -199,6 +198,13 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
         @Override
         public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {
             ModelDojutsu model = (ModelDojutsu) super.getArmorModel(living, stack, slot, defaultModel);
+
+            boolean isS06p = isRinnesharinganActivated(stack);
+            model.isS06P = model.headwearShine = model.onface.showModel = isS06p;
+            model.hornMiddle.showModel = false;
+            model.foreheadHide = !isS06p || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180d;
+            model.rinnesharinganBase = true;
+                
             model.rightEye.showModel = !isBlinded(stack); //sharingan blindness
             return model;
         }
@@ -219,17 +225,6 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
         public String getRinnesharinganTexture(ItemStack stack, Entity entity) {
             return "narutomod:textures/rinnesharingantomoehelmet.png";
         }
-
-
-        //            @SideOnly(Side.CLIENT)
-        //            public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {
-        //                ItemDojutsu.ClientModel.ModelHelmetSnug model = (ItemDojutsu.ClientModel.ModelHelmetSnug) super.getArmorModel(living, stack, slot, defaultModel);
-        //                boolean isS06p = isRinnesharinganActivated(stack);
-        //                model.isSo6 = model.hornMiddle.showModel = model.headwearShine = model.onface.showModel = isS06p;
-        //                model.foreheadHide = !isS06p || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180d;
-        //                
-        //                return model;
-        //            }
 
         public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
             if (isRinnesharinganActivated(stack))

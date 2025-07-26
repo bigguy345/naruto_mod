@@ -35,6 +35,7 @@ public class ModelDojutsu extends ModelBiped {
     public boolean headwearShine;
     public boolean highlightHide;
     public boolean foreheadHide;
+    public boolean rinnesharinganBase;
 
     public String rightTexture, leftTexture, eyeBaseTexture;
     public String rinnesharinganTexture; // full s06p helmet texture with horns and all
@@ -215,9 +216,9 @@ public class ModelDojutsu extends ModelBiped {
 
         if (isS06P) {
             RenderUtils.disableLightMap();
-            GlStateManager.depthMask(false);
-            
 
+            if (!rinnesharinganBase) // if tenseigan
+                GlStateManager.depthMask(false);
 
             bindTexture(rinnesharinganTexture);
             this.bipedHead.render(scale);
@@ -232,8 +233,17 @@ public class ModelDojutsu extends ModelBiped {
                 this.bipedHeadwear.render(scale);
             }
 
+            if (rinnesharinganBase) { //for rinnegan s06p
+                this.copyModelAngles(this.bipedHead, this.eyeBaseBoth);
+                bindTexture("narutomod:textures/eye/eye_base_rinnesharingan.png");
+                eyeBaseBoth.render(scale);
+            }
+            
             RenderUtils.enableLightmap(entityIn);
             GlStateManager.depthMask(true);
+
+            if (rinnesharinganBase)
+                eyeBaseL.showModel = eyeBaseR.showModel = false;
         }
 
         if (!this.highlightHide) {
@@ -286,6 +296,10 @@ public class ModelDojutsu extends ModelBiped {
         GlStateManager.alphaFunc(0x204, 0.1f);
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
+
+        if (rinnesharinganBase)
+            eyeBaseL.showModel = eyeBaseR.showModel = true;
+
         if (markDirty)
             reset();
 

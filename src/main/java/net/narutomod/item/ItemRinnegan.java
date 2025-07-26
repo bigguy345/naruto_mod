@@ -261,6 +261,7 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 				model.isS06P = model.headwearShine = model.onface.showModel = isS06p;
 				model.hornMiddle.showModel = false;
 				model.foreheadHide = !isS06p || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180d;
+				model.rinnesharinganBase = true;
 
 				return model;
 			} else {
