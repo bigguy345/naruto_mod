@@ -101,8 +101,8 @@ public final class NarutoWheelData extends AbstractPacket {
                 } else
                     player.sendMessage(new TextComponentTranslation("dojutsuwheel.inventory_full"));
             } else { //Equip eye in slot
-                if (ItemRinneganTomoe.isTomoe(helmet) && ItemRinneganTomoe.get(helmet).getCompatibleStatus(seg.stack) != -1 && !ItemRinnegan.isRinnesharinganActivated(helmet))
-                    ItemRinneganTomoe.setTomoeStatus(helmet, ItemRinneganTomoe.get(helmet).getCompatibleStatus(seg.stack), player);
+                if (ItemRinneganTomoe.isTomoe(helmet) && ItemRinneganTomoe.get(helmet).getCompatibleStatus(helmet, seg.stack) != -1 && !ItemRinnegan.isRinnesharinganActivated(helmet))
+                    ItemRinneganTomoe.setTomoeStatus(helmet, ItemRinneganTomoe.get(helmet).getCompatibleStatus(helmet, seg.stack), player);
                 else {
                     ItemStack targetItem = seg.stack;
                     seg.stack = ItemStack.EMPTY;

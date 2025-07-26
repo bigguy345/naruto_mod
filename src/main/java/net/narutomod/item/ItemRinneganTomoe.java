@@ -464,21 +464,21 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             return true;
         }
 
-        public int getCompatibleStatus(ItemStack targetItem) {
-            if (isRinnesharinganActivated(targetItem))
+        public int getCompatibleStatus(ItemStack current, ItemStack target) {
+            if (isRinnesharinganActivated(target))
                 return -1;
 
-            if (targetItem.isEmpty())
+            if (target.isEmpty())
                 return SHARINGAN_OFF;
 
-            if (targetItem.getItem() == helmet)
-                return getTomoeStatus(targetItem);
+            if (target.getItem() == helmet)
+                return getTomoeStatus(target);
 
-            if (targetItem.getItem() == ItemSharingan.helmet)
+            if (target.getItem() == ItemSharingan.helmet)
                 return SHARINGAN_ON;
 
 
-            if (ItemSharingan.isMangekyo(targetItem))
+            if (ItemSharingan.isMangekyo(target))
                 return ETERNAL_ON;
 
             return -1;
