@@ -1,6 +1,7 @@
 package net.narutomod.goatee.data;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -61,6 +62,16 @@ public class SideData {
     public String getTexture() {
         return texture;
     }
+    
+    public String getEffectiveTexture(EntityLivingBase entity){
+        return hasTexture() ? getTexture() : item.getLeftEyeTexture(stack, entity, this);
+    }
+
+
+    public int getEffectiveColor(EntityLivingBase entity){
+        return hasColor() ? getColor() : 0xffffff;
+    }
+
 
     public SideData setTexture(String tex) {
         tag.setString("texture", texture = tex);

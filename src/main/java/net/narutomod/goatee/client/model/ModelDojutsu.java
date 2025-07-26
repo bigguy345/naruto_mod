@@ -311,11 +311,11 @@ public class ModelDojutsu extends ModelBiped {
         modelRenderer.rotateAngleZ = z;
     }
     
-    public void bindTexture(String tex) {
+    public static void bindTexture(String tex) {
         Minecraft.getMinecraft().renderEngine.bindTexture(getTexture(tex));
     }
 
-    public ResourceLocation getTexture(String tex) {
+    public static ResourceLocation getTexture(String tex) {
         ResourceLocation resourcelocation = DOJUTSU_TEXTURE_RES_MAP.get(tex);
 
         if (resourcelocation == null)
@@ -334,20 +334,16 @@ public class ModelDojutsu extends ModelBiped {
         model.isSneak = living.isSneaking();
         model.isRiding = living.isRiding();
         model.isChild = living.isChild();
-       // model.headwearShine = false;
 
         SideData left = eye.data.getLeft(stack);
         SideData right = eye.data.getRight(stack);
 
-        model.leftTexture = left.hasTexture() ? left.getTexture() : eye.getLeftEyeTexture(stack, living, left);
-        model.rightTexture = right.hasTexture() ? right.getTexture() : eye.getRightEyeTexture(stack, living, right);
+        model.leftTexture = left.getEffectiveTexture(living);
+        model.rightTexture = right.getEffectiveTexture(living);
         model.rinnesharinganTexture = eye.getRinnesharinganTexture(stack, living);
 
-        if (left.hasColor())
-            model.leftColor = left.getColor();
-
-        if (right.hasColor())
-            model.rightColor = right.getColor();
+        model.leftColor = left.getEffectiveColor(living);
+        model.rightColor = right.getEffectiveColor(living);
 
         return model;
     }
