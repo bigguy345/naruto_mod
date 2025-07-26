@@ -1,13 +1,7 @@
 package net.narutomod.procedure;
 
-import net.narutomod.item.ItemSuiton;
-import net.narutomod.item.ItemSharingan;
-import net.narutomod.item.ItemRinnegan;
-import net.narutomod.item.ItemNinjutsu;
-import net.narutomod.item.ItemMokuton;
-import net.narutomod.item.ItemMangekyoSharinganEternal;
-import net.narutomod.item.ItemDoton;
-import net.narutomod.item.ItemDojutsu;
+import net.narutomod.ModConfig;
+import net.narutomod.item.*;
 import net.narutomod.ElementsNarutomodMod;
 
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -76,7 +70,9 @@ public class ProcedureWhiteZetsuFleshFoodEaten extends ElementsNarutomodMod.ModE
 							&& (!((entity instanceof EntityPlayer) ? ItemRinnegan.hasRinnegan((EntityPlayer) entity)
 									: false)))
 							&& (Math.random() < 0.2)))) {
-				rinneganstack = new ItemStack(ItemRinnegan.helmet, (int) (1));
+
+				boolean unlockTomoe = Math.random() * 100 < ModConfig.DOJUTSU.RINNEGAN_TOMOE_AWAKEN_CHANCE;
+				rinneganstack = new ItemStack(unlockTomoe ? ItemRinneganTomoe.helmet : ItemRinnegan.helmet, (int) (1));
 				((ItemDojutsu.Base) rinneganstack.getItem()).setOwner(rinneganstack, (EntityLivingBase) entity);
 				if (entity instanceof EntityPlayer) {
 					ItemStack _setstack = (rinneganstack);

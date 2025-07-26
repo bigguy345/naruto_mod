@@ -136,6 +136,10 @@ public class ModConfig extends ElementsNarutomodMod.ModElement {
 	}
 	public static class Dojutsu {
 
+		@Config.Comment("Chance of awakening a Rinnegan Tomoe instead on Rinnegan Awakening. (Default: 50)")
+		@Config.RangeDouble(min = 0, max = 100)
+		public double RINNEGAN_TOMOE_AWAKEN_CHANCE = 50;
+		
 		@Config.RangeInt(min = 0, max = 3600)
 		@Config.Comment("Sharingan's Lock On cooldown in seconds. (applied once Lock On effect runs out) (Default: 60)")
 		public int SHARINGAN_LOCK_ON_COOLDOWN = 60;
