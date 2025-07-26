@@ -154,8 +154,13 @@ public class JutsuKeys {
 			}
 
 
-			if (keyId == 3 && EntityBijuManager.isJinchuriki(player) && pressType == 2)
-				EntityBijuManager.toggleBijuCloak(player);
+			if (keyId == 3 && EntityBijuManager.isJinchuriki(player) && pressType == 2) {
+				if (EntityBijuManager.cloakLevel(player) > 0 && !player.isSneaking()) {
+					EntityBijuManager.increaseCloakLevel(player);
+				} else
+					EntityBijuManager.toggleBijuCloak(player);
+			}
+				
 		
 		}
 	}

@@ -56,7 +56,19 @@ public class ProcedurePowerIncreaseOnKeyPressed extends ElementsNarutomodMod.Mod
 				if ((!(is_pressed))) {
 					ItemJutsu.Base.switchNextJutsu(itemoffhand, (EntityLivingBase) entity);
 				}
-			}  else if (wearingDojutsu) {
+			} else if (wearingDojutsu && isBijuuCloak) {
+				if (entity.isSneaking()) {
+					if (!is_pressed)
+						EntityBijuManager.increaseCloakLevel((EntityPlayer) entity);
+				} else {
+					ItemDojutsu.Base eye = (ItemDojutsu.Base) helmet.getItem();
+					JutsuKey key = eye.data.getSwitchJutsuKey();
+					if (key.hasTask() && key.fire(is_pressed, helmet, (EntityPlayer) entity))
+						return;
+
+					eye.onSwitchJutsuKey(is_pressed, helmet, (EntityPlayer) entity);
+				}
+			} else if (wearingDojutsu) {
 				ItemDojutsu.Base eye = (ItemDojutsu.Base) helmet.getItem();
 				JutsuKey key = eye.data.getSwitchJutsuKey();
 				if (key.hasTask() && key.fire(is_pressed, helmet, (EntityPlayer) entity))
