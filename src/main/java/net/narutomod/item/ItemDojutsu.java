@@ -155,6 +155,13 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 		
 		public abstract Type getType();
 
+		public boolean canBuildInKamui(ItemStack stack) {
+			if (stack.getTagCompound().hasKey("kamuiCanBuild"))
+				return true;
+
+			return false;
+		}
+
 		public SoundEvent getActivationSound(ItemStack eye) {
 			return null;
 		}

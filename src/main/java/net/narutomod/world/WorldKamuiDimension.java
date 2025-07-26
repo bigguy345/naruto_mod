@@ -1,10 +1,15 @@
 
 package net.narutomod.world;
 
+import com.google.common.collect.Lists;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -47,12 +52,13 @@ import net.minecraft.block.BlockFalling;
 import net.narutomod.procedure.ProcedureKamuiDimensionPlayerEntersDimension;
 import net.narutomod.block.BlockKamuiBlock;
 import net.narutomod.ElementsNarutomodMod;
-import net.narutomod.NarutomodMod;
+import net.narutomod.block.BlockKamuiBlock;
+import net.narutomod.item.ItemDojutsu;
+import net.narutomod.procedure.ProcedureKamuiDimensionPlayerEntersDimension;
 
 import javax.annotation.Nullable;
-import java.util.Random;
 import java.util.List;
-import com.google.common.collect.Lists;
+import java.util.Random;
 
 @ElementsNarutomodMod.ModElement.Tag
 public class WorldKamuiDimension extends ElementsNarutomodMod.ModElement {
@@ -79,13 +85,32 @@ public class WorldKamuiDimension extends ElementsNarutomodMod.ModElement {
 		MinecraftForge.EVENT_BUS.register(new BlockEventHook());
 	}
 
+	public static boolean canInteract(Entity entity) {
+		if (!(entity instanceof EntityLivingBase))
+			return true;
+
+		ItemStack dojutsu = ItemDojutsu.getWorn((EntityLivingBase) entity);
+		if (!dojutsu.isEmpty())
+			return ((ItemDojutsu.Base) dojutsu.getItem()).canBuildInKamui(dojutsu);
+
+		return false;
+	}
 	public static class BlockEventHook {
+
 		@SubscribeEvent
-		public void onBlockEvent(BlockEvent event) {
-			if (event.getWorld().provider instanceof WorldProviderMod) {
+		public void onBlockEvent(BlockEvent.EntityPlaceEvent event) {
+			if (event.getWorld().provider instanceof WorldProviderMod && !canInteract(event.getEntity())) {
 				event.setCanceled(true);
 			}
 		}
+
+		@SubscribeEvent
+		public void onBlockEvent(BlockEvent.BreakEvent event) {
+			if (event.getWorld().provider instanceof WorldProviderMod && !canInteract(event.getPlayer())) {
+				event.setCanceled(true);
+			}
+		}
+		
 	}
 
 	public static class WorldProviderMod extends WorldProvider {

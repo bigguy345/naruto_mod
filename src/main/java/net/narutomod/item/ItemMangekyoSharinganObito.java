@@ -102,6 +102,10 @@ public class ItemMangekyoSharinganObito extends ElementsNarutomodMod.ModElement 
 				return true;
 			}
 
+			public boolean canBuildInKamui(ItemStack stack) {
+				return true;
+			}
+			
 			@Override
 			public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
 				return "narutomod:textures/mangekyosharinganhelmet_obito.png";

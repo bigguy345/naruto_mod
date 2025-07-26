@@ -190,6 +190,10 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             return true;
         }
 
+        public boolean canBuildInKamui(ItemStack stack) {
+            return true;
+        }
+
         public boolean useAdvancedModel() {
             return true;
         }
