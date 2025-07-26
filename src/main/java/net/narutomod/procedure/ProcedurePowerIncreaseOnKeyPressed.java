@@ -1,16 +1,16 @@
 package net.narutomod.procedure;
 
-import net.narutomod.item.ItemJutsu;
-import net.narutomod.item.ItemDojutsu;
-import net.narutomod.item.ItemBijuCloak;
-import net.narutomod.entity.EntityBijuManager;
-import net.narutomod.ElementsNarutomodMod;
-
-import net.minecraft.world.World;
-import net.minecraft.item.ItemStack;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.narutomod.ElementsNarutomodMod;
+import net.narutomod.entity.EntityBijuManager;
+import net.narutomod.goatee.data.JutsuKey;
+import net.narutomod.item.ItemBijuCloak;
+import net.narutomod.item.ItemDojutsu;
+import net.narutomod.item.ItemJutsu;
 
 import java.util.Map;
 
@@ -44,6 +44,10 @@ public class ProcedurePowerIncreaseOnKeyPressed extends ElementsNarutomodMod.Mod
 			helmet = ((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(((EntityPlayer) entity)) : ItemStack.EMPTY);
 			itemmainhand = ((entity instanceof EntityLivingBase) ? ((EntityLivingBase) entity).getHeldItemMainhand() : ItemStack.EMPTY);
 			itemoffhand = ((entity instanceof EntityLivingBase) ? ((EntityLivingBase) entity).getHeldItemOffhand() : ItemStack.EMPTY);
+			boolean wearingDojutsu = ItemDojutsu.is(helmet);
+			boolean isBijuuCloak = EntityBijuManager.cloakLevel((EntityPlayer) entity) > 0;
+			System.out.println(EntityBijuManager.cloakLevel((EntityPlayer) entity));
+
 			if (itemmainhand.getItem() instanceof ItemJutsu.Base) {
 				if ((!(is_pressed))) {
 					ItemJutsu.Base.switchNextJutsu(itemmainhand, (EntityLivingBase) entity);
@@ -52,9 +56,13 @@ public class ProcedurePowerIncreaseOnKeyPressed extends ElementsNarutomodMod.Mod
 				if ((!(is_pressed))) {
 					ItemJutsu.Base.switchNextJutsu(itemoffhand, (EntityLivingBase) entity);
 				}
-			} else if ((helmet.getItem() instanceof ItemDojutsu.Base
-					&& ((ItemDojutsu.Base) helmet.getItem()).onSwitchJutsuKey(is_pressed, helmet, (EntityPlayer) entity))) {
-				return;
+			}  else if (wearingDojutsu) {
+				ItemDojutsu.Base eye = (ItemDojutsu.Base) helmet.getItem();
+				JutsuKey key = eye.data.getSwitchJutsuKey();
+				if (key.hasTask() && key.fire(is_pressed, helmet, (EntityPlayer) entity))
+					return;
+
+				eye.onSwitchJutsuKey(is_pressed, helmet, (EntityPlayer) entity);
 			} else if ((((helmet).getItem() == new ItemStack(ItemBijuCloak.helmet, (int) (1)).getItem())
 					&& ((((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.armorInventory.get(2) : ItemStack.EMPTY)
 							.getItem() == new ItemStack(ItemBijuCloak.body, (int) (1)).getItem())

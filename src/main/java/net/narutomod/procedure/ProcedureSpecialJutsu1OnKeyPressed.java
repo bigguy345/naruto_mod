@@ -1,13 +1,12 @@
 package net.narutomod.procedure;
 
-import net.narutomod.item.ItemDojutsu;
-import net.narutomod.NarutomodModVariables;
-import net.narutomod.ElementsNarutomodMod;
-
-import net.minecraft.world.World;
-import net.minecraft.item.ItemStack;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.narutomod.ElementsNarutomodMod;
+import net.narutomod.NarutomodModVariables;
+import net.narutomod.goatee.data.JutsuKey;
+import net.narutomod.item.ItemDojutsu;
 
 import java.util.Map;
 
@@ -31,16 +30,21 @@ public class ProcedureSpecialJutsu1OnKeyPressed extends ElementsNarutomodMod.Mod
 			return;
 		}
 		boolean is_pressed = (boolean) dependencies.get("is_pressed");
-		Entity entity = (Entity) dependencies.get("entity");
+		EntityPlayer entity = (EntityPlayer) dependencies.get("entity");
 		World world = (World) dependencies.get("world");
 		ItemStack helmet = ItemStack.EMPTY;
 		entity.getEntityData().setBoolean((NarutomodModVariables.JutsuKey1Pressed), (is_pressed));
-		if (((world.isRemote) || ((EntityPlayer) entity).isSpectator())) {
+		if (((world.isRemote) || entity.isSpectator())) {
 			return;
 		}
-		helmet = ((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(((EntityPlayer) entity)) : ItemStack.EMPTY);
+		helmet = ((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(entity) : ItemStack.EMPTY);
 		if (helmet.getItem() instanceof ItemDojutsu.Base) {
-			((ItemDojutsu.Base) helmet.getItem()).onJutsuKey1(is_pressed, helmet, (EntityPlayer) entity);
+			ItemDojutsu.Base eye = (ItemDojutsu.Base) helmet.getItem();
+			JutsuKey key = eye.data.getKey(1);
+			if (key.hasTask() && key.fire(is_pressed, helmet, entity))
+				return;
+			
+			eye.onJutsuKey1(is_pressed, helmet, entity);
 		}
 	}
 }

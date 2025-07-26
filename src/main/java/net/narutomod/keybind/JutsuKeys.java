@@ -14,6 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.narutomod.entity.EntityBijuManager;
 import net.narutomod.entity.EntityHiraishin;
 import net.narutomod.goatee.client.hud.wheel.HUDItemStackWheel;
+import net.narutomod.goatee.data.JutsuKey;
 import net.narutomod.goatee.data.NarutoData;
 import net.narutomod.goatee.network.AbstractPacket;
 import net.narutomod.goatee.network.PacketHandler;
@@ -137,6 +138,10 @@ public class JutsuKeys {
 				((ItemSharingan.Base) helmet.getItem()).lockOnLookingAt(player, helmet);
 			else if ((helmet.getItem() instanceof ItemDojutsu.Base)) {
 				ItemDojutsu.Base eye = (ItemDojutsu.Base) helmet.getItem();
+
+				JutsuKey key = eye.data.getKey(keyId);
+				if (key.hasTask() && key.fire(pressType == 0, helmet, player))
+					return;
 
 				if (keyId == 4)
 					eye.onJutsuKey4(pressType, helmet, player);

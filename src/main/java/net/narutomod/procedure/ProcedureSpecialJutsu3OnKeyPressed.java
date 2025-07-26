@@ -1,5 +1,6 @@
 package net.narutomod.procedure;
 
+import net.narutomod.goatee.data.JutsuKey;
 import net.narutomod.item.ItemDojutsu;
 import net.narutomod.entity.EntityTailedBeast;
 import net.narutomod.entity.EntityBijuManager;
@@ -8,8 +9,6 @@ import net.narutomod.ElementsNarutomodMod;
 import net.minecraft.world.World;
 import net.minecraft.item.ItemStack;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.Entity;
 
 import java.util.Map;
 
@@ -33,22 +32,26 @@ public class ProcedureSpecialJutsu3OnKeyPressed extends ElementsNarutomodMod.Mod
 			return;
 		}
 		boolean is_pressed = (boolean) dependencies.get("is_pressed");
-		Entity entity = (Entity) dependencies.get("entity");
+		EntityPlayer entity = (EntityPlayer) dependencies.get("entity");
 		World world = (World) dependencies.get("world");
 		ItemStack helmet = ItemStack.EMPTY;
-		if (((world.isRemote) || ((EntityPlayer) entity).isSpectator())) {
+		if (((world.isRemote) || entity.isSpectator())) {
 			return;
 		}
-		helmet = ((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(((EntityPlayer) entity)) : ItemStack.EMPTY);
-		if ((helmet.getItem() instanceof ItemDojutsu.Base
-				&& ((ItemDojutsu.Base) helmet.getItem()).onJutsuKey3(is_pressed, helmet, (EntityPlayer) entity))) {
-			return;
-		} else if (EntityBijuManager.cloakLevel((EntityPlayer) entity) == 3) {
+		helmet = ((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(entity) : ItemStack.EMPTY);
+		if (helmet.getItem() instanceof ItemDojutsu.Base) {
+			ItemDojutsu.Base eye = (ItemDojutsu.Base) helmet.getItem();
+			JutsuKey key = eye.data.getKey(3);
+			if (key.hasTask() && key.fire(is_pressed, helmet, entity))
+				return;
+
+			eye.onJutsuKey3(is_pressed, helmet, entity);
+		} else if (EntityBijuManager.cloakLevel(entity) == 3) {
 			if ((!(is_pressed))) {
-				EntityBijuManager.getBijuOfPlayerInWorld((EntityPlayer) entity).attackEntityWithRangedAttack((EntityLivingBase) entity, 0f);
+				EntityBijuManager.getBijuOfPlayerInWorld(entity).attackEntityWithRangedAttack(entity, 0f);
 			}
-		} else if (EntityBijuManager.cloakLevel((EntityPlayer) entity) == 2) {
-			EntityTailedBeast.EntityTailBeastBall.create((EntityLivingBase) entity, is_pressed);
+		} else if (EntityBijuManager.cloakLevel(entity) == 2) {
+			EntityTailedBeast.EntityTailBeastBall.create(entity, is_pressed);
 		}
 	}
 }

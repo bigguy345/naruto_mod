@@ -1,29 +1,33 @@
 package net.narutomod.goatee.data;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.MathHelper;
 import net.narutomod.item.ItemDojutsu;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static net.narutomod.item.ItemDojutsu.is;
 
 public class DojutsuData {
     public final ItemDojutsu.Base eye;
- //   public final List<JutsuKey> jutsus = new ArrayList<>();
-  //  public final JutsuKey switchJutsu = new JutsuKey(-1);
+    public final List<JutsuKey> jutsus = new ArrayList<>();
+    public final JutsuKey switchJutsu = new JutsuKey(-1);
 
     public DojutsuData(ItemDojutsu.Base eye) {
         this.eye = eye;
 
-       // for (int i = 0; i < 6; i++)
-         //   jutsus.add(new JutsuKey(i));
+        for (int i = 0; i < 6; i++)
+            jutsus.add(new JutsuKey(i));
     }
 
-//    public JutsuKey getKey(int key) {
-//        return jutsus.get(clamp(key - 1, 0, jutsus.size()));
-//    }
-//
-//    public JutsuKey getSwitchJutsuKey() {
-//        return switchJutsu;
-//    }
+    public JutsuKey getKey(int key) {
+        return jutsus.get(MathHelper.clamp(key - 1, 0, jutsus.size()));
+    }
+
+    public JutsuKey getSwitchJutsuKey() {
+        return switchJutsu;
+    }
 
     public SideData left(ItemStack stack) {
         return getLeft(stack);

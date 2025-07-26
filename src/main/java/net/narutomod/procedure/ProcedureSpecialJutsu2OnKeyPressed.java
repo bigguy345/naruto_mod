@@ -1,15 +1,14 @@
 package net.narutomod.procedure;
 
-import net.narutomod.item.ItemDojutsu;
-import net.narutomod.entity.EntityBijuManager;
-import net.narutomod.NarutomodModVariables;
-import net.narutomod.ElementsNarutomodMod;
-
-import net.minecraft.world.World;
-import net.minecraft.item.ItemStack;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.narutomod.ElementsNarutomodMod;
+import net.narutomod.NarutomodModVariables;
+import net.narutomod.entity.EntityBijuManager;
+import net.narutomod.goatee.data.JutsuKey;
+import net.narutomod.item.ItemDojutsu;
 
 import java.util.Map;
 
@@ -33,29 +32,33 @@ public class ProcedureSpecialJutsu2OnKeyPressed extends ElementsNarutomodMod.Mod
 			return;
 		}
 		boolean is_pressed = (boolean) dependencies.get("is_pressed");
-		Entity entity = (Entity) dependencies.get("entity");
+		EntityPlayer entity = (EntityPlayer) dependencies.get("entity");
 		World world = (World) dependencies.get("world");
 		double which_path = 0;
 		boolean f1 = false;
 		String CTRL_pressed = "";
 		ItemStack stack = ItemStack.EMPTY;
 		ItemStack helmet = ItemStack.EMPTY;
-		CTRL_pressed = (String) "CTRL_pressed";
-		if (((EntityPlayer) entity).isSpectator()) {
+		CTRL_pressed = "CTRL_pressed";
+		if (entity.isSpectator()) {
 			return;
 		}
 		entity.getEntityData().setBoolean((NarutomodModVariables.JutsuKey2Pressed), (is_pressed));
 		if ((world.isRemote)) {
 			return;
 		}
-		stack = ((entity instanceof EntityLivingBase) ? ((EntityLivingBase) entity).getHeldItemMainhand() : ItemStack.EMPTY);
-		helmet = ((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(((EntityPlayer) entity)) : ItemStack.EMPTY);
-		if ((helmet.getItem() instanceof ItemDojutsu.Base
-				&& ((ItemDojutsu.Base) helmet.getItem()).onJutsuKey2(is_pressed, helmet, (EntityPlayer) entity))) {
-			return;
-		} else if (EntityBijuManager.isJinchuriki((EntityPlayer) entity)) {
+		stack = ((entity instanceof EntityLivingBase) ? entity.getHeldItemMainhand() : ItemStack.EMPTY);
+		helmet = ((entity instanceof EntityPlayer) ? ItemDojutsu.getWorn(entity) : ItemStack.EMPTY);
+		if (helmet.getItem() instanceof ItemDojutsu.Base) {
+			ItemDojutsu.Base eye = (ItemDojutsu.Base) helmet.getItem();
+			JutsuKey key = eye.data.getKey(2);
+			if (key.hasTask() && key.fire(is_pressed, helmet, entity))
+				return;
+
+			eye.onJutsuKey2(is_pressed, helmet, entity);
+		} else if (EntityBijuManager.isJinchuriki(entity)) {
 			if ((!(is_pressed))) {
-				EntityBijuManager.toggleBijuCloak((EntityPlayer) entity);
+				EntityBijuManager.toggleBijuCloak(entity);
 			}
 		}
 	}
