@@ -5,45 +5,38 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.model.TexturedQuad;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.narutomod.PlayerTracker;
 import net.narutomod.goatee.client.RenderUtils;
 import net.narutomod.goatee.data.SideData;
 import net.narutomod.item.ItemDojutsu;
-import net.narutomod.item.ItemRinnegan;
+import org.lwjgl.opengl.GL11;
 
-import java.lang.reflect.Field;
 import java.util.Map;
 
 public class ModelDojutsu extends ModelBiped {
     private static final Map<String, ResourceLocation> DOJUTSU_TEXTURE_RES_MAP = Maps.newHashMap();
 
-    public final ModelRenderer onface;
-    public final ModelRenderer hornRight;
-    public final ModelRenderer hornLeft;
-    public final ModelRenderer hornMiddle;
-    private final ModelRenderer forehead; //kekkei mora rinnesharin
+    public ModelRenderer onface;
+    public ModelRenderer hornRight;
+    public ModelRenderer hornLeft;
+    public ModelRenderer hornMiddle;
+    public ModelRenderer forehead; //kekkei mora rinnesharin
 
-    public final ModelRenderer leftEye, rightEye; //actual eyes
-    public final ModelRenderer eyeBaseL, eyeBaseR; //just the eyes base without the dojutsu
+    public ModelRenderer leftEye, rightEye; //actual eyes
+    public ModelRenderer eyeBaseL, eyeBaseR, eyeBaseBoth; //just the eyes base without the dojutsu
 
     public boolean headwearHide;
     public boolean headwearShine;
     public boolean highlightHide;
     public boolean foreheadHide;
 
-    public String rightTexture, leftTexture;
+    public String rightTexture, leftTexture, eyeBaseTexture;
     public String rinnesharinganTexture; // full s06p helmet texture with horns and all
 
     public boolean isS06P;
@@ -163,7 +156,9 @@ public class ModelDojutsu extends ModelBiped {
         //////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////
         // eyes
-
+        eyeBaseBoth = new ModelRenderer(this);
+        eyeBaseBoth.setRotationPoint(0.0F, 0.0F, 0.0F);
+        
         eyeBaseL = new ModelRenderer(this);
         eyeBaseL.setRotationPoint(0.0F, 0.0F, 0.0F);
 
@@ -179,10 +174,32 @@ public class ModelDojutsu extends ModelBiped {
         this.eyeBaseR.cubeList.add(new ModelBox(this.eyeBaseR, 8, 8, -4F, -8F, -4.1F, 4, 8, 0, 0.1F, false));
         this.rightEye.cubeList.add(new ModelBox(this.rightEye, 24, 0, -4F, -8F, -4.1F, 4, 8, 0, 0.1F, false));
 
-        this.eyeBaseL.cubeList.add(new ModelBox(eyeBaseL, 4, 8, 0.1f, -8F, -4.2f, 4, 8, 0, 0.1f, false));
+        this.eyeBaseL.cubeList.add(new ModelBox(eyeBaseL, 12, 8, 0f, -8F, -4.1f, 4, 8, 0, 0.1f, false));
         this.leftEye.cubeList.add(new ModelBox(this.leftEye, 28, 0, 0F, -8F, -4.1F, 4, 8, 0, 0.1F, false));
 
-        RenderUtils.flipQuads(eyeBaseL.cubeList.get(0)); // eyeBaseL normals are flipped for some reason, this unflips
+        this.eyeBaseBoth.cubeList.add(new ModelBox(eyeBaseBoth, 8, 8, -4f, -8F, -4.09f, 8, 8, 0, 0.1f, false));
+    }
+
+    public boolean markDirty;
+
+    public void setBox(ModelRenderer model, int texU, int texV, float x, float y, float z, int dx, int dy, int dz, float delta, boolean mirror) {
+        model.cubeList.clear();
+        model.setTextureSize(textureWidth, textureHeight);
+        model.cubeList.add(new ModelBox(model, texU, texV, x, y, z, dx, dy, dz, delta, mirror));
+        markDirty = true;
+    }
+
+    public void reset() {
+        this.textureWidth = 64;
+        this.textureHeight = 16;
+
+        setBox(this.eyeBaseR, 8, 8, -4F, -8F, -4.1F, 4, 8, 0, 0.1F, false);
+        setBox(this.rightEye, 24, 0, -4F, -8F, -4.1F, 4, 8, 0, 0.1F, false);
+
+        setBox(eyeBaseL, 4, 8, 0.1f, -8F, -4.2f, 4, 8, 0, 0.01f, false);
+        setBox(this.leftEye, 28, 0, 0F, -8F, -4.1F, 4, 8, 0, 0.1F, false);
+
+        markDirty = false;
     }
 
     @Override
@@ -190,7 +207,9 @@ public class ModelDojutsu extends ModelBiped {
         this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entityIn);
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
-        GlStateManager.alphaFunc(0x204, 0.01f);
+        GlStateManager.alphaFunc(GL11.GL_GEQUAL, 0.01f);
+        GlStateManager.color(1, 1, 1, 1);
+
         if (entityIn.isSneaking())
             GlStateManager.translate(0.0F, 0.2F, 0.0F);
 
@@ -198,6 +217,8 @@ public class ModelDojutsu extends ModelBiped {
             RenderUtils.disableLightMap();
             GlStateManager.depthMask(false);
             
+
+
             bindTexture(rinnesharinganTexture);
             this.bipedHead.render(scale);
 
@@ -216,10 +237,16 @@ public class ModelDojutsu extends ModelBiped {
         }
 
         if (!this.highlightHide) {
+            this.copyModelAngles(this.bipedHead, this.eyeBaseBoth);
             this.copyModelAngles(this.bipedHead, this.eyeBaseR);
             this.copyModelAngles(this.bipedHead, this.eyeBaseL);
             this.copyModelAngles(this.bipedHead, this.rightEye);
             this.copyModelAngles(this.bipedHead, this.leftEye);
+
+            if (eyeBaseTexture != null) {
+                bindTexture(eyeBaseTexture);
+                eyeBaseBoth.render(scale);
+            }
 
             //   leftTexture = "narutomod:textures/rinneganhelmet.png";
             //   leftTexture = "narutomod:textures/rinneganhelmet.png";
@@ -227,7 +254,6 @@ public class ModelDojutsu extends ModelBiped {
             //   leftTexture = "narutomod:textures/rinneganhelmet.png";
 
             bindTexture(leftTexture);
-            GlStateManager.color(1, 1, 1, 1);
             eyeBaseL.render(scale);
 
             RenderUtils.disableLightMap();
@@ -260,6 +286,9 @@ public class ModelDojutsu extends ModelBiped {
         GlStateManager.alphaFunc(0x204, 0.1f);
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
+        if (markDirty)
+            reset();
+
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
@@ -281,12 +310,12 @@ public class ModelDojutsu extends ModelBiped {
         return resourcelocation;
     }
 
-    private static ModelDojutsu model;
-
     @SideOnly(Side.CLIENT)
     public static ModelDojutsu getModel(EntityLivingBase living, ItemStack stack, ItemDojutsu.Base eye) {
-       if (model == null)
-            model = new ModelDojutsu();
+        if (eye.model == null)
+            eye.model = new ModelDojutsu();
+
+        ModelDojutsu model = eye.model;
 
         model.isSneak = living.isSneaking();
         model.isRiding = living.isRiding();

@@ -30,6 +30,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.init.MobEffects;
 
+import net.narutomod.goatee.client.model.ModelDojutsu;
 import net.narutomod.goatee.data.DojutsuData;
 import net.narutomod.goatee.data.NarutoData;
 import net.narutomod.goatee.data.SideData;
@@ -89,6 +90,9 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 			this.armorModel.isChild = living.isChild();
 			return this.armorModel;
 		}
+
+		@SideOnly(Side.CLIENT)
+		public ModelDojutsu model;
 
 		public boolean useAdvancedModel() {
 			return false;
