@@ -140,7 +140,7 @@ public class ProcedureSusanoo extends ElementsNarutomodMod.ModElement {
 				} else if (fullBody && playerXp >= EntitySusanooBase.BXP_REQUIRED_L2) {
 					if (Chakra.pathway(player).consume(BASE_CHAKRA_USAGE)) {
 						if (ItemRinneganTomoe.sharinganOff(tomoe)) {
-							ItemRinneganTomoe.setTomoeStatus(tomoe, ItemRinneganTomoe.SHARINGAN_ON_STATUS);
+							ItemRinneganTomoe.setTomoeStatus(tomoe, ItemRinneganTomoe.SHARINGAN_ON);
 							ItemDojutsu.playActivationSound(tomoe, player);
 						}
 						changeEntity(player, susanoo, new EntitySusanooClothed.EntityCustom(player, false));
@@ -151,7 +151,7 @@ public class ProcedureSusanoo extends ElementsNarutomodMod.ModElement {
 				if (hasLegs && playerXp >= EntitySusanooBase.BXP_REQUIRED_L4) {
 					if (Chakra.pathway(player).consume(BASE_CHAKRA_USAGE)) {
 						if (!ItemRinneganTomoe.eternalOn(tomoe)) {
-							ItemRinneganTomoe.setTomoeStatus(tomoe, ItemRinneganTomoe.ETERNAL_ON_STATUS);
+							ItemRinneganTomoe.setTomoeStatus(tomoe, ItemRinneganTomoe.ETERNAL_ON);
 							ItemDojutsu.playActivationSound(tomoe, player);
 						}
 						changeEntity(player, susanoo, new EntitySusanooWinged.EntityCustom(player));

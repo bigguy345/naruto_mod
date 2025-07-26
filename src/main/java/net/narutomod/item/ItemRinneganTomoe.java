@@ -125,11 +125,11 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             if (player.ticksExisted % 60 == 0) {
                 int tomoeStatus = getTomoeStatus(itemstack);
 
-                if (tomoeStatus == SHARINGAN_ON_STATUS) {
+                if (tomoeStatus == SHARINGAN_ON) {
                     player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 9, false, false));
                     player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 4, false, false));
                     player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 4, false, false));
-                } else if (tomoeStatus == ETERNAL_ON_STATUS) {
+                } else if (tomoeStatus == ETERNAL_ON) {
                     player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 15, false, false));
                     player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 8, false, false));
                     player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 6, false, false));
@@ -464,17 +464,17 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                 return -1;
 
             if (targetItem.isEmpty())
-                return SHARINGAN_OFF_STATUS;
+                return SHARINGAN_OFF;
 
             if (targetItem.getItem() == helmet)
                 return getTomoeStatus(targetItem);
 
             if (targetItem.getItem() == ItemSharingan.helmet)
-                return SHARINGAN_ON_STATUS;
+                return SHARINGAN_ON;
 
 
             if (ItemSharingan.isMangekyo(targetItem))
-                return ETERNAL_ON_STATUS;
+                return ETERNAL_ON;
 
             return -1;
         }
@@ -484,19 +484,19 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
         return stack.hasTagCompound() && stack.getTagCompound().getBoolean("RinneganTomoeActivated");
     }
 
-    public static final int SHARINGAN_OFF_STATUS = 0, SHARINGAN_ON_STATUS = 1, ETERNAL_ON_STATUS = 2;
+    public static final int SHARINGAN_OFF = 0, SHARINGAN_ON = 1, ETERNAL_ON = 2;
 
     public static boolean sharinganOff(ItemStack stack) {
         int status = getTomoeStatus(stack);
-        return status < SHARINGAN_ON_STATUS || status > ETERNAL_ON_STATUS;
+        return status < SHARINGAN_ON || status > ETERNAL_ON;
     }
 
     public static boolean sharinganOn(ItemStack stack) {
-        return stack.hasTagCompound() && getTomoeStatus(stack) == SHARINGAN_ON_STATUS;
+        return stack.hasTagCompound() && getTomoeStatus(stack) == SHARINGAN_ON;
     }
 
     public static boolean eternalOn(ItemStack stack) {
-        return stack.hasTagCompound() && getTomoeStatus(stack) == ETERNAL_ON_STATUS;
+        return stack.hasTagCompound() && getTomoeStatus(stack) == ETERNAL_ON;
     }
 
     public static int getTomoeStatus(ItemStack stack) {
@@ -504,13 +504,13 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             return -1;
 
         if (isRinnesharinganActivated(stack))
-            return ETERNAL_ON_STATUS;
+            return ETERNAL_ON;
         
         return stack.getTagCompound().getByte("tomoeStatus");
     }
 
     public static void setTomoeStatus(ItemStack stack, int status) {
-        int clamped = MathHelper.clamp(status, SHARINGAN_OFF_STATUS, ETERNAL_ON_STATUS);
+        int clamped = MathHelper.clamp(status, SHARINGAN_OFF, ETERNAL_ON);
         stack.getTagCompound().setByte("tomoeStatus", (byte) clamped);
     }
 

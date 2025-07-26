@@ -68,7 +68,7 @@ public final class NarutoWheelData extends AbstractPacket {
             ItemStack toSwapWith = player.getHeldItemMainhand().getItem() instanceof ItemDojutsu.Base ? player.getHeldItemMainhand() : (swapWithHelmet = helmet.getItem() instanceof ItemDojutsu.Base) ? helmet : ItemStack.EMPTY;
 
             if (helmet == toSwapWith && ItemRinneganTomoe.isTomoe(helmet)&& !ItemRinnegan.isRinnesharinganActivated(helmet) && !toInventory)
-                ItemRinneganTomoe.setTomoeStatus(helmet, ItemRinneganTomoe.SHARINGAN_OFF_STATUS,player);
+                ItemRinneganTomoe.setTomoeStatus(helmet, ItemRinneganTomoe.SHARINGAN_OFF,player);
             else if (!toSwapWith.isEmpty()) {
                 seg.putToSaved(toSwapWith, seg.stack);
 
