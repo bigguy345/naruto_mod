@@ -510,8 +510,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
     }
 
     public static void setTomoeStatus(ItemStack stack, int status) {
-        int clamped = MathHelper.clamp(status, SHARINGAN_OFF, ETERNAL_ON);
-        stack.getTagCompound().setByte("tomoeStatus", (byte) clamped);
+        stack.getTagCompound().setByte("tomoeStatus", (byte) status);
     }
 
     public static void setTomoeStatus(ItemStack stack, int status, EntityLivingBase entity) {
@@ -531,7 +530,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
     }
 
     public static boolean isTomoe(ItemStack stack) {
-        return stack.getItem() == helmet;
+        return stack.getItem() instanceof Base;
     }
 
     public static Base get(ItemStack stack) {
