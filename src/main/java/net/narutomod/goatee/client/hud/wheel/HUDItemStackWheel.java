@@ -337,7 +337,7 @@ public class HUDItemStackWheel extends GuiScreen {
         ItemStack oldChest = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
         ItemStack oldLegs = entity.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
 
-        ItemStack oldDojutsu = ItemDojutsu.getWorn(entity);
+        ItemStack worn = ItemDojutsu.getWorn(entity);
         boolean inDojutsuSlot = !data.getDojutsuSlot().isEmpty();
 
         if (inDojutsuSlot)
@@ -351,9 +351,9 @@ public class HUDItemStackWheel extends GuiScreen {
 
         int oldTomoeSlot = -1;
         if (hoveredSlot != -1) {
-            if (ItemRinneganTomoe.isTomoe(oldDojutsu) && ItemRinneganTomoe.get(oldDojutsu).getCompatibleStatus(oldDojutsu, selectedItem) != -1 && !ItemRinnegan.isRinnesharinganActivated(oldDojutsu)) {
-                oldTomoeSlot = ItemRinneganTomoe.getTomoeStatus(oldDojutsu);
-                ItemRinneganTomoe.setTomoeStatus(oldDojutsu, ItemRinneganTomoe.get(oldDojutsu).getCompatibleStatus(oldDojutsu, selectedItem));
+            if (ItemRinneganTomoe.isTomoe(worn) && ItemRinneganTomoe.get(worn).getCompatibleStatus(worn, selectedItem) != -1 && !ItemRinnegan.isRinnesharinganActivated(worn)) {
+                oldTomoeSlot = ItemRinneganTomoe.getTomoeStatus(worn);
+                ItemRinneganTomoe.setTomoeStatus(worn, ItemRinneganTomoe.get(worn).getCompatibleStatus(worn, selectedItem));
             } else {
                 entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, selectedItem);
 
@@ -442,7 +442,7 @@ public class HUDItemStackWheel extends GuiScreen {
         }
 
         if (oldTomoeSlot != -1)
-            ItemRinneganTomoe.setTomoeStatus(oldDojutsu, oldTomoeSlot);
+            ItemRinneganTomoe.setTomoeStatus(worn, oldTomoeSlot);
 
         entity.inventory.mainInventory.set(entity.inventory.currentItem, oldItem);
         entity.inventory.offHandInventory.set(0, oldOffhand);
@@ -454,7 +454,7 @@ public class HUDItemStackWheel extends GuiScreen {
             data.dojutsuSlotHandler.setStackInSlot(0, ItemStack.EMPTY);
 
         if (inDojutsuSlot)
-            data.dojutsuSlotHandler.setStackInSlot(0, oldDojutsu);
+            data.dojutsuSlotHandler.setStackInSlot(0, worn);
 
         IS_OPEN = false;
     }
