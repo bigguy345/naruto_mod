@@ -351,9 +351,9 @@ public class HUDItemStackWheel extends GuiScreen {
 
         int oldTomoeSlot = -1;
         if (hoveredSlot != -1) {
-            if (ItemRinneganTomoe.isTomoe(oldDojutsu) && ItemRinneganTomoe.getCompatibleStatus(selectedItem) != -1 && !ItemRinnegan.isRinnesharinganActivated(oldDojutsu)) {
+            if (ItemRinneganTomoe.isTomoe(oldDojutsu) && ItemRinneganTomoe.get(oldDojutsu).getCompatibleStatus(selectedItem) != -1 && !ItemRinnegan.isRinnesharinganActivated(oldDojutsu)) {
                 oldTomoeSlot = ItemRinneganTomoe.getTomoeStatus(oldDojutsu);
-                ItemRinneganTomoe.setTomoeStatus(oldDojutsu, ItemRinneganTomoe.getCompatibleStatus(selectedItem));
+                ItemRinneganTomoe.setTomoeStatus(oldDojutsu, ItemRinneganTomoe.get(oldDojutsu).getCompatibleStatus(selectedItem));
             } else {
                 entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, selectedItem);
 

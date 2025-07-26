@@ -458,6 +458,26 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
 
             return true;
         }
+
+        public int getCompatibleStatus(ItemStack targetItem) {
+            if (isRinnesharinganActivated(targetItem))
+                return -1;
+
+            if (targetItem.isEmpty())
+                return SHARINGAN_OFF_STATUS;
+
+            if (targetItem.getItem() == helmet)
+                return getTomoeStatus(targetItem);
+
+            if (targetItem.getItem() == ItemSharingan.helmet)
+                return SHARINGAN_ON_STATUS;
+
+
+            if (ItemSharingan.isMangekyo(targetItem))
+                return ETERNAL_ON_STATUS;
+
+            return -1;
+        }
     }
 
     public static boolean isRinneganTomoeActivated(ItemStack stack) {
@@ -510,31 +530,13 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
         }
     }
 
-    public static int getCompatibleStatus(ItemStack targetItem) {
-        if (isRinnesharinganActivated(targetItem))
-            return -1;
-        
-        if (targetItem.isEmpty())
-            return SHARINGAN_OFF_STATUS;
-        
-        if (targetItem.getItem() == helmet)
-            return getTomoeStatus(targetItem);
-        
-        if (targetItem.getItem() == ItemSharingan.helmet)
-            return SHARINGAN_ON_STATUS;
-
-
-        if (ItemSharingan.isMangekyo(targetItem))
-            return ETERNAL_ON_STATUS;
-
-        return -1;
-    }
-
-
     public static boolean isTomoe(ItemStack stack) {
         return stack.getItem() == helmet;
     }
 
+    public static Base get(ItemStack stack) {
+        return (Base) stack.getItem();
+    }
     public static boolean isWearing(EntityLivingBase player) {
         return isTomoe(ItemDojutsu.getWorn(player));
     }
