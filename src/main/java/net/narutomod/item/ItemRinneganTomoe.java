@@ -18,7 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
@@ -506,7 +505,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
     }
 
     public static int getTomoeStatus(ItemStack stack) {
-        if (!stack.getTagCompound().hasKey("tomoeStatus"))
+        if (stack == null || !stack.hasTagCompound() || !stack.getTagCompound().hasKey("tomoeStatus"))
             return -1;
 
         if (isRinnesharinganActivated(stack))
