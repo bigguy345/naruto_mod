@@ -1,57 +1,58 @@
 
 package net.narutomod.item;
 
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.common.util.EnumHelper;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-
-import net.minecraft.world.World;
-import net.minecraft.util.ResourceLocation;
+import com.google.common.collect.Multimap;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelBox;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemArmor;
-import net.minecraft.item.Item;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.Entity;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.model.ModelBox;
-import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.init.MobEffects;
-import net.minecraft.init.SoundEvents;
-
+import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.util.EnumHelper;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.narutomod.ElementsNarutomodMod;
+import net.narutomod.Particles;
+import net.narutomod.entity.EntityBijuManager;
+import net.narutomod.entity.EntityJinchurikiClone;
+import net.narutomod.goatee.client.RenderUtils;
+import net.narutomod.goatee.client.model.ModelDojutsu;
+import net.narutomod.goatee.data.SideData;
 import net.narutomod.potion.PotionChakraEnhancedStrength;
 import net.narutomod.potion.PotionReach;
 import net.narutomod.procedure.ProcedureSync;
 import net.narutomod.procedure.ProcedureUtils;
-import net.narutomod.entity.EntityBijuManager;
-import net.narutomod.entity.EntityJinchurikiClone;
-import net.narutomod.Particles;
-import net.narutomod.ElementsNarutomodMod;
 
-import com.google.common.collect.Multimap;
-import java.util.UUID;
-import java.util.Random;
-import java.util.List;
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 @ElementsNarutomodMod.ModElement.Tag
 public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
@@ -98,9 +99,30 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 				armorModel.sandHeadL2.showModel = tails == 1 && cloaklevel == 2;
 				armorModel.bodyShine = tails == 9 && cloaklevel == 2 && getCloakXp(stack) >= 800;
 				armorModel.layerShine = true;
+
+				injectDojutsuRendering(armorModel, living, stack, tails, cloaklevel);
 				return armorModel;
 			}
 
+			@SideOnly(Side.CLIENT)
+			public ModelBiped injectDojutsuRendering(ModelBijuCloak model, EntityLivingBase entity, ItemStack stack, int tails, int cloakLevel) {
+				ItemStack worn = entity.getHeldItem(EnumHand.MAIN_HAND);//ItemDojutsu.getWorn(entity);//
+				boolean render = ItemDojutsu.is(worn) && cloakLevel == 2;
+				model.leftEye.showModel = model.rightEye.showModel = render;
+				if (render) {
+					ItemDojutsu.Base eye = (ItemDojutsu.Base) worn.getItem();
+					SideData left = eye.data.getLeft(worn);
+					SideData right = eye.data.getRight(worn);
+
+					model.leftTexture = left.getEffectiveTexture(entity);
+					model.rightTexture = right.getEffectiveTexture(entity);
+
+					model.leftColor = left.getEffectiveColor(entity);
+					model.rightColor = right.getEffectiveColor(entity);
+				}
+				return model;
+			}
+			
 			@Override
 			public void onUpdate(ItemStack itemstack, World world, Entity entity, int par4, boolean par5) {
 				super.onUpdate(itemstack, world, entity, par4, par5);
@@ -1291,6 +1313,8 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 				}
 			}
 			this.setModelVisibilities(tails);
+
+			eyeModels();
 		}
 
 		private void setModelVisibilities(int numberoftails) {
@@ -1312,6 +1336,7 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 		public void render(Entity entity, float f0, float f1, float f2, float f3, float f4, float f5) {
 			bipedHeadwear.showModel = false;
 			bipedBody.showModel = bipedBody.showModel && !bipedRightLeg.showModel && !bipedLeftLeg.showModel;
+			float alpha;
 			GlStateManager.pushMatrix();
 			GlStateManager.depthMask(true);
 			GlStateManager.matrixMode(5890);
@@ -1319,7 +1344,7 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 			GlStateManager.translate(0.0F, f2 * 0.01F, 0.0F);
 			GlStateManager.matrixMode(5888);
 			GlStateManager.enableBlend();
-			GlStateManager.color(1.0F, 1.0F, 1.0F, MathHelper.clamp((float)getWearingTicks(entity) / 80.0F, 0.0F, 1.0F));
+			GlStateManager.color(1.0F, 1.0F, 1.0F, alpha = MathHelper.clamp((float) getWearingTicks(entity) / 80.0F, 0.0F, 1.0F));
 			GlStateManager.disableLighting();
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 			int k = entity.getBrightnessForRender();
@@ -1359,12 +1384,87 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 			bipedLeftArmWear.render(f5);
 			bipedRightLegWear.render(f5);
 			bipedLeftLegWear.render(f5);
+
+			renderDojutsu(entity, f5, alpha);
+			
 			GlStateManager.enableLighting();
 			GlStateManager.disableBlend();
 			GlStateManager.depthMask(false);
 			GlStateManager.popMatrix();
 		}
 
+		public void renderDojutsu(Entity entityIn, float scale, float alpha) {
+			eyeModels();
+			if (leftEye.showModel && leftTexture != null) {
+				this.copyModelAngles(this.bipedHeadwear, this.leftEye);
+				RenderUtils.disableLightMap();
+				ModelDojutsu.bindTexture(leftTexture);
+				float r = (float) (leftColor >> 16 & 255) / 255.0F;
+				float g = (float) (leftColor >> 8 & 255) / 255.0F;
+				float b = (float) (leftColor & 255) / 255.0F;
+				GlStateManager.color(r, g, b, alpha);
+				this.leftEye.render(scale);
+				RenderUtils.enableLightmap(entityIn);
+			}
+
+			if (rightEye.showModel && rightTexture != null) {
+				this.copyModelAngles(this.bipedHeadwear, this.rightEye);
+				RenderUtils.disableLightMap();
+				ModelDojutsu.bindTexture(rightTexture);
+				float r = (float) (rightColor >> 16 & 255) / 255.0F;
+				float g = (float) (rightColor >> 8 & 255) / 255.0F;
+				float b = (float) (rightColor & 255) / 255.0F;
+				GlStateManager.color(r, g, b, alpha);
+				this.rightEye.render(scale);
+				RenderUtils.enableLightmap(entityIn);
+			}
+
+			if (markDirty)
+				reset();
+		}
+
+		public boolean markDirty;
+
+		public void setBox(ModelRenderer model, int texU, int texV, float x, float y, float z, int dx, int dy, int dz, float delta, boolean mirror) {
+			model.cubeList.clear();
+			model.setTextureSize(textureWidth, textureHeight);
+			model.cubeList.add(new ModelBox(model, texU, texV, x, y, z, dx, dy, dz, delta, mirror));
+			markDirty = true;
+		}
+
+		public void reset() {
+			this.textureWidth = 64;
+			this.textureHeight = 16;
+
+			setBox(this.rightEye, 24, 0, -4.3F, -8.05F, -4.1F, 4, 8, 0, 0.55F, false);
+			setBox(this.leftEye,  28, 0, 0.25F, -8.05F, -4.1F, 4, 8, 0, 0.55F, false);
+			markDirty = false;
+		}
+
+		public ModelRenderer leftEye, rightEye; //actual eyes
+		public String rightTexture, leftTexture, eyeBaseTexture;
+		public int leftColor = 0xffffff, rightColor = 0xffffff;
+
+		public void eyeModels() {
+			textureWidth = 64;
+			textureHeight = 16;
+
+			rightEye = new ModelRenderer(this);
+			rightEye.setRotationPoint(0.0F, 0.0F, 0.0F);
+
+			leftEye = new ModelRenderer(this);
+			leftEye.setRotationPoint(0.0F, 0.0F, 0.0F);
+
+			this.rightEye.cubeList.add(new ModelBox(this.rightEye, 24, 0, -4.3F, -8.05F, -4.1F, 4, 8, 0, 0.55F, false));
+			this.leftEye.cubeList.add(new ModelBox(this.leftEye, 28, 0, 0.25F, -8.05F, -4.1F, 4, 8, 0, 0.55F, false));
+
+			//tanuki 
+			//this.rightEye.cubeList.add(new ModelBox(this.rightEye, 24, 0, -4.1F, -9F, -4.1F, 4, 8, 0, 0.6F, false));
+			//this.leftEye.cubeList.add(new ModelBox(this.leftEye, 28, 0, 0.1F, -9.F, -4.1F, 4, 8, 0, 0.6F, false));
+		}
+
+	
+		
 		public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
 			modelRenderer.rotateAngleX = x;
 			modelRenderer.rotateAngleY = y;
