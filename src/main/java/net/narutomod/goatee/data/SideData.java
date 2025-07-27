@@ -21,6 +21,10 @@ public class SideData {
     private int color = 0xffffff;
     private String texture = "";
 
+    public boolean inactive;
+    public String inactiveTexture;
+    public int inactiveColor;
+
     public SideData(Side side, ItemStack stack, ItemDojutsu.Base item) {
         this.side = side;
         this.stack = stack;
@@ -64,7 +68,14 @@ public class SideData {
     }
     
     public String getEffectiveTexture(EntityLivingBase entity){
-        return hasTexture() ? getTexture() : item.getLeftEyeTexture(stack, entity, this);
+        if (hasTexture())
+            return getTexture();
+
+
+        if (side == Side.RIGHT)
+            return item.getRightEyeTexture(stack, entity, this);
+        else
+            return item.getLeftEyeTexture(stack, entity, this);
     }
 
 
