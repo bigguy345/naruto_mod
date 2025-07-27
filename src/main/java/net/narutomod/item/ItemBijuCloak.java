@@ -507,12 +507,11 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 	@SideOnly(Side.CLIENT)
 	public class ModelBijuCloak extends ModelBiped {
 		//private final ModelRenderer bipedHead;
-		private final int tails;
 		private final ModelRenderer earLeft[] = new ModelRenderer[9];
 		private final ModelRenderer earRight[] = new ModelRenderer[9];
 		private final ModelRenderer sandEar;
 		private final ModelRenderer sandHeadL2;
-		private final ModelRenderer bone;
+		private ModelRenderer bone;
 		private final ModelRenderer sandEar2;
 		//private final ModelRenderer bipedBody;
 		private final ModelRenderer allTails;
@@ -550,7 +549,6 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 		public ModelBijuCloak(int tails) {
 			textureWidth = 128;
 			textureHeight = 64;
-			this.tails = tails;
 			bipedHead = new ModelRenderer(this);
 			bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
 			bipedHead.cubeList.add(new ModelBox(bipedHead, 0, 0, -4.0F, -8.0F, -4.0F, 8, 8, 8, 0.4F, false));
@@ -660,7 +658,7 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 			bone.setRotationPoint(0.0F, -1.6F, -4.55F);
 			sandHeadL2.addChild(bone);
 			setRotationAngle(bone, 0.2618F, 0.0F, 0.0F);
-			bone.cubeList.add(new ModelBox(bone, 100, 0, -3.0F, -0.4F, -1.45F, 6, 2, 2, 0.7F, false));
+			bone.cubeList.add(new ModelBox(bone, 100, 0, -3.0F, -0.05F, -1.45F, 6, 2, 2, 0.7F, false));
 			sandEar2 = new ModelRenderer(this);
 			sandEar2.setRotationPoint(4.425F, -8.0F, 0.0F);
 			sandHeadL2.addChild(sandEar2);
@@ -1411,13 +1409,10 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 
 		public void renderDojutsu(Entity entityIn, float scale, float alpha) {
 			if (tails == 1 && entityIn.isSneaking())
-				GlStateManager.translate(0.0F, -0.01F, 0.0F);
+				GlStateManager.translate(0.0F, cloak == 2 ? -0.008f : -0.015f, 0.0F);
 
-
-			GlStateManager.enableBlend();
-			if (tails == 1)
-				GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_DST_ALPHA);
-
+			GlStateManager.depthMask(false);
+			
 			if (leftEye.showModel && leftTexture != null) {
 				this.copyModelAngles(this.bipedHeadwear, this.leftEye);
 				RenderUtils.disableLightMap();
@@ -1441,8 +1436,9 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 				this.rightEye.render(scale);
 				RenderUtils.enableLightmap(entityIn);
 			}
+			
 			GlStateManager.enableAlpha();
-
+			GlStateManager.depthMask(false);
 			markDirty = true;
 			if (markDirty)
 				reset();
@@ -1468,13 +1464,14 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 		public String rightTexture, leftTexture, eyeBaseTexture;
 		public int leftColor = 0xffffff, rightColor = 0xffffff;
 
-		public int cloak;
+		public int tails, cloak;
 
 		public void setupEyeModels(int tails, int cloak) {
 			textureWidth = 64;
 			textureHeight = 16;
 
 			this.cloak = cloak;
+			this.tails = tails;
 			rightEye = new ModelRenderer(this);
 			rightEye.setRotationPoint(0.0F, 0.0F, 0.0F);
 
@@ -1483,11 +1480,11 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 
 			if (tails == 1) {
 				if (cloak == 1) {
-					this.rightEye.cubeList.add(new ModelBox(this.rightEye, 24, 0, -3.9F, -8.16F, -4.2F, 4, 8, 0, 0.3F, false));
+					this.rightEye.cubeList.add(new ModelBox(this.rightEye, 24, 0, -3.9F, -8.2F, -4.2F, 4, 8, 0, 0.5F, false));
 					this.leftEye.cubeList.add(new ModelBox(this.leftEye, 28, 0, 0.1F, -9.F, -4.1F, 4, 8, 0, 0.6F, false));
 				} else {
-					this.rightEye.cubeList.add(new ModelBox(this.rightEye, 24, 0, -4.0F, -9.02F, -4.1F, 4, 8, 0, 0.7F, false));
-					this.leftEye.cubeList.add(new ModelBox(this.leftEye, 28, 0, 0.01F, -9.02F, -4.1F, 4, 8, 0, 0.7F, false));
+					this.rightEye.cubeList.add(new ModelBox(this.rightEye, 24, 0, -4.07F, -9.02F, -4.1F, 4, 8, 0, 0.7F, false));
+					this.leftEye.cubeList.add(new ModelBox(this.leftEye, 28, 0, 0.1F, -9.02F, -4.1F, 4, 8, 0, 0.7F, false));
 				}
 			} else {
 				this.rightEye.cubeList.add(new ModelBox(this.rightEye, 24, 0, -4.3F, -8.05F, -4.1F, 4, 8, 0, 0.55F, false));
@@ -1501,7 +1498,7 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 			if (tails == 1 && cloak == 1) {
 				bipedHeadwear = new ModelRenderer(this);
 				bipedHeadwear.setRotationPoint(0.0F, 0.0F, 0.0F);
-				bipedHeadwear.cubeList.add(new ModelBox(bipedHeadwear, 64, 0, -4.0F, -8.0F, -4.0F, 8, 8, 8, 0.25F, false));
+				bipedHeadwear.cubeList.add(new ModelBox(bipedHeadwear, 64, 0, -4F, -7.8F, -4.0F, 8, 1, 8, 0.3F, false)); //fills upper quarter of face
 				bipedHeadwear.cubeList.add(new ModelBox(bipedHeadwear, 64, 0, -4.0F, -7.2F, -4.0F, 8, 8, 8, 0.3F, false));
 
 
