@@ -67,7 +67,7 @@ public class SideData {
         return texture;
     }
     
-    public String getEffectiveTexture(EntityLivingBase entity){
+    public String getFinalTexture(EntityLivingBase entity){
         if (hasTexture())
             return getTexture();
 
@@ -79,7 +79,7 @@ public class SideData {
     }
 
 
-    public int getEffectiveColor(EntityLivingBase entity){
+    public int getFinalColor(EntityLivingBase entity){
         return hasColor() ? getColor() : 0xffffff;
     }
 

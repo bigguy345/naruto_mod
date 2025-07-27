@@ -48,7 +48,6 @@ import net.narutomod.potion.PotionChakraEnhancedStrength;
 import net.narutomod.potion.PotionReach;
 import net.narutomod.procedure.ProcedureSync;
 import net.narutomod.procedure.ProcedureUtils;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -119,11 +118,11 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 					SideData right = eye.data.getRight(worn);
 
 
-					model.leftTexture = left.getEffectiveTexture(entity);
-					model.rightTexture = right.getEffectiveTexture(entity);
+					model.leftTexture = left.getFinalTexture(entity);
+					model.rightTexture = right.getFinalTexture(entity);
 
-					model.leftColor = left.getEffectiveColor(entity);
-					model.rightColor = right.getEffectiveColor(entity);
+					model.leftColor = left.getFinalColor(entity);
+					model.rightColor = right.getFinalColor(entity);
 					model.setupEyeModels(tails, cloakLevel);
 
 					if (shukaku && cloakLevel == 1)

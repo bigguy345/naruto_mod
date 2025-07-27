@@ -343,12 +343,12 @@ public class ModelDojutsu extends ModelBiped {
         SideData left = eye.data.getLeft(stack);
         SideData right = eye.data.getRight(stack);
 
-        model.leftTexture = left.getEffectiveTexture(living);
-        model.rightTexture = right.getEffectiveTexture(living);
+        model.leftTexture = left.getFinalTexture(living);
+        model.rightTexture = right.getFinalTexture(living);
         model.rinnesharinganTexture = eye.getRinnesharinganTexture(stack, living);
 
-        model.leftColor = left.getEffectiveColor(living);
-        model.rightColor = right.getEffectiveColor(living);
+        model.leftColor = left.getFinalColor(living);
+        model.rightColor = right.getFinalColor(living);
         model.alpha = 1;
 
         applyBijuuCloakModifications(model, living, stack, eye);
