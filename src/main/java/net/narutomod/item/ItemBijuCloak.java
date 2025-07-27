@@ -48,6 +48,7 @@ import net.narutomod.potion.PotionChakraEnhancedStrength;
 import net.narutomod.potion.PotionReach;
 import net.narutomod.procedure.ProcedureSync;
 import net.narutomod.procedure.ProcedureUtils;
+import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -100,25 +101,33 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 				armorModel.bodyShine = tails == 9 && cloaklevel == 2 && getCloakXp(stack) >= 800;
 				armorModel.layerShine = true;
 
-				injectDojutsuRendering(armorModel, living, stack, tails, cloaklevel);
+				applyDojutsuModelData(armorModel, living, stack, tails, cloaklevel);
 				return armorModel;
 			}
 
 			@SideOnly(Side.CLIENT)
-			public ModelBiped injectDojutsuRendering(ModelBijuCloak model, EntityLivingBase entity, ItemStack stack, int tails, int cloakLevel) {
-				ItemStack worn = entity.getHeldItem(EnumHand.MAIN_HAND);//ItemDojutsu.getWorn(entity);//
-				boolean render = ItemDojutsu.is(worn) && cloakLevel == 2;
+			public ModelBiped applyDojutsuModelData(ModelBijuCloak model, EntityLivingBase entity, ItemStack stack, int tails, int cloakLevel) {
+				ItemStack worn = entity.getHeldItem(EnumHand.MAIN_HAND);
+				boolean shukaku = tails == 1 && cloakLevel > 0;
+				boolean kurama = cloakLevel == 2 && getCloakXp(stack) >= 800;
+
+				boolean render = ItemDojutsu.is(worn) && (kurama || shukaku);
 				model.leftEye.showModel = model.rightEye.showModel = render;
 				if (render) {
 					ItemDojutsu.Base eye = (ItemDojutsu.Base) worn.getItem();
 					SideData left = eye.data.getLeft(worn);
 					SideData right = eye.data.getRight(worn);
 
+
 					model.leftTexture = left.getEffectiveTexture(entity);
 					model.rightTexture = right.getEffectiveTexture(entity);
 
 					model.leftColor = left.getEffectiveColor(entity);
 					model.rightColor = right.getEffectiveColor(entity);
+					model.setupEyeModels(tails, cloakLevel);
+
+					if (shukaku && cloakLevel == 1)
+						model.leftEye.showModel = false;
 				}
 				return model;
 			}
@@ -471,6 +480,10 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 		}
 	}
 
+	public static float getAnimationAlpha(Entity entity) {
+		return MathHelper.clamp((float) getWearingTicks(entity) / 80.0F, 0.0F, 1.0F);
+	}
+
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void registerModels(ModelRegistryEvent event) {
@@ -494,6 +507,7 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 	@SideOnly(Side.CLIENT)
 	public class ModelBijuCloak extends ModelBiped {
 		//private final ModelRenderer bipedHead;
+		private final int tails;
 		private final ModelRenderer earLeft[] = new ModelRenderer[9];
 		private final ModelRenderer earRight[] = new ModelRenderer[9];
 		private final ModelRenderer sandEar;
@@ -536,6 +550,7 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 		public ModelBijuCloak(int tails) {
 			textureWidth = 128;
 			textureHeight = 64;
+			this.tails = tails;
 			bipedHead = new ModelRenderer(this);
 			bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
 			bipedHead.cubeList.add(new ModelBox(bipedHead, 0, 0, -4.0F, -8.0F, -4.0F, 8, 8, 8, 0.4F, false));
@@ -1314,7 +1329,7 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 			}
 			this.setModelVisibilities(tails);
 
-			eyeModels();
+			setupEyeModels(tails, 0);
 		}
 
 		private void setModelVisibilities(int numberoftails) {
@@ -1337,6 +1352,7 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 			bipedHeadwear.showModel = false;
 			bipedBody.showModel = bipedBody.showModel && !bipedRightLeg.showModel && !bipedLeftLeg.showModel;
 			float alpha;
+
 			GlStateManager.pushMatrix();
 			GlStateManager.depthMask(true);
 			GlStateManager.matrixMode(5890);
@@ -1344,7 +1360,7 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 			GlStateManager.translate(0.0F, f2 * 0.01F, 0.0F);
 			GlStateManager.matrixMode(5888);
 			GlStateManager.enableBlend();
-			GlStateManager.color(1.0F, 1.0F, 1.0F, alpha = MathHelper.clamp((float) getWearingTicks(entity) / 80.0F, 0.0F, 1.0F));
+			GlStateManager.color(1.0F, 1.0F, 1.0F, alpha = getAnimationAlpha(entity));
 			GlStateManager.disableLighting();
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 			int k = entity.getBrightnessForRender();
@@ -1394,7 +1410,14 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 		}
 
 		public void renderDojutsu(Entity entityIn, float scale, float alpha) {
-			eyeModels();
+			if (tails == 1 && entityIn.isSneaking())
+				GlStateManager.translate(0.0F, -0.01F, 0.0F);
+
+
+			GlStateManager.enableBlend();
+			if (tails == 1)
+				GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_DST_ALPHA);
+
 			if (leftEye.showModel && leftTexture != null) {
 				this.copyModelAngles(this.bipedHeadwear, this.leftEye);
 				RenderUtils.disableLightMap();
@@ -1402,7 +1425,7 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 				float r = (float) (leftColor >> 16 & 255) / 255.0F;
 				float g = (float) (leftColor >> 8 & 255) / 255.0F;
 				float b = (float) (leftColor & 255) / 255.0F;
-				GlStateManager.color(r, g, b, alpha);
+				GlStateManager.color(r, g, b, alpha); // tails == 1? alpha : 1
 				this.leftEye.render(scale);
 				RenderUtils.enableLightmap(entityIn);
 			}
@@ -1414,30 +1437,30 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 				float r = (float) (rightColor >> 16 & 255) / 255.0F;
 				float g = (float) (rightColor >> 8 & 255) / 255.0F;
 				float b = (float) (rightColor & 255) / 255.0F;
-				GlStateManager.color(r, g, b, alpha);
+				GlStateManager.color(r, g, b, tails == 1 ? alpha : alpha);
 				this.rightEye.render(scale);
 				RenderUtils.enableLightmap(entityIn);
 			}
+			GlStateManager.enableAlpha();
 
+			markDirty = true;
 			if (markDirty)
 				reset();
 		}
 
 		public boolean markDirty;
 
-		public void setBox(ModelRenderer model, int texU, int texV, float x, float y, float z, int dx, int dy, int dz, float delta, boolean mirror) {
-			model.cubeList.clear();
-			model.setTextureSize(textureWidth, textureHeight);
-			model.cubeList.add(new ModelBox(model, texU, texV, x, y, z, dx, dy, dz, delta, mirror));
-			markDirty = true;
-		}
-
 		public void reset() {
-			this.textureWidth = 64;
-			this.textureHeight = 16;
+			textureWidth = 128;
+			textureHeight = 64;
 
-			setBox(this.rightEye, 24, 0, -4.3F, -8.05F, -4.1F, 4, 8, 0, 0.55F, false);
-			setBox(this.leftEye,  28, 0, 0.25F, -8.05F, -4.1F, 4, 8, 0, 0.55F, false);
+			bipedHeadwear = new ModelRenderer(this);
+			bipedHeadwear.setRotationPoint(0.0F, 0.0F, 0.0F);
+			bipedHeadwear.cubeList.add(new ModelBox(bipedHeadwear, 64, 0, -4.0F, -8.0F, -4.0F, 8, 8, 8, 0.6F, false));
+
+			bipedHeadwear.addChild(sandEar);
+			bipedHeadwear.addChild(sandHeadL2);
+			
 			markDirty = false;
 		}
 
@@ -1445,25 +1468,48 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 		public String rightTexture, leftTexture, eyeBaseTexture;
 		public int leftColor = 0xffffff, rightColor = 0xffffff;
 
-		public void eyeModels() {
+		public int cloak;
+
+		public void setupEyeModels(int tails, int cloak) {
 			textureWidth = 64;
 			textureHeight = 16;
 
+			this.cloak = cloak;
 			rightEye = new ModelRenderer(this);
 			rightEye.setRotationPoint(0.0F, 0.0F, 0.0F);
 
 			leftEye = new ModelRenderer(this);
 			leftEye.setRotationPoint(0.0F, 0.0F, 0.0F);
 
-			this.rightEye.cubeList.add(new ModelBox(this.rightEye, 24, 0, -4.3F, -8.05F, -4.1F, 4, 8, 0, 0.55F, false));
-			this.leftEye.cubeList.add(new ModelBox(this.leftEye, 28, 0, 0.25F, -8.05F, -4.1F, 4, 8, 0, 0.55F, false));
+			if (tails == 1) {
+				if (cloak == 1) {
+					this.rightEye.cubeList.add(new ModelBox(this.rightEye, 24, 0, -3.9F, -8.16F, -4.2F, 4, 8, 0, 0.3F, false));
+					this.leftEye.cubeList.add(new ModelBox(this.leftEye, 28, 0, 0.1F, -9.F, -4.1F, 4, 8, 0, 0.6F, false));
+				} else {
+					this.rightEye.cubeList.add(new ModelBox(this.rightEye, 24, 0, -4.0F, -9.02F, -4.1F, 4, 8, 0, 0.7F, false));
+					this.leftEye.cubeList.add(new ModelBox(this.leftEye, 28, 0, 0.01F, -9.02F, -4.1F, 4, 8, 0, 0.7F, false));
+				}
+			} else {
+				this.rightEye.cubeList.add(new ModelBox(this.rightEye, 24, 0, -4.3F, -8.05F, -4.1F, 4, 8, 0, 0.55F, false));
+				this.leftEye.cubeList.add(new ModelBox(this.leftEye, 28, 0, 0.25F, -8.05F, -4.1F, 4, 8, 0, 0.55F, false));
+			}
 
-			//tanuki 
-			//this.rightEye.cubeList.add(new ModelBox(this.rightEye, 24, 0, -4.1F, -9F, -4.1F, 4, 8, 0, 0.6F, false));
-			//this.leftEye.cubeList.add(new ModelBox(this.leftEye, 28, 0, 0.1F, -9.F, -4.1F, 4, 8, 0, 0.6F, false));
+			textureWidth = 128;
+			textureHeight = 64;
+
+
+			if (tails == 1 && cloak == 1) {
+				bipedHeadwear = new ModelRenderer(this);
+				bipedHeadwear.setRotationPoint(0.0F, 0.0F, 0.0F);
+				bipedHeadwear.cubeList.add(new ModelBox(bipedHeadwear, 64, 0, -4.0F, -8.0F, -4.0F, 8, 8, 8, 0.25F, false));
+				bipedHeadwear.cubeList.add(new ModelBox(bipedHeadwear, 64, 0, -4.0F, -7.2F, -4.0F, 8, 8, 8, 0.3F, false));
+
+
+				bipedHeadwear.addChild(sandEar);
+				bipedHeadwear.addChild(sandHeadL2);
+				markDirty = true;
+			}
 		}
-
-	
 		
 		public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
 			modelRenderer.rotateAngleX = x;

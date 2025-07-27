@@ -8,12 +8,13 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.narutomod.entity.EntityBijuManager;
 import net.narutomod.goatee.client.RenderUtils;
 import net.narutomod.goatee.data.SideData;
+import net.narutomod.item.ItemBijuCloak;
 import net.narutomod.item.ItemDojutsu;
 import org.lwjgl.opengl.GL11;
 
@@ -21,7 +22,7 @@ import java.util.Map;
 
 public class ModelDojutsu extends ModelBiped {
     private static final Map<String, ResourceLocation> DOJUTSU_TEXTURE_RES_MAP = Maps.newHashMap();
-
+    public boolean render = true;
     public ModelRenderer onface;
     public ModelRenderer hornRight;
     public ModelRenderer hornLeft;
@@ -42,6 +43,7 @@ public class ModelDojutsu extends ModelBiped {
 
     public boolean isS06P;
     public int leftColor = 0xffffff, rightColor = 0xffffff;
+    public float alpha = 1;
 
     public ModelDojutsu() {
         this.textureWidth = 64;
@@ -205,11 +207,14 @@ public class ModelDojutsu extends ModelBiped {
 
     @Override
     public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+        if (!render)
+            return;
+        ;
         this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entityIn);
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.alphaFunc(GL11.GL_GEQUAL, 0.01f);
-        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.color(1, 1, 1, alpha);
 
         if (entityIn.isSneaking())
             GlStateManager.translate(0.0F, 0.2F, 0.0F);
@@ -270,7 +275,7 @@ public class ModelDojutsu extends ModelBiped {
             float r = (float) (leftColor >> 16 & 255) / 255.0F;
             float g = (float) (leftColor >> 8 & 255) / 255.0F;
             float b = (float) (leftColor & 255) / 255.0F;
-            GlStateManager.color(r, g, b, 1.0F);
+            GlStateManager.color(r, g, b, alpha);
             this.leftEye.render(scale);
             RenderUtils.enableLightmap(entityIn);
 
@@ -280,14 +285,14 @@ public class ModelDojutsu extends ModelBiped {
             //            rightTexture = "narutomod:textures/tenseiganhelmet.png";
             //            rightTexture = "narutomod:textures/byakuganhelmet.png";
             bindTexture(rightTexture);
-            GlStateManager.color(1, 1, 1, 1);
+            GlStateManager.color(1, 1, 1, alpha);
             eyeBaseR.render(scale);
 
             RenderUtils.disableLightMap();
             r = (float) (rightColor >> 16 & 255) / 255.0F;
             g = (float) (rightColor >> 8 & 255) / 255.0F;
             b = (float) (rightColor & 255) / 255.0F;
-            GlStateManager.color(r, g, b, 1.0F);
+            GlStateManager.color(r, g, b, alpha);
             this.rightEye.render(scale);
             RenderUtils.enableLightmap(entityIn);
         }
@@ -324,13 +329,13 @@ public class ModelDojutsu extends ModelBiped {
         return resourcelocation;
     }
 
-    @SideOnly(Side.CLIENT)
     public static ModelDojutsu getModel(EntityLivingBase living, ItemStack stack, ItemDojutsu.Base eye) {
         if (eye.model == null)
             eye.model = new ModelDojutsu();
 
         ModelDojutsu model = eye.model;
 
+        model.render = true;
         model.isSneak = living.isSneaking();
         model.isRiding = living.isRiding();
         model.isChild = living.isChild();
@@ -344,8 +349,23 @@ public class ModelDojutsu extends ModelBiped {
 
         model.leftColor = left.getEffectiveColor(living);
         model.rightColor = right.getEffectiveColor(living);
+        model.alpha = 1;
 
+        applyBijuuCloakModifications(model, living, stack, eye);
+       
         return model;
     }
+
+    public static ModelDojutsu applyBijuuCloakModifications(ModelDojutsu model, EntityLivingBase living, ItemStack stack, ItemDojutsu.Base eye) {
+        if (living instanceof EntityPlayer) {
+            EntityPlayer p = (EntityPlayer) living;
+            int cloak = EntityBijuManager.cloakLevel(p);
+            if (cloak == 2) {
+                model.alpha = 1 - (ItemBijuCloak.getAnimationAlpha(living) * 3);
+            }
+        }
+        return model;
+    }
+    
 
 }
