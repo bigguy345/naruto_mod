@@ -494,12 +494,11 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 	
 	
 	public static boolean hasRinnegan(EntityPlayer player) {
-		return player.inventory.hasItemStack(new ItemStack(ItemRinnegan.helmet)) || player.inventory.hasItemStack(new ItemStack(ItemRinneganTomoe.helmet));
+		return ProcedureUtils.hasAnyItemOfSubtype(player, ItemRinnegan.Base.class) || ProcedureUtils.hasAnyItemOfSubtype(player, ItemRinneganTomoe.Base.class);
 	}
 	public static boolean isRinnegan(ItemStack stack) {
-		return stack.getItem() instanceof Base || stack.getItem() == ItemRinneganTomoe.helmet;
+		return stack.getItem() instanceof Base || stack.getItem() instanceof ItemRinneganTomoe.Base;
 	}
-
 	public static boolean isWearing(EntityLivingBase player) {
 		return isRinnegan(ItemDojutsu.getWorn(player));
 	}
@@ -533,9 +532,6 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 		return false;
 	}
 
-	public static boolean rinneganInInventory(EntityPlayer player) {
-		return ProcedureUtils.hasItemInInventory(player, ItemRinnegan.helmet) || ProcedureUtils.hasItemInInventory(player, ItemTenseigan.helmet)|| ProcedureUtils.hasItemInInventory(player, ItemRinneganTomoe.helmet);
-	}
 
 	public static void giveClothes(ItemStack stack, EntityPlayer entity) {
 		if (ItemTenseigan.isTenseigan(stack)) {

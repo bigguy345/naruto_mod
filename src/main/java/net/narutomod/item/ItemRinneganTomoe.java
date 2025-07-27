@@ -74,7 +74,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
     }
 
     public static double getEternalChakraUsage(ItemStack stack, EntityLivingBase entity) {
-        return ((ItemDojutsu.Base) helmet).isOwner(stack, entity) ? ETERNAL_CHAKRA_USAGE : ETERNAL_CHAKRA_USAGE * 3;
+        return ((ItemDojutsu.Base) stack.getItem()).isOwner(stack, entity) ? ETERNAL_CHAKRA_USAGE : ETERNAL_CHAKRA_USAGE * 3;
     }
     
     public void initElements() {
@@ -471,7 +471,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             if (target.isEmpty())
                 return SHARINGAN_OFF;
 
-            if (target.getItem() == helmet)
+            if (isTomoe(target))
                 return getTomoeStatus(target);
 
             if (target.getItem() == ItemSharingan.helmet)

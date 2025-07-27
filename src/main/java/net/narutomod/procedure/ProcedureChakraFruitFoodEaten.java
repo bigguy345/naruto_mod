@@ -1,27 +1,26 @@
 package net.narutomod.procedure;
 
-import net.narutomod.item.*;
-import net.narutomod.PlayerTracker;
-import net.narutomod.NarutomodModVariables;
-import net.narutomod.ElementsNarutomodMod;
-
-import net.minecraftforge.items.ItemHandlerHelper;
-
-import net.minecraft.world.World;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.item.ItemStack;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.item.EntityXPOrb;
-import net.minecraft.entity.Entity;
-import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.world.World;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.narutomod.ElementsNarutomodMod;
+import net.narutomod.NarutomodModVariables;
+import net.narutomod.PlayerTracker;
+import net.narutomod.item.*;
 
-import java.util.Map;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 @ElementsNarutomodMod.ModElement.Tag
 public class ProcedureChakraFruitFoodEaten extends ElementsNarutomodMod.ModElement {
@@ -48,21 +47,15 @@ public class ProcedureChakraFruitFoodEaten extends ElementsNarutomodMod.ModEleme
 		EntityPlayer player = (EntityPlayer) entity;
 		onhead = ItemDojutsu.getWorn(player);
 		if (ItemRinnegan.hasRinnegan(player)) {
-			if (player.inventory.hasItemStack(new ItemStack(ItemRinnegan.helmet))) {
-				ItemStack _stack = ProcedureUtils.getItemStackIgnoreDurability(player.inventory, new ItemStack(ItemRinnegan.helmet));
-				if (!_stack.hasTagCompound())
-					_stack.setTagCompound(new NBTTagCompound());
-				_stack.getTagCompound().setBoolean((NarutomodModVariables.RINNESHARINGAN_ACTIVATED), (true));
+
+			List<ItemStack> stacks = ProcedureUtils.getAllItemsOfSubType(player, ItemRinnegan.Base.class);
+			stacks.addAll(ProcedureUtils.getAllItemsOfSubType(player, ItemRinneganTomoe.Base.class));
+			for (ItemStack stck : stacks) {
+				if (!stck.hasTagCompound())
+					stck.setTagCompound(new NBTTagCompound());
+				stck.getTagCompound().setBoolean((NarutomodModVariables.RINNESHARINGAN_ACTIVATED), (true));
+				
 			}
-
-			if (player.inventory.hasItemStack(new ItemStack(ItemRinneganTomoe.helmet))) {
-				ItemStack _stack = ProcedureUtils.getItemStackIgnoreDurability(player.inventory, new ItemStack(ItemRinneganTomoe.helmet));
-				if (!_stack.hasTagCompound())
-					_stack.setTagCompound(new NBTTagCompound());
-				_stack.getTagCompound().setBoolean((NarutomodModVariables.RINNESHARINGAN_ACTIVATED), (true));
-			}
-
-
 			if (entity instanceof EntityPlayerMP) {
 				Advancement _adv = ((MinecraftServer) ((EntityPlayerMP) entity).mcServer).getAdvancementManager().getAdvancement(new ResourceLocation("narutomod:rinnesharinganactivated"));
 				AdvancementProgress _ap = ((EntityPlayerMP) entity).getAdvancements().getProgress(_adv);
@@ -83,7 +76,8 @@ public class ProcedureChakraFruitFoodEaten extends ElementsNarutomodMod.ModEleme
 				_setstack.setCount(1);
 				ItemHandlerHelper.giveItemToPlayer(((EntityPlayer) entity), _setstack);
 			}
-		} else if (player.inventory.hasItemStack(new ItemStack(ItemTenseigan.helmet))) {
+		}
+		if (player.inventory.hasItemStack(new ItemStack(ItemTenseigan.helmet))) {
 			ItemStack _stack = ProcedureUtils.getItemStackIgnoreDurability(((EntityPlayer) entity).inventory, new ItemStack(ItemTenseigan.helmet));
 
 			if (!_stack.hasTagCompound())

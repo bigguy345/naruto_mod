@@ -1,25 +1,23 @@
 package net.narutomod.procedure;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.narutomod.ElementsNarutomodMod;
+import net.narutomod.NarutomodModVariables;
+import net.narutomod.PlayerTracker;
+import net.narutomod.entity.EntityBijuManager;
 import net.narutomod.goatee.data.NarutoData;
 import net.narutomod.item.*;
-import net.narutomod.entity.EntityBijuManager;
-import net.narutomod.PlayerTracker;
-import net.narutomod.NarutomodModVariables;
-import net.narutomod.ElementsNarutomodMod;
-
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.common.MinecraftForge;
-
-import net.minecraft.world.World;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.item.ItemStack;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.Entity;
 
 import java.util.List;
 import java.util.Map;
@@ -41,67 +39,29 @@ public class ProcedureOnPlayerDeath extends ElementsNarutomodMod.ModElement {
 		ItemStack stack2 = ItemStack.EMPTY;
 		if ((entity instanceof EntityPlayerMP)) {
 			keepInventory = (boolean) entity.world.getGameRules().getBoolean("keepInventory");
-			if (((entity instanceof EntityPlayer)
-					? ((EntityPlayer) entity).inventory.hasItemStack(new ItemStack(ItemRinnegan.helmet, (int) (1)))
-					: false)) {
-				stack = ProcedureUtils.getItemStackIgnoreDurability(((EntityPlayer) entity).inventory, new ItemStack(ItemRinnegan.helmet));
-				if (stack.hasTagCompound() && stack.getTagCompound().hasUniqueId("KoH_id")) {
-					if (entity instanceof EntityLivingBase)
-						((EntityLivingBase) entity).setHealth((float) 2);
-					if (dependencies.get("event") != null) {
-						Object _obj = dependencies.get("event");
-						if (_obj instanceof net.minecraftforge.fml.common.eventhandler.Event) {
-							net.minecraftforge.fml.common.eventhandler.Event _evt = (net.minecraftforge.fml.common.eventhandler.Event) _obj;
-							if (_evt.isCancelable())
-								_evt.setCanceled(true);
+
+			if (entity instanceof EntityPlayer) {
+				EntityPlayer player = (EntityPlayer) entity;
+				List<ItemStack> stacks = ProcedureUtils.getAllItemsOfSubType(player, ItemRinnegan.Base.class);
+				stacks.addAll(ProcedureUtils.getAllItemsOfSubType(player, ItemRinneganTomoe.Base.class));
+				for (ItemStack stck : stacks) {
+					if (stck.hasTagCompound() && stck.getTagCompound().hasUniqueId("KoH_id")) {
+						if (entity instanceof EntityLivingBase)
+							((EntityLivingBase) entity).setHealth((float) 2);
+						if (dependencies.get("event") != null) {
+							Object _obj = dependencies.get("event");
+							if (_obj instanceof net.minecraftforge.fml.common.eventhandler.Event) {
+								net.minecraftforge.fml.common.eventhandler.Event _evt = (net.minecraftforge.fml.common.eventhandler.Event) _obj;
+								if (_evt.isCancelable())
+									_evt.setCanceled(true);
+							}
 						}
+					} else if (!keepInventory) {
+						stck.setCount(0);
 					}
-				} else if ((!(keepInventory))) {
-					if (entity instanceof EntityPlayer)
-						((EntityPlayer) entity).inventory.clearMatchingItems(new ItemStack(ItemRinnegan.helmet, (int) (1)).getItem(), -1, (int) (-1),
-								null);
 				}
 			}
-			
-			if (((entity instanceof EntityPlayer) ? ((EntityPlayer) entity).inventory.hasItemStack(new ItemStack(ItemRinneganTomoe.helmet, (int) (1))) : false)) {
-				stack = ProcedureUtils.getItemStackIgnoreDurability(((EntityPlayer) entity).inventory, new ItemStack(ItemRinneganTomoe.helmet));
-				if (stack.hasTagCompound() && stack.getTagCompound().hasUniqueId("KoH_id")) {
-					if (entity instanceof EntityLivingBase)
-						((EntityLivingBase) entity).setHealth((float) 2);
-					if (dependencies.get("event") != null) {
-						Object _obj = dependencies.get("event");
-						if (_obj instanceof net.minecraftforge.fml.common.eventhandler.Event) {
-							net.minecraftforge.fml.common.eventhandler.Event _evt = (net.minecraftforge.fml.common.eventhandler.Event) _obj;
-							if (_evt.isCancelable())
-								_evt.setCanceled(true);
-						}
-					}
-				} else if ((!(keepInventory))) {
-					if (entity instanceof EntityPlayer)
-						((EntityPlayer) entity).inventory.clearMatchingItems(new ItemStack(ItemRinneganTomoe.helmet, (int) (1)).getItem(), -1, (int) (-1), null);
-				}
-			}
-			if (((entity instanceof EntityPlayer)
-					? ((EntityPlayer) entity).inventory.hasItemStack(new ItemStack(ItemTenseigan.helmet, (int) (1)))
-					: false)) {
-				stack = ProcedureUtils.getItemStackIgnoreDurability(((EntityPlayer) entity).inventory, new ItemStack(ItemTenseigan.helmet));
-				if (stack.hasTagCompound() && stack.getTagCompound().hasUniqueId("KoH_id")) {
-					if (entity instanceof EntityLivingBase)
-						((EntityLivingBase) entity).setHealth((float) 2);
-					if (dependencies.get("event") != null) {
-						Object _obj = dependencies.get("event");
-						if (_obj instanceof net.minecraftforge.fml.common.eventhandler.Event) {
-							net.minecraftforge.fml.common.eventhandler.Event _evt = (net.minecraftforge.fml.common.eventhandler.Event) _obj;
-							if (_evt.isCancelable())
-								_evt.setCanceled(true);
-						}
-					}
-				} else if ((!(keepInventory))) {
-					if (entity instanceof EntityPlayer)
-						((EntityPlayer) entity).inventory.clearMatchingItems(new ItemStack(ItemTenseigan.helmet, (int) (1)).getItem(), -1, (int) (-1),
-								null);
-				}
-			}
+
 			if ((((entity instanceof EntityPlayer)
 					? ((EntityPlayer) entity).inventory.hasItemStack(new ItemStack(ItemMangekyoSharinganEternal.helmet, (int) (1)))
 					: false) && (!(keepInventory)))) {
