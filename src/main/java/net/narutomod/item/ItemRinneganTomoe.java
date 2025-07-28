@@ -264,7 +264,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             if (isRinnesharinganActivated(stack))
                 tooltip.add(TextFormatting.RED + I18n.translateToLocal("advancements.rinnesharinganactivated.title") + TextFormatting.WHITE);
             tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu1") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.mangekyo.amaterasu.jutsu1"));
-            tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu2") + ": " + TextFormatting.GRAY + I18n.translateToLocal("entity.susanooclothed.name"));
+            tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu2") + ": " + TextFormatting.GRAY + I18n.translateToLocal("entity.susanooclothed.name") + ",     [SHIFT] Genjutsu");
             tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu3") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.mangekyo.kamui.jutsu1"));
             tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.jutsu.4") + ": " + TextFormatting.GRAY + I18n.translateToLocal("chattext.shinratensei"));
             tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.jutsu.5") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.rinnegan.jutsu2"));
@@ -311,6 +311,12 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
         @Override
         public boolean onJutsuKey2(boolean is_pressed, ItemStack stack, EntityPlayer entity) {
             if (!is_pressed) {
+                if (entity.isSneaking()) {
+                    int duration = eternalOn(stack) ? 40 : sharinganOn(stack) ? 20 : 10;
+                    int range = eternalOn(stack) ? 64 : sharinganOn(stack) ? 32 : 16;
+                    return applyGenjutsu(entity, range, duration);
+                }
+                
                 Map<String, Object> $_dependencies = Maps.newHashMap();
                 $_dependencies.put("entity", entity);
                 $_dependencies.put("world", entity.world);

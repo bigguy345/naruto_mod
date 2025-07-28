@@ -90,6 +90,17 @@ public class ItemInton extends ElementsNarutomodMod.ModElement {
 			return false;
 		}
 
+		public static boolean createJutsu(EntityLivingBase entity, ItemStack stack, double range, int durationIn) {
+			Entity target = ProcedureUtils.objectEntityLookingAt(entity, range).entityHit;
+			if (target instanceof EntityLivingBase && createJutsu(entity, (EntityLivingBase) target, durationIn)) {
+				if (stack != null && entity instanceof EntityPlayer)
+					ItemJutsu.setCurrentJutsuCooldown(stack, entity, 1200);
+
+				return true;
+			}
+			return false;
+		}
+		
 		public static boolean createJutsu(EntityLivingBase entity, EntityLivingBase target, int durationIn) {
 			if (canTargetBeAffected(entity, target)) {
 				entity.world.playSound(null, target.posX, target.posY, target.posZ,

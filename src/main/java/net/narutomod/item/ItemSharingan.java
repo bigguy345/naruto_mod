@@ -136,6 +136,9 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 
 
 			}
+
+			if (genjutsuCD > 0)
+				genjutsuCD--;
 		}
 
 		@Override
@@ -273,10 +276,25 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 
 		}
 
+		protected int genjutsuCD;
+
+		public boolean applyGenjutsu(EntityPlayer entity, double range, int durationSeconds) {
+			if (genjutsuCD > 0) {
+				entity.sendStatusMessage(new TextComponentTranslation("chattext.cooldown.formatted", genjutsuCD / 20), true);
+				return false;
+			}
+
+			if (ItemInton.Genjutsu.createJutsu(entity, null, range, durationSeconds * 20)) {
+				genjutsuCD = 10 * 20;
+				return true;
+			}
+			return false;
+		}
+		
 		@Override
 		public boolean onJutsuKey1(boolean is_pressed, ItemStack stack, EntityPlayer entity) {
 			if (!is_pressed)
-				return ItemInton.GENJUTSU.jutsu.createJutsu(stack, entity, 0);
+				return applyGenjutsu(entity, 8, 10);
 
 			return false;
 		}

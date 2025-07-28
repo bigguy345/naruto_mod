@@ -115,7 +115,7 @@ public class ItemMangekyoSharinganObito extends ElementsNarutomodMod.ModElement 
 			public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 				super.addInformation(stack, worldIn, tooltip, flagIn);
 				tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu1") + ": " + TextFormatting.GRAY + I18n.translateToLocal("tooltip.mangekyo.kamui.jutsu1"));
-				tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu2") + ": " + TextFormatting.GRAY + I18n.translateToLocal("entity.susanooclothed.name"));
+				tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu2") + ": " + TextFormatting.GRAY + I18n.translateToLocal("entity.susanooclothed.name") + ",     [SHIFT] Genjutsu");
 			}
 
 			@Override
@@ -143,6 +143,9 @@ public class ItemMangekyoSharinganObito extends ElementsNarutomodMod.ModElement 
 			@Override
 			public boolean onJutsuKey2(boolean is_pressed, ItemStack stack, EntityPlayer entity) {
 				if (!is_pressed) {
+					if (entity.isSneaking())
+						return applyGenjutsu(entity, 16, 15);
+					
 					Map<String, Object> $_dependencies = Maps.newHashMap();
 					$_dependencies.put("entity", entity);
 					$_dependencies.put("world", entity.world);
