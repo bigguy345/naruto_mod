@@ -24,6 +24,8 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelBiped;
 
+import net.narutomod.item.ItemNinjaArmor;
+import net.narutomod.item.ItemNinjutsu;
 import net.narutomod.item.ItemSenbon;
 import net.narutomod.item.ItemPoisonbomb;
 import net.narutomod.procedure.ProcedureUtils;
@@ -63,6 +65,10 @@ public class EntityPuppetKarasu extends ElementsNarutomodMod.ModElement {
 			Vec3d vec = ownerIn.getLookVec();
 			vec = ownerIn.getPositionVector().addVector(vec.x, 1d, vec.z);
 			this.setLocationAndAngles(vec.x, vec.y, vec.z, ownerIn.rotationYaw, 0f);
+		}
+
+		public EntityCustom(EntityLivingBase ownerIn) {
+			this(ownerIn, ItemNinjutsu.PUPPET.chakraUsage);
 		}
 
 		@Override
