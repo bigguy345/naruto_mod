@@ -164,7 +164,7 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 				if (this.armorModel == null) {
 					this.armorModel = new ModelSizPathRobe();
 				}
-				setJuubito(ItemDojutsu.getWorn(living),true);
+				
 				boolean show = !isJuubito(living);
 				this.armorModel.robe.showModel = show;
 				this.armorModel.robeRightArm.showModel = show;
