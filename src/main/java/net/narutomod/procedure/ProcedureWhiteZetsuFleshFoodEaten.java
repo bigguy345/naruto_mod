@@ -71,7 +71,7 @@ public class ProcedureWhiteZetsuFleshFoodEaten extends ElementsNarutomodMod.ModE
 									: false)))
 							&& (Math.random() < 0.2)))) {
 
-				boolean unlockTomoe = Math.random() * 100 < ModConfig.DOJUTSU.RINNEGAN_TOMOE_AWAKEN_CHANCE;
+				boolean unlockTomoe = Math.random() * 100 <= ModConfig.DOJUTSU.RINNEGAN_TOMOE_AWAKEN_CHANCE;
 				rinneganstack = new ItemStack(unlockTomoe ? ItemRinneganTomoe.helmet : ItemRinnegan.helmet, (int) (1));
 				((ItemDojutsu.Base) rinneganstack.getItem()).setOwner(rinneganstack, (EntityLivingBase) entity);
 				if (entity instanceof EntityPlayer) {

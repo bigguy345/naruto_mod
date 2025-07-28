@@ -1,5 +1,6 @@
 package net.narutomod.procedure;
 
+import net.narutomod.ModConfig;
 import net.narutomod.item.*;
 import net.narutomod.potion.PotionFlight;
 import net.narutomod.entity.EntityTenTails;
@@ -147,6 +148,13 @@ public class ProcedureRinneganHelmetTickEvent extends ElementsNarutomodMod.ModEl
 						if (!_stack.hasTagCompound())
 							_stack.setTagCompound(new NBTTagCompound());
 						_stack.getTagCompound().setBoolean((NarutomodModVariables.RINNESHARINGAN_ACTIVATED), (true));
+
+						if (Math.random() * 100 <= ModConfig.DOJUTSU.KEKKEI_MORA_UNLOCK_CHANCE) {
+							ItemStack _setstack = new ItemStack(ItemKekkeiMora.block);
+							((ItemJutsu.Base) _setstack.getItem()).setOwner(_setstack, (EntityLivingBase) entity);
+							ItemHandlerHelper.giveItemToPlayer(((EntityPlayer) entity), _setstack);
+						}
+						
 					}
 					if ((((itemstack).getItem() == new ItemStack(ItemRinnegan.helmet, (int) (1)).getItem())
 							&& (!(((entity instanceof EntityPlayerMP) && ((entity).world instanceof WorldServer))
