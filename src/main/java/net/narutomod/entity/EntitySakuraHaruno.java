@@ -115,7 +115,7 @@ public class EntitySakuraHaruno extends ElementsNarutomodMod.ModElement {
 
 			MerchantRecipeList uncommonTrades = new MerchantRecipeList();
 			uncommonTrades.add(new MerchantRecipe(new ItemStack(Items.EMERALD, 20), ItemStack.EMPTY, new ItemStack(ItemScrollHealing.block, 1), 0, 1));
-			uncommonTrades.add(new MerchantRecipe(new ItemStack(Items.EMERALD, 15), ItemStack.EMPTY, new ItemStack(ItemMilitaryRationsPillGold.block, 1, 1), 0, 1));
+			uncommonTrades.add(new MerchantRecipe(new ItemStack(Items.EMERALD, 15), ItemStack.EMPTY, new ItemStack(ItemMilitaryRationsPillGold.block, 1), 0, 1));
 
 			MerchantRecipeList rareTrades = new MerchantRecipeList();
 			rareTrades.add(new MerchantRecipe(new ItemStack(Items.EMERALD, 45), ItemStack.EMPTY, new ItemStack(ItemScrollEnhancedStrength.block, 1), 0, 1));
