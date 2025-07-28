@@ -417,7 +417,7 @@ public class ProcedureOnPlayerPostTick extends ElementsNarutomodMod.ModElement {
 		}
 		if ((((entity.ticksExisted % 20) == 0) && (!(world.isRemote)))) {
 			if (ItemDojutsu.hasAnyDojutsu((EntityPlayer) entity)) {
-				if ((!ItemSharingan.isWearingMangekyo((EntityPlayer) entity) && (entity.getEntityData().getBoolean("susanoo_activated")))) {
+				if ((!ItemSharingan.wearingAny((EntityPlayer) entity) && (entity.getEntityData().getBoolean("susanoo_activated")))) {
 					{
 						Map<String, Object> $_dependencies = new HashMap<>();
 						$_dependencies.put("entity", entity);
