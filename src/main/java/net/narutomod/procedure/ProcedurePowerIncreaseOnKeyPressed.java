@@ -46,7 +46,6 @@ public class ProcedurePowerIncreaseOnKeyPressed extends ElementsNarutomodMod.Mod
 			itemoffhand = ((entity instanceof EntityLivingBase) ? ((EntityLivingBase) entity).getHeldItemOffhand() : ItemStack.EMPTY);
 			boolean wearingDojutsu = ItemDojutsu.is(helmet);
 			boolean isBijuuCloak = EntityBijuManager.cloakLevel((EntityPlayer) entity) > 0;
-			System.out.println(EntityBijuManager.cloakLevel((EntityPlayer) entity));
 
 			if (itemmainhand.getItem() instanceof ItemJutsu.Base) {
 				if ((!(is_pressed))) {
