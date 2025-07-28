@@ -1,6 +1,7 @@
 
 package net.narutomod.entity;
 
+import net.minecraft.entity.item.EntityItem;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
@@ -276,7 +277,7 @@ public class EntityLightningArc extends ElementsNarutomodMod.ModElement {
 			if (this.damageAmount > 0f) {
 				for (Entity entity : this.world.getEntitiesWithinAABBExcludingEntity(this.excludeEntity, this.getEntityBoundingBox()
 				  .expand(this.ogEndVec.x - this.posX, this.ogEndVec.y - this.posY, this.ogEndVec.z - this.posZ).grow(1))) {
-					if (entity.getEntityBoundingBox().calculateIntercept(this.getPositionVector(), this.ogEndVec) != null) {
+					if (entity.getEntityBoundingBox().calculateIntercept(this.getPositionVector(), this.ogEndVec) != null && !(entity instanceof EntityItem)) {
 						if (this.resetHurtResistantTime) {
 							entity.hurtResistantTime = 10;
 						}

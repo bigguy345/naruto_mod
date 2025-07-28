@@ -1,6 +1,7 @@
 
 package net.narutomod.entity;
 
+import net.minecraft.entity.item.EntityItem;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
@@ -190,7 +191,7 @@ public class EntityRasenshuriken extends ElementsNarutomodMod.ModElement {
 
 		protected void doImpactDamage() {
 			ProcedureAoeCommand.set(this.world, this.impactVec.x, this.impactVec.y, this.impactVec.z, 0d, this.width/2)
-			  .exclude(this.shootingEntity).exclude(EntityTruthSeekerBall.EntityCustom.class).resetHurtResistanceTime()
+			  .exclude(this.shootingEntity).exclude(EntityTruthSeekerBall.EntityCustom.class).exclude(EntityItem.class).resetHurtResistanceTime()
 			  .damageEntities(this.damageSource, this.fullScale * this.impactDamageMultiplier)
 			  .motion(0d, 0d, 0d);
 		}
