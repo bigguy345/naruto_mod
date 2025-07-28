@@ -108,7 +108,7 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 			public ModelBiped applyDojutsuModelData(ModelBijuCloak model, EntityLivingBase entity, ItemStack stack, int tails, int cloakLevel) {
 				ItemStack worn = entity.getHeldItem(EnumHand.MAIN_HAND);
 				boolean shukaku = tails == 1 && cloakLevel > 0;
-				boolean kurama = cloakLevel == 2 && getCloakXp(stack) >= 800;
+				boolean kurama = tails == 9 && cloakLevel >= 2 && getCloakXp(stack) >= 800;
 
 				boolean render = ItemDojutsu.is(worn) && (kurama || shukaku);
 				model.leftEye.showModel = model.rightEye.showModel = render;
@@ -171,7 +171,7 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 				boolean b = tails == 1 && cloaklevel == 2;
 				armorModel.sandArmLeft.showModel = b;
 				armorModel.sandBodyL2.showModel = b;
-				armorModel.bodyShine = tails == 9 && cloaklevel == 2 && getCloakXp(stack) >= 800;
+				armorModel.bodyShine = tails == 9 && cloaklevel >= 2 && getCloakXp(stack) >= 800;
 				armorModel.allTails.showModel = !armorModel.bodyShine;
 				armorModel.layerShine = true;
 				return armorModel;
@@ -322,18 +322,20 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 	}
 
 	private static String getTexture(ItemStack stack) {
-		int i = getTails(stack);
-		int j = getCloakLevel(stack);
-		int k = getCloakXp(stack);
-		return i == 1  
-		 	? "narutomod:textures/bijucloak_sand.png"
-			: j == 2
-				? i == 9 && k >= 800
-					? k < 4800 
-						? "narutomod:textures/bijucloak_kurama.png"
-						: "narutomod:textures/bijucloak_kcm2.png"
-		 			: "narutomod:textures/bijucloakl2.png" 
-		 		: "narutomod:textures/bijucloakl1.png";
+		int tails = getTails(stack);
+		int cloak = getCloakLevel(stack);
+		int xp = getCloakXp(stack);
+
+		if (tails == 1)
+			return "narutomod:textures/bijucloak_sand.png";
+
+		if (tails == 9 && cloak >= 2 && xp >= 800)
+			return xp >= 4800 ? "narutomod:textures/bijucloak_kcm2.png" : "narutomod:textures/bijucloak_kurama.png";
+
+		if (cloak >= 2)
+			return "narutomod:textures/bijucloakl2.png";
+
+		return "narutomod:textures/bijucloakl1.png";
 	}
 
 	public static void clearCloakItems(EntityPlayer player) {

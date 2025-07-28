@@ -502,6 +502,7 @@ public abstract class EntityBijuManager<T extends EntityTailedBeast.Base> {
 				ItemBijuCloak.setWearingTicks(this.jinchurikiPlayer, 0);
 			}
 			this.cloakCD += i + (int)((float)level * 2f * i / Math.max(MathHelper.sqrt(MathHelper.sqrt((float)this.cloakXp[level-1])) - 3f, 1f));
+		//	cloakCD = 0;
 			this.markDirty();
 		}
 	}
@@ -602,11 +603,11 @@ public abstract class EntityBijuManager<T extends EntityTailedBeast.Base> {
 				} else if (this.cloakLevel == 1) {
 					chakra.consume(-d, true);
 					this.saveAndResetWearingTicks(this.cloakLevel++);
-				}
- else {
+				} else {
 					T biju = this.spawnEntity(this.jinchurikiPlayer);
 					if (biju != null) {
-						ItemBijuCloak.clearCloakItems(this.jinchurikiPlayer);
+						if (tails != 9)
+							ItemBijuCloak.clearCloakItems(this.jinchurikiPlayer);
 						biju.setLifeSpan(this.cloakXp[2] * 5 + 200);
 						chakra.consume(-d, true);
 						this.saveAndResetWearingTicks(this.cloakLevel++);
