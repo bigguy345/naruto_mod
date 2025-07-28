@@ -131,6 +131,22 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 		  ? TENGAISHINSEI_CHAKRA_USAGE : TENGAISHINSEI_CHAKRA_USAGE * 2 : (Double.MAX_VALUE * 0.001d);
 	}
 
+	public static boolean isJuubito(EntityLivingBase entity) {
+		ItemStack helmet = ItemDojutsu.getWorn(entity);
+		if (!helmet.isEmpty() && helmet.getTagCompound().getBoolean("juubito"))
+			return true;
+
+		if (entity instanceof EntityPlayer)
+			return PlayerTracker.getNinjaLevel((EntityPlayer) entity) < 200d;
+
+		return false;
+	}
+
+	public static void setJuubito(ItemStack helmet, boolean bo) {
+		if(helmet.isEmpty())
+			return;
+		helmet.getTagCompound().setBoolean("juubito", bo);
+	}
 	public void initElements() {
 		ItemArmor.ArmorMaterial enuma = EnumHelper.addArmorMaterial("RINNEGAN", "narutomod:rinnegan_", 25, new int[]{2, 5, 6, 15}, 0,
 				null, 2.0F);
@@ -148,7 +164,8 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 				if (this.armorModel == null) {
 					this.armorModel = new ModelSizPathRobe();
 				}
-				boolean show = living instanceof EntityPlayer ? PlayerTracker.getNinjaLevel((EntityPlayer)living) >= 200d : false;
+				setJuubito(ItemDojutsu.getWorn(living),true);
+				boolean show = !isJuubito(living);
 				this.armorModel.robe.showModel = show;
 				this.armorModel.robeRightArm.showModel = show;
 				this.armorModel.robeLeftArm.showModel = show;
@@ -192,7 +209,7 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 				if (this.armorModel == null) {
 					this.armorModel = new ModelSizPathRobe();
 				}
-				boolean show = living instanceof EntityPlayer ? PlayerTracker.getNinjaLevel((EntityPlayer)living) >= 180d : false;
+				boolean show = !isJuubito(living);
 				this.armorModel.robe.showModel = show;
 				this.armorModel.robeRightArm.showModel = show;
 				this.armorModel.robeLeftArm.showModel = show;
