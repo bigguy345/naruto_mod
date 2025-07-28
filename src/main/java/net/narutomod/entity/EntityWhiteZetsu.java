@@ -117,7 +117,7 @@ public class EntityWhiteZetsu extends ElementsNarutomodMod.ModElement {
 								entity1 = world.playerEntities.get(rand.nextInt(world.playerEntities.size()));
 							} else {
 								List<EntityLiving> list = world.getEntitiesWithinAABB(EntityLiving.class, EntityCustom.this.getEntityBoundingBox().grow(64, 32, 64), (p)-> {
-									return p instanceof EntityZombie && !(p instanceof EntityZombieVillager) || p instanceof EntityVillager || p instanceof EntityEnderman
+									return p instanceof EntityZombie && !(p instanceof EntityZombieVillager) || p instanceof EntityEnderman
 									 || p instanceof EntityNinjaMerchant.Base;
 								});
 								entity1 = !list.isEmpty() ? list.get(rand.nextInt(list.size())) : null;
