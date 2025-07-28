@@ -45,7 +45,8 @@ import net.narutomod.creativetab.TabModTab;
 import net.narutomod.ElementsNarutomodMod;
 
 import java.util.Map;
-import java.util.HashMap;
+import java.util.HashMap;
+
 import com.google.common.collect.Multimap;
 
 @ElementsNarutomodMod.ModElement.Tag
@@ -78,7 +79,7 @@ public class ItemKunai extends ElementsNarutomodMod.ModElement {
 			setFull3D();
 			setUnlocalizedName("kunai");
 			setRegistryName("kunai");
-			maxStackSize = 3;
+			maxStackSize = 16;
 			setCreativeTab(TabModTab.tab);
 		}
 

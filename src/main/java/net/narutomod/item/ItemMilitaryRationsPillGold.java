@@ -54,7 +54,7 @@ public class ItemMilitaryRationsPillGold extends ElementsNarutomodMod.ModElement
 			setRegistryName("military_rations_pill_gold");
 			setAlwaysEdible();
 			this.setCreativeTab(TabModTab.tab);
-			setMaxStackSize(3);
+			setMaxStackSize(16);
 		}
 
 		@Override

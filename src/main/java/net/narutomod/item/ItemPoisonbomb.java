@@ -76,7 +76,7 @@ public class ItemPoisonbomb extends ElementsNarutomodMod.ModElement {
 			setFull3D();
 			setUnlocalizedName("poisonbomb");
 			setRegistryName("poisonbomb");
-			maxStackSize = 1;
+			maxStackSize = 16;
 			setCreativeTab(TabModTab.tab);
 		}
 

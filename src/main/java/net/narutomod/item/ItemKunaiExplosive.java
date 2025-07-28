@@ -80,7 +80,7 @@ public class ItemKunaiExplosive extends ElementsNarutomodMod.ModElement {
 			setFull3D();
 			setUnlocalizedName("kunai_explosive");
 			setRegistryName("kunai_explosive");
-			maxStackSize = 3;
+			maxStackSize = 16;
 			setCreativeTab(TabModTab.tab);
 		}
 

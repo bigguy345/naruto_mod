@@ -52,7 +52,7 @@ public class ItemMilitaryRationsPill extends ElementsNarutomodMod.ModElement {
 			this.setUnlocalizedName("military_rations_pill");
 			this.setRegistryName("military_rations_pill");
 			this.setCreativeTab(TabModTab.tab);
-			this.setMaxStackSize(3);
+			this.setMaxStackSize(16);
 			//this.setAlwaysEdible();
 		}
 

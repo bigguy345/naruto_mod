@@ -74,7 +74,7 @@ public class ItemKunai3prong extends ElementsNarutomodMod.ModElement {
 			setFull3D();
 			setUnlocalizedName("kunai_3prong");
 			setRegistryName("kunai_3prong");
-			maxStackSize = 3;
+			maxStackSize = 16;
 			setCreativeTab(TabModTab.tab);
 		}
 
