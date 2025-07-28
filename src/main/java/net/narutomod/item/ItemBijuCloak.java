@@ -106,7 +106,11 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 
 			@SideOnly(Side.CLIENT)
 			public ModelBiped applyDojutsuModelData(ModelBijuCloak model, EntityLivingBase entity, ItemStack stack, int tails, int cloakLevel) {
-				ItemStack worn = entity.getHeldItem(EnumHand.MAIN_HAND);
+			//	ItemStack worn = entity.getHeldItem(EnumHand.MAIN_HAND);
+
+				ItemStack worn = ItemDojutsu.getWorn(entity);
+				if (worn.isEmpty())
+					return model;
 				boolean shukaku = tails == 1 && cloakLevel > 0;
 				boolean kurama = tails == 9 && cloakLevel >= 2 && getCloakXp(stack) >= 800;
 
@@ -1413,6 +1417,7 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 				GlStateManager.translate(0.0F, cloak == 2 ? -0.008f : -0.015f, 0.0F);
 
 			GlStateManager.depthMask(false);
+			GlStateManager.enableCull();
 			
 			if (leftEye.showModel && leftTexture != null) {
 				this.copyModelAngles(this.bipedHeadwear, this.leftEye);
@@ -1439,6 +1444,7 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 			}
 			
 			GlStateManager.enableAlpha();
+			GlStateManager.disableCull();
 			GlStateManager.depthMask(false);
 			markDirty = true;
 			if (markDirty)
@@ -1487,7 +1493,7 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 					this.rightEye.cubeList.add(new ModelBox(this.rightEye, 24, 0, -4.07F, -9.02F, -4.1F, 4, 8, 0, 0.7F, false));
 					this.leftEye.cubeList.add(new ModelBox(this.leftEye, 28, 0, 0.1F, -9.02F, -4.1F, 4, 8, 0, 0.7F, false));
 				}
-			} else {
+			} else if (cloak >= 2) {
 				this.rightEye.cubeList.add(new ModelBox(this.rightEye, 24, 0, -4.3F, -8.05F, -4.1F, 4, 8, 0, 0.55F, false));
 				this.leftEye.cubeList.add(new ModelBox(this.leftEye, 28, 0, 0.25F, -8.05F, -4.1F, 4, 8, 0, 0.55F, false));
 			}

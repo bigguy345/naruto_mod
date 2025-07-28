@@ -214,6 +214,7 @@ public class ModelDojutsu extends ModelBiped {
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.alphaFunc(GL11.GL_GEQUAL, 0.01f);
+        GlStateManager.enableCull(); //MUST OR THE BACKFACE WILL OVERLAP ON THE FRONT WITH SMALL DELTAS 
         GlStateManager.color(1, 1, 1, alpha);
 
         if (entityIn.isSneaking())
@@ -298,6 +299,7 @@ public class ModelDojutsu extends ModelBiped {
         }
 
 
+        GlStateManager.disableCull();
         GlStateManager.alphaFunc(0x204, 0.1f);
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
