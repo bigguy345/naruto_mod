@@ -2,6 +2,7 @@ package net.narutomod.keybind;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -104,6 +105,22 @@ public class JutsuKeys {
 		}
 	}
 
+	public static class ModifierData {
+		public boolean SHIFT, CTRL, ALT;
+
+		public void write(ByteBuf out) throws IOException {
+			out.writeBoolean(GuiScreen.isShiftKeyDown());
+			out.writeBoolean(GuiScreen.isCtrlKeyDown());
+			out.writeBoolean(GuiScreen.isAltKeyDown());
+		}
+
+		public void read(ByteBuf in) throws IOException {
+			this.SHIFT = in.readBoolean();
+			this.CTRL = in.readBoolean();
+			this.ALT = in.readBoolean();
+		}
+	}
+
 	public static class Packet extends AbstractPacket {
 		public static final String packetName = "jutsuKey";
 
@@ -113,6 +130,7 @@ public class JutsuKeys {
 
 		byte keyId;
 		byte pressType;
+		ModifierData modifiers = new ModifierData();
 
 		public Packet() {
 		}
@@ -125,11 +143,13 @@ public class JutsuKeys {
 		public void sendData(ByteBuf out) throws IOException {
 			out.writeByte(this.keyId);
 			out.writeByte(this.pressType);
+			modifiers.write(out);
 		}
 
 		public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
 			this.keyId = in.readByte();
 			this.pressType = in.readByte();
+			modifiers.read(in);
 
 			ItemStack helmet = ItemDojutsu.getWorn(player);
 
@@ -155,10 +175,15 @@ public class JutsuKeys {
 
 
 			if (keyId == 3 && EntityBijuManager.isJinchuriki(player) && pressType == 2) {
-				if (EntityBijuManager.cloakLevel(player) > 0 && !player.isSneaking()) {
+				int cloak = EntityBijuManager.cloakLevel(player);
+				if (cloak > 0 && !modifiers.SHIFT) {
 					EntityBijuManager.increaseCloakLevel(player);
 				} else
 					EntityBijuManager.toggleBijuCloak(player);
+
+				//				if (EntityBijuManager.getCloakXp(player) < 5000)
+				//					EntityBijuManager.addCloakXp(player, 5000);
+				//EntityBijuManager.getClosestBiju(player).setCloakCD(0);
 			}
 				
 		
