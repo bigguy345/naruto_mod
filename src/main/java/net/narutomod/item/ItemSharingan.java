@@ -1,5 +1,6 @@
 package net.narutomod.item;
 
+import com.google.common.collect.Maps;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.SoundEvent;
@@ -45,10 +46,7 @@ import net.narutomod.ModConfig;
 import net.narutomod.goatee.client.Sounds;
 import net.narutomod.goatee.client.model.ModelDojutsu;
 import net.narutomod.potion.PotionLockOn;
-import net.narutomod.procedure.ProcedureSharinganHelmetTickEvent;
-import net.narutomod.procedure.ProcedureSync;
-import net.narutomod.procedure.ProcedureUtils;
-import net.narutomod.procedure.ProcedureOnLivingUpdate;
+import net.narutomod.procedure.*;
 import net.narutomod.creativetab.TabModTab;
 import net.narutomod.ElementsNarutomodMod;
 
@@ -270,7 +268,19 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 			super.addInformation(stack, worldIn, tooltip, flagIn);
 			tooltip.add(TextFormatting.DARK_GRAY + I18n.translateToLocal("tooltip.sharingan.descr") + (isDodgeEnabled(stack) ? TextFormatting.GREEN + I18n.translateToLocal("tooltip.sharingan.dodge_on") : TextFormatting.RED + I18n.translateToLocal("tooltip.sharingan.dodge_off")) + TextFormatting.WHITE);
+			if (ItemDojutsu.is(stack, ItemSharingan.class))
+				tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu1") + ": " + TextFormatting.GRAY + I18n.translateToLocal("entity.genjutsu.name"));
+
 		}
+
+		@Override
+		public boolean onJutsuKey1(boolean is_pressed, ItemStack stack, EntityPlayer entity) {
+			if (!is_pressed)
+				return ItemInton.GENJUTSU.jutsu.createJutsu(stack, entity, 0);
+
+			return false;
+		}
+		
 	}
 
 	public static boolean hasAny(EntityPlayer player) {

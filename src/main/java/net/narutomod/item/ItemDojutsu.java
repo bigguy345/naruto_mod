@@ -229,6 +229,10 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 	public static boolean is(ItemStack stack) {
 		return stack.getItem() instanceof Base;
 	}
+
+	public static boolean is(ItemStack stack, Class<?> outerClass) {
+		return stack.getItem().getClass().getEnclosingClass() == outerClass;
+	}
 	
 	public static ItemStack getWorn(EntityLivingBase entity) {
 		if (entity instanceof EntityPlayer) {
