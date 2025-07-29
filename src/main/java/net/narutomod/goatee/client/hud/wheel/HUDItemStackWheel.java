@@ -12,6 +12,7 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.settings.KeyConflictContext;
@@ -341,7 +342,9 @@ public class HUDItemStackWheel extends GuiScreen {
         boolean inDojutsuSlot = !data.getDojutsuSlot().isEmpty();
         boolean emptyDojutsuSlotAtEnd = false;
 
-        if (inDojutsuSlot)
+        boolean renderHelmet = oldMcHelmet.getItem() == ItemBijuCloak.helmet; //add helmets here 
+
+        if (inDojutsuSlot && !renderHelmet)
             entity.inventory.armorInventory.set(EntityEquipmentSlot.HEAD.getIndex(), ItemStack.EMPTY);
         
         if (!(oldItem.getItem() instanceof ItemJutsu.Base))
@@ -364,8 +367,14 @@ public class HUDItemStackWheel extends GuiScreen {
                     if (selectedItem.isEmpty())
                         data.dojutsuSlotHandler.setStackInSlot(0, ItemStack.EMPTY);
 
+                    if (renderHelmet)
+                        entity.inventory.armorInventory.set(3, oldMcHelmet);
+
                     emptyDojutsuSlotAtEnd = !ItemDojutsu.is(entity.inventory.armorInventory.get(3));
                 }
+
+                if (selectedItem.isEmpty() && renderHelmet)
+                    entity.inventory.armorInventory.set(3, oldMcHelmet);
 
                 if (ItemTenseigan.isTenseigan(selectedItem)) {
                     entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ItemTenseigan.body));
