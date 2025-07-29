@@ -247,6 +247,18 @@ public abstract class EntityBijuManager<T extends EntityTailedBeast.Base> {
 		return list;
 	}
 
+	public static long getCloakCD(EntityPlayer player) {
+		EntityBijuManager bm = getBijuManagerFrom(player);
+		return bm != null ? bm.getCloakCD() : 0;
+	}
+
+	public static void setCloakCD(EntityPlayer player, long cd) {
+		EntityBijuManager bm = getBijuManagerFrom(player);
+		if (bm != null) {
+			bm.setCloakCD(cd);
+		}
+	}
+
 	public static EntityBijuManager getClosestBiju(EntityPlayer player) {
 		EntityBijuManager closest = null;
 
@@ -502,7 +514,6 @@ public abstract class EntityBijuManager<T extends EntityTailedBeast.Base> {
 				ItemBijuCloak.setWearingTicks(this.jinchurikiPlayer, 0);
 			}
 			this.cloakCD += i + (int)((float)level * 2f * i / Math.max(MathHelper.sqrt(MathHelper.sqrt((float)this.cloakXp[level-1])) - 3f, 1f));
-		//	cloakCD = 0;
 			this.markDirty();
 		}
 	}
