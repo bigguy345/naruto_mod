@@ -147,6 +147,7 @@ public class EntityItachi extends ElementsNarutomodMod.ModElement {
 			((ItemSharingan.Base)stack.getItem()).setOwner(stack, this);
 			((ItemSharingan.Base)stack.getItem()).setColor(stack, 0x20ec1c24);
 			this.setItemStackToSlot(EntityEquipmentSlot.HEAD, stack);
+			//this.entityDropItem(stack, 0.0f);
 			ItemStack stack1 = new ItemStack(ItemAkatsukiRobe.body);
 			stack1.setTagCompound(new NBTTagCompound());
 			stack1.getTagCompound().setBoolean("collarOpen", true);
@@ -255,7 +256,8 @@ public class EntityItachi extends ElementsNarutomodMod.ModElement {
 		public SoundEvent getDeathSound() {
 			return SoundEvents.ENTITY_ILLAGER_DEATH;
 		}
-
+
+
 		private boolean isSusanooActive() {
 			return this.susanooEntity != null && this.susanooEntity.isEntityAlive();
 		}
@@ -358,7 +360,8 @@ public class EntityItachi extends ElementsNarutomodMod.ModElement {
 
 		@Override
 		public void removeTrackingPlayer(EntityPlayerMP player) {
-			super.removeTrackingPlayer(player);
+			super.removeTrackingPlayer(player);
+
 			if (this.bossInfo.getPlayers().contains(player)) {
 				this.bossInfo.removePlayer(player);
 			}
@@ -408,7 +411,8 @@ public class EntityItachi extends ElementsNarutomodMod.ModElement {
 		@SideOnly(Side.CLIENT)
 		@Override
 		public void register() {
-			RenderingRegistry.registerEntityRenderingHandler(EntityCustom.class, renderManager -> {
+			RenderingRegistry.registerEntityRenderingHandler(EntityCustom.class, renderManager ->
+ {
 				class ModelItachi extends EntityNinjaMob.ModelNinja {
 					ModelItachi() {
 						super(0.0F);

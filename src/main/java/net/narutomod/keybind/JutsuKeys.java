@@ -175,15 +175,16 @@ public class JutsuKeys {
 
 
 			if (keyId == 3 && EntityBijuManager.isJinchuriki(player) && pressType == 2) {
+			//	EntityBijuManager.setCloakCD(player,0);
+
 				int cloak = EntityBijuManager.cloakLevel(player);
 				if (cloak > 0 && !modifiers.SHIFT) {
 					EntityBijuManager.increaseCloakLevel(player);
 				} else
 					EntityBijuManager.toggleBijuCloak(player);
 
-				//				if (EntityBijuManager.getCloakXp(player) < 5000)
-				//					EntityBijuManager.addCloakXp(player, 5000);
-				//EntityBijuManager.getClosestBiju(player).setCloakCD(0);
+//				if (EntityBijuManager.getCloakXp(player) < 5000)
+//					EntityBijuManager.addCloakXp(player, 5000);
 			}
 				
 		

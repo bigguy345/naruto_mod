@@ -479,6 +479,7 @@ public class PlayerRender extends ElementsNarutomodMod.ModElement {
 	        this.renderArmorLayer(entitylivingbaseIn, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale, EntityEquipmentSlot.CHEST);
 	        this.renderArmorLayer(entitylivingbaseIn, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale, EntityEquipmentSlot.LEGS);
 	        this.renderArmorLayer(entitylivingbaseIn, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale, EntityEquipmentSlot.FEET);
+			//	this.renderDojutsuSlot(entitylivingbaseIn, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale, EntityEquipmentSlot.HEAD);
 	        this.renderArmorLayer(entitylivingbaseIn, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale, EntityEquipmentSlot.HEAD);
 			
 		}
@@ -534,7 +535,10 @@ public class PlayerRender extends ElementsNarutomodMod.ModElement {
 			if (data == null || data.getDojutsuSlot().isEmpty())
 				return;
 
-			ItemStack eye = data.getDojutsuSlot();
+			ItemStack eye = data.getDojutsuSlot();// entityIn.getHeldItem(EnumHand.MAIN_HAND);//
+			//			if(!(eye.getItem() instanceof ItemArmor))
+			//				return;
+			//			
 			ItemArmor itemarmor = (ItemArmor) eye.getItem();
 			boolean isDojutsu = true;
 			
