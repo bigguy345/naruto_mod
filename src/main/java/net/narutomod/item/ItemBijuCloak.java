@@ -1408,7 +1408,7 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 			
 			GlStateManager.enableLighting();
 			GlStateManager.disableBlend();
-			GlStateManager.depthMask(false);
+			GlStateManager.depthMask(true);
 			GlStateManager.popMatrix();
 		}
 
