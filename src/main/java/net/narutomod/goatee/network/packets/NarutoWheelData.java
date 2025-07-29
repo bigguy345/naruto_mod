@@ -111,14 +111,15 @@ public final class NarutoWheelData extends AbstractPacket {
                         ItemRinnegan.giveClothes(targetItem, player);
                     player.setItemStackToSlot(EntityEquipmentSlot.HEAD, targetItem);
 
+                    boolean putInDojutsuSlot = ItemStack.areItemStacksEqual(data.getDojutsuSlot(), targetItem);
+
                     if (helmet.getItem() instanceof ItemDojutsu.Base) { //SWAP EYES
                         seg.putToSaved(helmet, targetItem);
 
                         if (ItemRinnegan.isRinnegan(helmet))
                             ItemRinnegan.removeClothes(player);
-                    }
-                    else {
-                        if (player.inventory.getFirstEmptyStack() != -1)
+                    } else if (!(putInDojutsuSlot && !ItemDojutsu.is(helmet))) { //selected eye was put in doj slot && the worn helmet is not mc
+                        if (player.inventory.getFirstEmptyStack() != -1) //add worn helmet to inventory
                             player.inventory.addItemStackToInventory(helmet);
                         else {
                             if (helmet.getItem() instanceof ItemDojutsu.Base)
@@ -130,7 +131,7 @@ public final class NarutoWheelData extends AbstractPacket {
 
                     //Fix mc helmet not being removed upon swapping 2 eyes
                     ItemStack newHelmet = player.inventory.armorInventory.get(EntityEquipmentSlot.HEAD.getIndex());
-                    if (ItemStack.areItemStacksEqual(newHelmet, helmet))
+                    if (ItemDojutsu.is(newHelmet) && ItemStack.areItemStacksEqual(newHelmet, helmet))
                         player.inventory.armorInventory.set(EntityEquipmentSlot.HEAD.getIndex(), ItemStack.EMPTY);
 
 
