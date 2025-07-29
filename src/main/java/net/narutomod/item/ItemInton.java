@@ -1,6 +1,7 @@
 
 package net.narutomod.item;
 
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -24,6 +25,7 @@ import net.minecraft.init.MobEffects;
 import net.narutomod.entity.EntityMindTransfer;
 import net.narutomod.entity.EntityShadowImitation;
 import net.narutomod.entity.EntityTailedBeast;
+import net.narutomod.potion.PotionGenjutsu;
 import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.procedure.ProcedureSync;
 import net.narutomod.potion.PotionParalysis;
@@ -90,10 +92,23 @@ public class ItemInton extends ElementsNarutomodMod.ModElement {
 			return false;
 		}
 
-		public static boolean createJutsu(EntityLivingBase entity, ItemStack stack, double range, int durationIn) {
+		public static boolean createJutsu(EntityLivingBase entity, ItemStack stack, double range, int durationIn, int cooldown) {
 			Entity target = ProcedureUtils.objectEntityLookingAt(entity, range).entityHit;
+			if (!(target instanceof EntityLivingBase))
+				return false;
+
+			if (((EntityLivingBase) target).isPotionActive(PotionGenjutsu.potion)) {
+				return remove(entity, (EntityLivingBase) target);
+			}
+			
+			if (cooldown > 0) { //cooldown is bigger than > 0 if implementing custom coolown logic, else set to -1 to use ItemJutsu's cooldown
+				if (entity instanceof EntityPlayer)
+					((EntityPlayer) entity).sendStatusMessage(new TextComponentTranslation("chattext.cooldown.formatted", cooldown / 20), true);
+				return false;
+			}
+			
 			if (target instanceof EntityLivingBase && createJutsu(entity, (EntityLivingBase) target, durationIn)) {
-				if (stack != null && entity instanceof EntityPlayer)
+				if (cooldown == -1 && stack != null && entity instanceof EntityPlayer)
 					ItemJutsu.setCurrentJutsuCooldown(stack, entity, 1200);
 
 				return true;
@@ -105,6 +120,7 @@ public class ItemInton extends ElementsNarutomodMod.ModElement {
 			if (canTargetBeAffected(entity, target)) {
 				entity.world.playSound(null, target.posX, target.posY, target.posZ,
 				  SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:genjutsu")), SoundCategory.NEUTRAL, 1f, 1f);
+				target.addPotionEffect(new PotionEffect(PotionGenjutsu.potion, durationIn, 1, false, false));
 				target.addPotionEffect(new PotionEffect(PotionParalysis.potion, durationIn, 1, false, false));
 				target.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, durationIn + 40, 0, false, true));
 				target.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, durationIn, 0, false, true));
@@ -115,6 +131,15 @@ public class ItemInton extends ElementsNarutomodMod.ModElement {
 				return true;
 			}
 			return false;			
+		}
+
+		public static boolean remove(EntityLivingBase entity, EntityLivingBase target) {
+			target.removePotionEffect(PotionGenjutsu.potion);
+			target.removePotionEffect(PotionParalysis.potion);
+			target.removePotionEffect(MobEffects.NAUSEA);
+			target.removePotionEffect(MobEffects.BLINDNESS);
+
+			return false;
 		}
 
 		public static boolean canTargetBeAffected(EntityLivingBase caster, EntityLivingBase target) {

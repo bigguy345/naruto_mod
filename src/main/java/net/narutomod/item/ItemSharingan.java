@@ -279,12 +279,8 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		protected int genjutsuCD;
 
 		public boolean applyGenjutsu(EntityPlayer entity, double range, int durationSeconds) {
-			if (genjutsuCD > 0) {
-				entity.sendStatusMessage(new TextComponentTranslation("chattext.cooldown.formatted", genjutsuCD / 20), true);
-				return false;
-			}
 
-			if (ItemInton.Genjutsu.createJutsu(entity, null, range, durationSeconds * 20)) {
+			if (ItemInton.Genjutsu.createJutsu(entity, null, range, durationSeconds * 20, genjutsuCD)) {
 				genjutsuCD = 10 * 20;
 				return true;
 			}
