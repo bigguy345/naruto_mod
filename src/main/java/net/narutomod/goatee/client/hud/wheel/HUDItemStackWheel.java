@@ -339,6 +339,7 @@ public class HUDItemStackWheel extends GuiScreen {
 
         ItemStack worn = ItemDojutsu.getWorn(entity);
         boolean inDojutsuSlot = !data.getDojutsuSlot().isEmpty();
+        boolean emptyDojutsuSlotAtEnd = false;
 
         if (inDojutsuSlot)
             entity.inventory.armorInventory.set(EntityEquipmentSlot.HEAD.getIndex(), ItemStack.EMPTY);
@@ -357,11 +358,13 @@ public class HUDItemStackWheel extends GuiScreen {
             } else {
                 entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, selectedItem);
 
-                if (!data.getDojutsuSlot().isEmpty()) { // A must for the dojutsu slot addon (fixes flickering in wheel when only mc helmet slot has dojutsu)
-                    entity.inventory.armorInventory.set(EntityEquipmentSlot.HEAD.getIndex(), ItemStack.EMPTY);
+                if (!data.getDojutsuSlot().isEmpty()) { // WHEN DOJUTSU ADDON IS LOADED
+                    entity.inventory.armorInventory.set(EntityEquipmentSlot.HEAD.getIndex(), ItemStack.EMPTY); // A must for the dojutsu slot addon (fixes flickering in wheel when only mc helmet slot has dojutsu)
 
                     if (selectedItem.isEmpty())
                         data.dojutsuSlotHandler.setStackInSlot(0, ItemStack.EMPTY);
+
+                    emptyDojutsuSlotAtEnd = !ItemDojutsu.is(entity.inventory.armorInventory.get(3));
                 }
 
                 if (ItemTenseigan.isTenseigan(selectedItem)) {
@@ -450,7 +453,7 @@ public class HUDItemStackWheel extends GuiScreen {
         entity.inventory.armorInventory.set(EntityEquipmentSlot.LEGS.getIndex(), oldLegs);
         entity.inventory.armorInventory.set(EntityEquipmentSlot.HEAD.getIndex(), oldMcHelmet);
 
-        if (data.getDojutsuSlot().isEmpty())  // Fixes delay in dojutsu slot addon
+        if (data.getDojutsuSlot().isEmpty() || emptyDojutsuSlotAtEnd)  // Fixes delay of switching wheel items in dojutsu slot addon, fixes GUI eye rendering in-game (not just in wheel) when no eye is equipped in dojslot addon
             data.dojutsuSlotHandler.setStackInSlot(0, ItemStack.EMPTY);
 
         if (inDojutsuSlot)
