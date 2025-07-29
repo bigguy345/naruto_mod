@@ -98,53 +98,51 @@ public class ProcedureMedicalScrollGUIOnButtonClicked extends ElementsNarutomodM
 											.getAdvancement(new ResourceLocation("narutomod:mangekyosharinganopened")))
 									.isDone()
 							: false)) {
-						newstack = new ItemStack(ItemMangekyoSharinganEternal.helmet, (int) (1));
-						((ItemSharingan.Base) newstack.getItem()).setOwner(newstack, owner);
-						if (entity instanceof EntityPlayerMP) {
-							Container _current = ((EntityPlayerMP) entity).openContainer;
-							if (_current instanceof Supplier) {
-								Object invobj = ((Supplier) _current).get();
-								if (invobj instanceof Map) {
-									ItemStack _setstack = (newstack);
-									_setstack.setCount(1);
-									((Slot) ((Map) invobj).get((int) (2))).putStack(_setstack);
-									_current.detectAndSendChanges();
+						ItemStack eternal = ((ItemSharingan.Base) stack0.getItem()).getEternalMangekyo(stack0, stack1);
+						if (!eternal.isEmpty()) {
+							((ItemSharingan.Base) eternal.getItem()).setOwner(eternal, owner);
+							if (entity instanceof EntityPlayerMP) {
+								Container _current = ((EntityPlayerMP) entity).openContainer;
+								if (_current instanceof Supplier) {
+									Object invobj = ((Supplier) _current).get();
+									if (invobj instanceof Map) {
+										ItemStack _setstack = (eternal);
+										_setstack.setCount(1);
+										((Slot) ((Map) invobj).get((int) (2))).putStack(_setstack);
+										_current.detectAndSendChanges();
+									}
 								}
 							}
-						}
-						if (entity instanceof EntityPlayerMP) {
-							Container _current = ((EntityPlayerMP) entity).openContainer;
-							if (_current instanceof Supplier) {
-								Object invobj = ((Supplier) _current).get();
-								if (invobj instanceof Map) {
-									((Slot) ((Map) invobj).get((int) (0))).decrStackSize((int) (1));
-									_current.detectAndSendChanges();
+							if (entity instanceof EntityPlayerMP) {
+								Container _current = ((EntityPlayerMP) entity).openContainer;
+								if (_current instanceof Supplier) {
+									Object invobj = ((Supplier) _current).get();
+									if (invobj instanceof Map) {
+										((Slot) ((Map) invobj).get((int) (0))).decrStackSize((int) (1));
+										_current.detectAndSendChanges();
+									}
 								}
 							}
-						}
-						if (entity instanceof EntityPlayerMP) {
-							Container _current = ((EntityPlayerMP) entity).openContainer;
-							if (_current instanceof Supplier) {
-								Object invobj = ((Supplier) _current).get();
-								if (invobj instanceof Map) {
-									((Slot) ((Map) invobj).get((int) (1))).decrStackSize((int) (1));
-									_current.detectAndSendChanges();
+							if (entity instanceof EntityPlayerMP) {
+								Container _current = ((EntityPlayerMP) entity).openContainer;
+								if (_current instanceof Supplier) {
+									Object invobj = ((Supplier) _current).get();
+									if (invobj instanceof Map) {
+										((Slot) ((Map) invobj).get((int) (1))).decrStackSize((int) (1));
+										_current.detectAndSendChanges();
+									}
 								}
 							}
-						}
-						world.playSound((EntityPlayer) null, (owner.posX), (owner.posY), (owner.posZ),
-								(net.minecraft.util.SoundEvent) net.minecraft.util.SoundEvent.REGISTRY
-										.getObject(new ResourceLocation("ui.toast.challenge_complete")),
-								SoundCategory.NEUTRAL, (float) 1, (float) 1);
-						if (owner instanceof EntityPlayerMP) {
-							Advancement _adv = ((MinecraftServer) ((EntityPlayerMP) owner).mcServer).getAdvancementManager()
-									.getAdvancement(new ResourceLocation("narutomod:eternalmangekyoachieved"));
-							AdvancementProgress _ap = ((EntityPlayerMP) owner).getAdvancements().getProgress(_adv);
-							if (!_ap.isDone()) {
-								Iterator _iterator = _ap.getRemaningCriteria().iterator();
-								while (_iterator.hasNext()) {
-									String _criterion = (String) _iterator.next();
-									((EntityPlayerMP) owner).getAdvancements().grantCriterion(_adv, _criterion);
+							world.playSound((EntityPlayer) null, (owner.posX), (owner.posY), (owner.posZ), (net.minecraft.util.SoundEvent) net.minecraft.util.SoundEvent.REGISTRY.getObject(new ResourceLocation("ui.toast.challenge_complete")), SoundCategory.NEUTRAL, (float) 1, (float) 1);
+							if (owner instanceof EntityPlayerMP) {
+								Advancement _adv = ((MinecraftServer) ((EntityPlayerMP) owner).mcServer).getAdvancementManager().getAdvancement(new ResourceLocation("narutomod:eternalmangekyoachieved"));
+								AdvancementProgress _ap = ((EntityPlayerMP) owner).getAdvancements().getProgress(_adv);
+								if (!_ap.isDone()) {
+									Iterator _iterator = _ap.getRemaningCriteria().iterator();
+									while (_iterator.hasNext()) {
+										String _criterion = (String) _iterator.next();
+										((EntityPlayerMP) owner).getAdvancements().grantCriterion(_adv, _criterion);
+									}
 								}
 							}
 						}

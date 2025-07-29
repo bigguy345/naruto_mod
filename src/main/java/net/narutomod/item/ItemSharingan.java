@@ -88,6 +88,16 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			return false;
 		}
 
+		/**
+		 * Inherit this and override it. Medical Scroll fetches this
+		 * @param mangekyo1 Owner's mangekyo
+		 * @param mangekyo2 Mangekyo to combine with
+		 * @return
+		 */
+		public ItemStack getEternalMangekyo(ItemStack mangekyo1, ItemStack mangekyo2) {
+			return new ItemStack(ItemMangekyoSharinganEternal.helmet);
+		}
+
 		@SideOnly(Side.CLIENT)
 		@Override
 		public ModelBiped getArmorModel(EntityLivingBase living, ItemStack stack, EntityEquipmentSlot slot, ModelBiped defaultModel) {
