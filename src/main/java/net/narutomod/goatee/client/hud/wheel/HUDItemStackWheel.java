@@ -297,6 +297,10 @@ public class HUDItemStackWheel extends GuiScreen {
         return x >= width - 60 && x <= width + 60 && y >= height - 90 && y <= height + 90;
     }
 
+    private static boolean renderHelmet(Item i) {
+        return i == ItemBijuCloak.helmet || i == ItemMaskObito1.helmet || i == ItemMaskObitoWar.helmet || i == ItemMaskAnbu1.helmet;
+    }
+
     public void renderPlayer(int i, int j, float partialTicks) {
         if (isMouseOverRenderer(i, j) && Mouse.isButtonDown(0)) {
             rotation -= Mouse.getDX() * 0.75f;
@@ -342,7 +346,7 @@ public class HUDItemStackWheel extends GuiScreen {
         boolean inDojutsuSlot = !data.getDojutsuSlot().isEmpty();
         boolean emptyDojutsuSlotAtEnd = false;
 
-        boolean renderHelmet = oldMcHelmet.getItem() == ItemBijuCloak.helmet; //add helmets here 
+        boolean renderHelmet = renderHelmet(oldMcHelmet.getItem()); //add helmets here
 
         if (inDojutsuSlot && !renderHelmet)
             entity.inventory.armorInventory.set(EntityEquipmentSlot.HEAD.getIndex(), ItemStack.EMPTY);
