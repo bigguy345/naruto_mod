@@ -54,10 +54,11 @@ public class DojutsuData {
     }
 
     public boolean useAdvancedModel(ItemStack stack) {
-        return eye.useAdvancedModel() || stack.getTagCompound().getBoolean("useAdvancedModel");
+        return eye.useAdvancedModel() || stack.hasTagCompound() && stack.getTagCompound().getBoolean("useAdvancedModel");
     }
 
     public void useAdvancedModel(ItemStack stack, boolean use) {
-        stack.getTagCompound().setBoolean("useAdvancedModel", use);
+        if (stack.hasTagCompound())
+            stack.getTagCompound().setBoolean("useAdvancedModel", use);
     }
 }
