@@ -150,13 +150,16 @@ public class WheelData {
         }
 
         public static boolean hasDefaultSlot(ItemStack stack, String wheelName) {
-            if (stack.isEmpty())
+            if (stack.isEmpty() || !stack.hasTagCompound())
                 return false;
 
             return stack.getTagCompound().hasKey(wheelName + "Slot");
         }
 
         public static int getDefaultSlot(ItemStack stack, String wheelName) {
+            if (!stack.hasTagCompound())
+                return 0;
+
             return stack.getTagCompound().getByte(wheelName + "Slot");
         }
 
@@ -173,6 +176,9 @@ public class WheelData {
         }
 
         public void setDefaultSlot(int slot) {
+            if (!stack.hasTagCompound())
+                stack.setTagCompound(new NBTTagCompound());
+            
             stack.getTagCompound().setByte(parent.NAME + "Slot", (byte) slot);
 
             if (parent.player != null)
@@ -184,10 +190,10 @@ public class WheelData {
                 parent.player.sendMessage(new TextComponentTranslation("dojutsuwheel.not_assigned", stack.getItem().getItemStackDisplayName(stack)));
                 return;
             }
-                
             
             int saveSlot = getDefaultSlot();
-            stack.getTagCompound().removeTag(parent.NAME + "Slot");
+            if (stack.hasTagCompound())
+                stack.getTagCompound().removeTag(parent.NAME + "Slot");
 
             if (parent.player != null)
                 parent.player.sendMessage(new TextComponentTranslation("dojutsuwheel.remove_default", stack.getItem().getItemStackDisplayName(stack), TextFormatting.RED + "" + saveSlot));
