@@ -115,21 +115,37 @@ public enum KekkeiGenkai {
     },
     MANGEKYO(ItemMangekyoSharingan.helmet, "narutomod:mangekyosharinganopened") {
         public Item getItem() {
-            return Math.random() < 0.5 ? ItemMangekyoSharingan.helmet : ItemMangekyoSharinganObito.helmet;
+            return ItemSharingan.getRandomMangekyoFromPool();
         }
 
         public void remove(EntityPlayerMP player) {
             if (AdvancementUtil.revoke(player, achievement)) {
                 ProcedureUtils.getAllItemsOfSubType(player, ItemSharingan.Base.class).forEach((stack -> {
                     ItemSharingan.Base sharingan = (ItemSharingan.Base) stack.getItem();
-                    if (sharingan.isMangekyo() && !sharingan.isEternal() && sharingan.isOwner(stack, player))
+                    if (sharingan.getTier(stack) == ItemDojutsu.Tier.MANGEKYO && sharingan.isOwner(stack, player))
                         stack.shrink(1);
                 }));
             }
         }
 
     },
-    ETERNAL_MANGEKYO(ItemMangekyoSharinganEternal.helmet, "narutomod:eternalmangekyoachieved"),
+    ETERNAL_MANGEKYO(ItemMangekyoSharinganEternal.helmet, "narutomod:eternalmangekyoachieved") {
+        public ItemStack applyToItemStack(ItemStack original, EntityPlayer player) {
+            Item foundMangekyo = null;
+            List<ItemStack> playerMangekyos = ProcedureUtils.getAllItemsOfSubType(player, ItemSharingan.Base.class);
+            for (ItemStack stack : playerMangekyos) {
+                ItemSharingan.Base sharingan = (ItemSharingan.Base) stack.getItem();
+                if (sharingan.getTier(stack) == ItemDojutsu.Tier.MANGEKYO && sharingan.isOwner(stack, player))
+                    foundMangekyo = sharingan.getEternalMangekyo(ItemStack.EMPTY, ItemStack.EMPTY).getItem();
+            }
+
+
+            if (foundMangekyo == null)
+                foundMangekyo = ItemSharingan.getRandomEternal();
+
+            return createItemStack(foundMangekyo, player);
+        }
+    },
     RINNEGAN(ItemRinnegan.helmet, "narutomod:rinneganawakened");
 
     public Item item;
@@ -157,7 +173,7 @@ public enum KekkeiGenkai {
 
     }
 
-    public ItemStack applyToItemStack(ItemStack stack, EntityLivingBase player) {
+    public ItemStack applyToItemStack(ItemStack stack, EntityPlayer player) {
         return stack;
     }
 

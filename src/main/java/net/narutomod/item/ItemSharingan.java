@@ -103,6 +103,10 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		return null; 
 	}
 
+	public static Item getRandomEternal() {
+		return ((ItemSharingan.Base) ItemSharingan.getRandomMangekyoFromPool()).getEternalMangekyo(ItemStack.EMPTY, ItemStack.EMPTY).getItem();
+	}
+
 	public static class Base extends ItemDojutsu.Base {
 		private boolean canDamage;
 
