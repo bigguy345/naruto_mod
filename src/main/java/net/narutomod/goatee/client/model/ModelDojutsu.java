@@ -38,11 +38,18 @@ public class ModelDojutsu extends ModelBiped {
     public boolean foreheadHide;
     public boolean rinnesharinganBase;
 
-    public String rightTexture, leftTexture, eyeBaseTexture;
+    public String rightTexture, leftTexture;
+    public String rightBaseTex, leftBaseTex, eyeBaseTexture;
+
     public String rinnesharinganTexture; // full s06p helmet texture with horns and all
 
     public boolean isS06P;
     public int leftColor = 0xffffff, rightColor = 0xffffff;
+
+    public float rightOffsetX = 1, leftOffsetX = 1;
+    public float rightOffsetY = 1, leftOffsetY = 1;
+    public float rightScale = 1, leftScale = 1;
+    
     public float alpha = 1;
 
     public ModelDojutsu() {
@@ -209,7 +216,7 @@ public class ModelDojutsu extends ModelBiped {
     public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         if (!render)
             return;
-        ;
+
         this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entityIn);
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
@@ -269,33 +276,54 @@ public class ModelDojutsu extends ModelBiped {
             //   leftTexture = "narutomod:textures/rinneganhelmet.png";
             //   leftTexture = "narutomod:textures/rinneganhelmet.png";
 
-            bindTexture(leftTexture);
+            boolean hasLeftBase = leftBaseTex != null && !leftBaseTex.isEmpty();
+            if (hasLeftBase)
+                bindTexture(leftBaseTex);
+            else
+                bindTexture(leftTexture);
+            
             eyeBaseL.render(scale);
+            if (hasLeftBase)
+                bindTexture(leftTexture);
 
+            GlStateManager.pushMatrix();
             RenderUtils.disableLightMap();
             float r = (float) (leftColor >> 16 & 255) / 255.0F;
             float g = (float) (leftColor >> 8 & 255) / 255.0F;
             float b = (float) (leftColor & 255) / 255.0F;
             GlStateManager.color(r, g, b, alpha);
+            GlStateManager.scale(leftScale, leftScale, leftScale);
             this.leftEye.render(scale);
             RenderUtils.enableLightmap(entityIn);
-
+            GlStateManager.popMatrix();
             //            rightTexture = "narutomod:textures/mangekyosharinganhelmet_obito.png";
             //            rightTexture = "narutomod:textures/rinneganhelmet.png";
             //            rightTexture = "narutomod:textures/sharinganhelmet.png";
             //            rightTexture = "narutomod:textures/tenseiganhelmet.png";
             //            rightTexture = "narutomod:textures/byakuganhelmet.png";
-            bindTexture(rightTexture);
-            GlStateManager.color(1, 1, 1, alpha);
-            eyeBaseR.render(scale);
 
+
+            GlStateManager.color(1, 1, 1, alpha);
+            boolean hasRightBase = rightBaseTex != null && !rightBaseTex.isEmpty();
+            if (hasRightBase)
+                bindTexture(rightBaseTex);
+            else
+                bindTexture(rightTexture);
+            
+            eyeBaseR.render(scale);
+            if (hasRightBase)
+                bindTexture(rightTexture);
+
+            GlStateManager.pushMatrix();
             RenderUtils.disableLightMap();
             r = (float) (rightColor >> 16 & 255) / 255.0F;
             g = (float) (rightColor >> 8 & 255) / 255.0F;
             b = (float) (rightColor & 255) / 255.0F;
             GlStateManager.color(r, g, b, alpha);
+            GlStateManager.scale(rightScale, rightScale, rightScale);
             this.rightEye.render(scale);
             RenderUtils.enableLightmap(entityIn);
+            GlStateManager.popMatrix();
         }
 
 
@@ -346,12 +374,30 @@ public class ModelDojutsu extends ModelBiped {
         SideData right = eye.data.getRight(stack);
 
         model.leftTexture = left.getFinalTexture(living);
+        model.leftBaseTex = left.getEyeBaseTexture();
+        
         model.rightTexture = right.getFinalTexture(living);
+        model.rightBaseTex = right.getEyeBaseTexture();
+        
         model.rinnesharinganTexture = eye.getRinnesharinganTexture(stack, living);
 
         model.leftColor = left.getFinalColor(living);
         model.rightColor = right.getFinalColor(living);
         model.alpha = 1;
+
+        model.leftOffsetX = left.getOffsetX();
+        model.leftOffsetY = left.getOffsetY();
+        model.leftScale = left.getScale();
+
+        model.rightOffsetX = right.getOffsetX();
+        model.rightOffsetY = right.getOffsetY();
+        model.rightScale = right.getScale();
+
+        if (left.isTextureHD())
+            RenderUtils.convertToHD(model, left);
+
+        if (right.isTextureHD())
+            RenderUtils.convertToHD(model, right);
 
         applyBijuuCloakModifications(model, living, stack, eye);
        

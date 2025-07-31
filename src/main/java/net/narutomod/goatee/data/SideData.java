@@ -19,7 +19,11 @@ public class SideData {
     public NBTTagCompound tag;
 
     private int color = 0xffffff;
-    private String texture = "";
+    private String texture = "", eyeBaseTexture = "";
+    private boolean isTextureHD;
+
+    private float offsetX, offsetY;
+    private float scale = 1;
 
     public boolean inactive;
     public String inactiveTexture;
@@ -59,12 +63,35 @@ public class SideData {
         return this;
     }
 
+    public int getFinalColor(EntityLivingBase entity) {
+        return hasColor() ? getColor() : 0xffffff;
+    }
+
+    public boolean isTextureHD() {
+        return isTextureHD;
+    }
+
+    public SideData setTextureHD(boolean bo) {
+        tag.setBoolean("isTextureHD", isTextureHD = bo);
+        return this;
+    }
+
     public boolean hasTexture() {
         return !texture.isEmpty();
     }
 
     public String getTexture() {
         return texture;
+    }
+
+    public SideData setTexture(String tex) {
+        tag.setString("texture", texture = tex);
+        return this;
+    }
+
+    public SideData setTexture(ItemStack stack) {
+        tag.setString("texture", texture = getEyeTexture(stack, null));
+        return this;
     }
     
     public String getFinalTexture(EntityLivingBase entity){
@@ -78,19 +105,43 @@ public class SideData {
             return item.getLeftEyeTexture(stack, entity, this);
     }
 
-
-    public int getFinalColor(EntityLivingBase entity){
-        return hasColor() ? getColor() : 0xffffff;
+    public boolean hasEyeBaseTexture() {
+        return !eyeBaseTexture.isEmpty();
     }
 
+    public String getEyeBaseTexture() {
+        return eyeBaseTexture;
+    }
 
-    public SideData setTexture(String tex) {
-        tag.setString("texture", texture = tex);
+    public SideData setEyeBaseTexture(String tex) {
+        tag.setString("eyeBaseTexture", eyeBaseTexture = tex);
         return this;
     }
 
-    public SideData setTexture(ItemStack stack) {
-        tag.setString("texture", texture = getEyeTexture(stack, null));
+    public float getOffsetX() {
+        return offsetX;
+    }
+
+    public SideData setOffsetX(float offsetX) {
+        tag.setFloat("offsetX", this.offsetX = offsetX);
+        return this;
+    }
+
+    public float getOffsetY() {
+        return offsetY;
+    }
+
+    public SideData setOffsetY(float offsetY) {
+        tag.setFloat("offsetY", this.offsetY = offsetY);
+        return this;
+    }
+
+    public float getScale() {
+        return scale;
+    }
+
+    public SideData setScale(float scale) {
+        tag.setFloat("scale", this.scale = scale);
         return this;
     }
 
