@@ -359,7 +359,7 @@ public static boolean dropOnForceDojutsuDrop(Item eye){
 		RINNEGAN(4),
 		RINNESHARINGAN(5);
 
-		private final int level;
+		public final int level;
 
 		Tier(int level) {
 			this.level = level;
@@ -369,8 +369,10 @@ public static boolean dropOnForceDojutsuDrop(Item eye){
 			return level;
 		}
 
-		public boolean isAtLeast(Tier other) {
-			return this.level >= other.level;
+		public boolean canRemoveGenjutsuFrom(ItemDojutsu.Tier caster) {
+			if (caster.level <= SHARINGAN.level)  //no dojutsu or higher removes sharingan 3 tomoe
+				return true;
+			return this.level >= caster.level - 1; //sharingan+ removes mangekyo, mangekyo+ removes eternal, eternal+ removes rinnegan, rinne+ removes rinnesharin
 		}
 	}
 

@@ -1,36 +1,38 @@
 
 package net.narutomod.item;
 
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-
-import net.minecraft.world.World;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Item;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.Entity;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.init.MobEffects;
-
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.narutomod.ElementsNarutomodMod;
+import net.narutomod.creativetab.TabModTab;
 import net.narutomod.entity.EntityMindTransfer;
 import net.narutomod.entity.EntityShadowImitation;
 import net.narutomod.entity.EntityTailedBeast;
 import net.narutomod.potion.PotionGenjutsu;
-import net.narutomod.procedure.ProcedureUtils;
-import net.narutomod.procedure.ProcedureSync;
 import net.narutomod.potion.PotionParalysis;
-import net.narutomod.creativetab.TabModTab;
-import net.narutomod.ElementsNarutomodMod;
+import net.narutomod.procedure.ProcedureSync;
+import net.narutomod.procedure.ProcedureUtils;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @ElementsNarutomodMod.ModElement.Tag
 public class ItemInton extends ElementsNarutomodMod.ModElement {
@@ -115,15 +117,18 @@ public class ItemInton extends ElementsNarutomodMod.ModElement {
 			}
 			return false;
 		}
-		
+
 		public static boolean createJutsu(EntityLivingBase entity, EntityLivingBase target, int durationIn) {
 			if (canTargetBeAffected(entity, target)) {
 				entity.world.playSound(null, target.posX, target.posY, target.posZ,
 				  SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:genjutsu")), SoundCategory.NEUTRAL, 1f, 1f);
-				target.addPotionEffect(new PotionEffect(PotionGenjutsu.potion, durationIn, 1, false, false));
+
+				target.addPotionEffect(new PotionEffect(PotionGenjutsu.potion, durationIn, 0));
+				GENJUTSU_CASTER_MAP.put(target.getUniqueID(), entity.getUniqueID());
+
 				target.addPotionEffect(new PotionEffect(PotionParalysis.potion, durationIn, 1, false, false));
-				target.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, durationIn + 40, 0, false, true));
-				target.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, durationIn, 0, false, true));
+				target.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, durationIn + 40, 0, false, false));
+				target.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, durationIn, 0, false, false));
 				if (target instanceof EntityPlayerMP) {
 					ProcedureSync.MobAppearanceParticle.send((EntityPlayerMP)target, entity.getEntityId());
 				}
@@ -133,11 +138,36 @@ public class ItemInton extends ElementsNarutomodMod.ModElement {
 			return false;			
 		}
 
-		public static boolean remove(EntityLivingBase entity, EntityLivingBase target) {
-			target.removePotionEffect(PotionGenjutsu.potion);
-			target.removePotionEffect(PotionParalysis.potion);
-			target.removePotionEffect(MobEffects.NAUSEA);
-			target.removePotionEffect(MobEffects.BLINDNESS);
+		public static final Map<UUID, UUID> GENJUTSU_CASTER_MAP = new HashMap<>();
+
+		public static EntityLivingBase getGenjutsuCaster(EntityLivingBase target) {
+			UUID casterId = GENJUTSU_CASTER_MAP.get(target.getUniqueID());
+			if (casterId != null && target.world instanceof WorldServer)
+				return (EntityLivingBase) ((WorldServer) target.world).getEntityFromUuid(casterId);
+
+			return null;
+		}
+
+		public static boolean remove(EntityLivingBase remover, EntityLivingBase target) {
+			boolean remove;
+			EntityLivingBase caster = getGenjutsuCaster(target);
+
+			if (caster == null || caster.equals(remover))
+				remove = true;
+			else {
+				ItemDojutsu.Tier casterTier = ItemDojutsu.getTier(ItemDojutsu.getWorn(caster));
+				ItemDojutsu.Tier removerTier = ItemDojutsu.getTier(ItemDojutsu.getWorn(remover));
+
+				remove = removerTier.canRemoveGenjutsuFrom(casterTier);
+			}
+
+			if (remove) {
+				target.removePotionEffect(PotionGenjutsu.potion);
+				target.removePotionEffect(PotionParalysis.potion);
+				target.removePotionEffect(MobEffects.NAUSEA);
+				target.removePotionEffect(MobEffects.BLINDNESS);
+				return true;
+			}
 
 			return false;
 		}

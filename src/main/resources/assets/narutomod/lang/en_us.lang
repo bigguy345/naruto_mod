@@ -823,6 +823,7 @@ key.teleport_behind=Teleport Behind (Hiraishin)
 
 item.sharingan.lock_on_cooldown=Cooldown: %ss
 effect.lock_on=Lock On
+effect.genjutsu=Genjutsu
 
 item.rinnegantomoehelmet.name=Rinnegan Tomoe
 item.rinnegantomoehelmet.sharingan_status=Sharingan status: 
@@ -850,5 +851,3 @@ hiraishin.teleport_behind.not_safe=Not safe to teleport!
 command.kekkei_genkai.already_has=%s already has %s
 command.kekkei_genkai.doesn't_have=%s doesn't have %s
 command.kekkei_genkai.removed=Revoked %s from %s
-
-potion.effect.genjutsu=Genjutsu
