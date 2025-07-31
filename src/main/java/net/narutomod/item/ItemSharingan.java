@@ -569,8 +569,8 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			if (event.getButton() == 1 && hasTargetLockOnEntity(player)) {
 				//boolean flag = player.getEntityData().getBoolean("shouldTargetLockOnEntity");
 				boolean flag = !event.isButtonstate();
-				player.getEntityData().setBoolean(shouldTargetLockOnEntity, !flag);
-				ProcedureSync.EntityNBTTag.sendToServer(player, shouldTargetLockOnEntity, !flag);
+			//	player.getEntityData().setBoolean(shouldTargetLockOnEntity, !flag);
+			//	ProcedureSync.EntityNBTTag.sendToServer(player, shouldTargetLockOnEntity, !flag);
 			}
 		}
 
