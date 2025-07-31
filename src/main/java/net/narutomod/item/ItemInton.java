@@ -30,6 +30,8 @@ import net.narutomod.potion.PotionParalysis;
 import net.narutomod.procedure.ProcedureSync;
 import net.narutomod.procedure.ProcedureUtils;
 
+import static net.narutomod.item.ItemDojutsu.Tier.*;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -118,21 +120,21 @@ public class ItemInton extends ElementsNarutomodMod.ModElement {
 			return false;
 		}
 
-		public static boolean createJutsu(EntityLivingBase entity, EntityLivingBase target, int durationIn) {
-			if (canTargetBeAffected(entity, target)) {
-				entity.world.playSound(null, target.posX, target.posY, target.posZ,
+		public static boolean createJutsu(EntityLivingBase caster, EntityLivingBase target, int durationIn) {
+			if (canTargetBeAffected(caster, target)) {
+				caster.world.playSound(null, target.posX, target.posY, target.posZ,
 				  SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:genjutsu")), SoundCategory.NEUTRAL, 1f, 1f);
 
 				target.addPotionEffect(new PotionEffect(PotionGenjutsu.potion, durationIn, 0));
-				GENJUTSU_CASTER_MAP.put(target.getUniqueID(), entity.getUniqueID());
+				GENJUTSU_CASTER_MAP.put(target.getUniqueID(), caster.getUniqueID());
 
 				target.addPotionEffect(new PotionEffect(PotionParalysis.potion, durationIn, 1, false, false));
 				target.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, durationIn + 40, 0, false, false));
 				target.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, durationIn, 0, false, false));
 				if (target instanceof EntityPlayerMP) {
-					ProcedureSync.MobAppearanceParticle.send((EntityPlayerMP)target, entity.getEntityId());
+					ProcedureSync.MobAppearanceParticle.send((EntityPlayerMP)target, caster.getEntityId());
 				}
-				target.setRevengeTarget(entity);
+				target.setRevengeTarget(caster);
 				return true;
 			}
 			return false;			
@@ -173,21 +175,29 @@ public class ItemInton extends ElementsNarutomodMod.ModElement {
 		}
 
 		public static boolean canTargetBeAffected(EntityLivingBase caster, EntityLivingBase target) {
-			if (target instanceof EntityTailedBeast.Base && !ItemSharingan.wearingAny(caster)) 
-				return false;
-			else if (ItemRinnegan.isWearing(target) && (!ItemRinnegan.isWearing(caster) || !ItemSharingan.isWearingEternal(caster)))
-				return false;
-			else if (ItemSharingan.isWearingEternal(target) && !ItemSharingan.isWearingEternal(caster))
-				return false;
-			else if (ItemSharingan.isWearingMangekyo(target) && !ItemSharingan.isWearingMangekyo(caster))
+			if (target instanceof EntityTailedBeast.Base && !ItemSharingan.wearingAny(caster))
 				return false;
 			else {
-				ItemStack stack = ProcedureUtils.getMatchingItemStack(target, ItemNinjutsu.block);
-				if (stack != null && ItemNinjutsu.isJutsuEnabled(stack, ItemNinjutsu.BUGSWARM)) {
+				ItemDojutsu.Tier casterTier = ItemDojutsu.getTier(ItemDojutsu.getWorn(caster));
+				ItemDojutsu.Tier targetTier = ItemDojutsu.getTier(ItemDojutsu.getWorn(target));
+
+				if (targetTier.level <= SHARINGAN.level) //anyone can apply genjutsu on 3 tomoe sharin/byakugan
+					return true;
+				else if (casterTier.level >= RINNEGAN.level) //rinnegan applies genjutsu on every1 including rinnesharingan
+					return true;
+				else if (casterTier.level == ETERNAL.level &&  targetTier.level <= RINNESHARINGAN.level) //eternal can apply on every1 except rinnesharingan
+					return true;
+				else if (targetTier.level > casterTier.level) // sharingan cant on mangekyo, mangekyo cant on eternal
 					return false;
+
+				else {
+					ItemStack stack = ProcedureUtils.getMatchingItemStack(target, ItemNinjutsu.block);
+					if (stack != null && ItemNinjutsu.isJutsuEnabled(stack, ItemNinjutsu.BUGSWARM)) {
+						return false;
+					}
 				}
+				return true;
 			}
-			return true;
 		}
 	}
 }
