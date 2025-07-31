@@ -30,7 +30,7 @@ public class PotionLockOn extends ElementsNarutomodMod.ModElement {
 		private final ResourceLocation potionIcon;
 
 		public PotionCustom() {
-			super(false, -1);
+			super(false, 0x0);
 			this.setBeneficial();
 			this.setRegistryName("lock_on");
 			this.setPotionName("effect.lock_on");
