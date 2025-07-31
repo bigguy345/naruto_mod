@@ -427,7 +427,10 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static int getWearingTicks(Entity entity) {
-		return entity.getEntityData().getInteger("WearingBijuCloakTicks");
+		if (entity.getEntityData().hasKey("WearingBijuCloakTicks"))
+			return entity.getEntityData().getInteger("WearingBijuCloakTicks");
+
+		return 80;
 	}
 
 	private void setWearingFullSet(ItemStack itemstack, boolean b) {
