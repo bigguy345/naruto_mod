@@ -49,8 +49,8 @@ import net.narutomod.procedure.*;
 import net.narutomod.creativetab.TabModTab;
 import net.narutomod.ElementsNarutomodMod;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Nullable;
 import net.minecraft.util.math.RayTraceResult;
 
@@ -61,6 +61,46 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 	
 	public ItemSharingan(ElementsNarutomodMod instance) {
 		super(instance, 56);
+	}
+
+	public static final HashMap<Item, Integer> MANGEKYO_POOL = new HashMap<>();
+
+	@Override
+	public void init(FMLInitializationEvent event) {
+		MinecraftForge.EVENT_BUS.register(new LockOn());
+		addMangekyoToPool(ItemMangekyoSharingan.helmet, 50);
+		addMangekyoToPool(ItemMangekyoSharinganObito.helmet, 50);
+		
+	}
+
+	public static void addMangekyoToPool(Item mangekyo, int weight) {
+		MANGEKYO_POOL.put(mangekyo, weight);
+	}
+	
+
+	public static Item getRandomMangekyoFromPool() {
+		Random rand = ThreadLocalRandom.current();
+		
+		int totalWeight = 0;
+		for (int weight : MANGEKYO_POOL.values()) 
+			totalWeight += weight;
+		
+		if (totalWeight <= 0 || MANGEKYO_POOL.isEmpty()) {
+			return null; 
+		}
+
+		int randomWeight = rand.nextInt(totalWeight); // [0, totalWeight)
+		int runningWeight = 0;
+
+		// Step 3: Find the item corresponding to this weight
+		for (Map.Entry<Item, Integer> entry : MANGEKYO_POOL.entrySet()) {
+			runningWeight += entry.getValue();
+			if (randomWeight < runningWeight) {
+				return entry.getKey();
+			}
+		}
+
+		return null; 
 	}
 
 	public static class Base extends ItemDojutsu.Base {
@@ -642,10 +682,6 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		ModelLoader.setCustomModelResourceLocation(helmet, 0, new ModelResourceLocation("narutomod:sharinganhelmet", "inventory"));
 	}
 
-	@Override
-	public void init(FMLInitializationEvent event) {
-		MinecraftForge.EVENT_BUS.register(new LockOn());
-	}
 
 	public enum Type {
 		BASE,

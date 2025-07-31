@@ -3,8 +3,6 @@ package net.narutomod.procedure;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.narutomod.goatee.util.AdvancementUtil;
 import net.narutomod.item.ItemSharingan;
-import net.narutomod.item.ItemMangekyoSharinganObito;
-import net.narutomod.item.ItemMangekyoSharingan;
 import net.narutomod.item.ItemDojutsu;
 import net.narutomod.PlayerTracker;
 import net.narutomod.NarutomodModVariables;
@@ -143,11 +141,7 @@ public class ProcedureSharinganHelmetTickEvent extends ElementsNarutomodMod.ModE
 			}
 			if (itemstack.getItem() == ItemSharingan.helmet && entity.getEntityData().getDouble(NarutomodModVariables.BATTLEXP) >= 1000) {
 				if (!AdvancementUtil.has((EntityPlayerMP) entity, "narutomod:mangekyosharinganopened") && PlayerTracker.Deaths.hasRecentNearby((EntityPlayer) entity, 40D, 6000D) && (!(world.isRemote))) {//PlayerTracker.Deaths.hasRecentNearby((EntityPlayer) entity, 40D, 6000D) && (!(world.isRemote))) {
-					if ((Math.random() < 0.5)) {
-						mangekyo = new ItemStack(ItemMangekyoSharingan.helmet, (int) (1));
-					} else {
-						mangekyo = new ItemStack(ItemMangekyoSharinganObito.helmet, (int) (1));
-					}
+					mangekyo = new ItemStack(ItemSharingan.getRandomMangekyoFromPool());
 					EntityLivingBase owner = ((ItemDojutsu.Base) itemstack.getItem()).getOwner(itemstack, world);
 					((ItemSharingan.Base) mangekyo.getItem()).setOwner(mangekyo, owner);
 					if (entity instanceof EntityPlayer) {
