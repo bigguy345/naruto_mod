@@ -203,15 +203,23 @@ public class ModelDojutsu extends ModelBiped {
         this.textureWidth = 64;
         this.textureHeight = 16;
 
+        rightEye = new ModelRenderer(this);
+        rightEye.setRotationPoint(0.0F, 0.0F, 0.0F);
+        eyeBaseR = new ModelRenderer(this);
+        eyeBaseR.setRotationPoint(0.0F, 0.0F, 0.0f);
         setBox(this.eyeBaseR, 8, 8, -4F, -8F, -4.1F, 4, 8, 0, 0.1F, false);
         setBox(this.rightEye, 24, 0, -4F, -8F, -4.1F, 4, 8, 0, 0.1F, false);
 
-        setBox(eyeBaseL, 4, 8, 0.1f, -8F, -4.2f, 4, 8, 0, 0.01f, false);
+        leftEye = new ModelRenderer(this);
+        leftEye.setRotationPoint(0.0F, 0.0F, 0.0f);
+        eyeBaseL = new ModelRenderer(this);
+        eyeBaseL.setRotationPoint(0.0F, 0.0F, 0.0f);
+
+        setBox(this.eyeBaseL, 12, 8, 0f, -8F, -4.1f, 4, 8, 0, 0.1f, false);
         setBox(this.leftEye, 28, 0, 0F, -8F, -4.1F, 4, 8, 0, 0.1F, false);
 
         markDirty = false;
     }
-
     @Override
     public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         if (!render)
