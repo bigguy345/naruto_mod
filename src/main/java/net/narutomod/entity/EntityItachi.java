@@ -1,6 +1,7 @@
 
 package net.narutomod.entity;
 
+import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
@@ -205,6 +206,7 @@ public class EntityItachi extends ElementsNarutomodMod.ModElement {
 			this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
 		}
 
+		private int ticksSinceLastTargeted;
 		@Override
 		protected void updateAITasks() {
 			super.updateAITasks();
@@ -232,7 +234,15 @@ public class EntityItachi extends ElementsNarutomodMod.ModElement {
 					this.susanooEntity.setDead();
 				}
 			}
-			if ((this.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == ItemMangekyoSharingan.helmet) != (target != null)) {
+
+			target = getAttackTarget();
+			if (target == null)
+				ticksSinceLastTargeted++;
+			else
+				ticksSinceLastTargeted = 0;
+
+			Item helmet = getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem();
+			if (helmet== ItemMangekyoSharingan.helmet && ticksSinceLastTargeted >= 60 || helmet == ItemAkatsukiRobe.helmet && target != null) {
 				this.swapWithInventory(EntityEquipmentSlot.HEAD, 1);
 			}
 		}
