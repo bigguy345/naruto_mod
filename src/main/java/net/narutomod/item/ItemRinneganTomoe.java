@@ -224,15 +224,21 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             if (isRinnesharinganActivated(stack))
                 return "narutomod:textures/rinnesharingantomoehelmet.png";
             else if (sharinganOn(stack))
-                return "narutomod:textures/rinnegantomoehelmet_sharingan.png";
+                return "narutomod:textures/sharinganhelmet.png";
             else if (eternalOn(stack))
-                return "narutomod:textures/rinnegantomoehelmet_eternal.png";
+                return "narutomod:textures/mangekyosharinganhelmet_eternal.png";
+            
+            //            side.setTextureHD(true);
+            //            side.setOffsetX(0.2f);
+            //            side.setOffsetY(-0.06f);
+            //            side.setColor(0x55555a);
+            //            side.setEyeBaseTexture("narutomod:textures/rinnegantomoehelmet_off.png"); "narutomod:textures/eye/base.png";//
+            return "narutomod:textures/eye/blackpupils.png";
 
-            return "narutomod:textures/rinnegantomoehelmet_off.png";
         }
 
         public String getLeftEyeTexture(ItemStack stack, Entity entity, SideData side) {
-            return "narutomod:textures/rinnegantomoehelmet_eternal.png";
+          return "narutomod:textures/rinnegantomoehelmet.png";
         }
 
         public String getRinnesharinganTexture(ItemStack stack, Entity entity) {
