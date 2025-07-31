@@ -52,7 +52,7 @@ public class AdvancementUtil {
             player.getAdvancements().revokeCriterion(advancement, criterion);
 
 
-        return playerProgress.isDone();
+        return !playerProgress.isDone();
     }
 
     public static boolean has(EntityPlayerMP player, String advancementId) {
