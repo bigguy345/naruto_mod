@@ -330,7 +330,12 @@ public class EntityKageBunshin extends ElementsNarutomodMod.ModElement {
 				if (!(entity instanceof EntityPlayer) || Chakra.pathway(entity).getAmount() >= 2000.0d) {
 					entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, SoundEvent.REGISTRY
 					  .getObject(new ResourceLocation("narutomod:kagebunshin")), SoundCategory.NEUTRAL, 1.0F, 1.0F);
-					EC newClone = new EC(entity);
+					EC newClone;
+
+					if (EntityBijuManager.cloakLevel((EntityPlayer) entity) == 3)
+						newClone = new EC(EntityBijuManager.getBijuOfPlayerInWorld((EntityPlayer) entity));
+					else
+						newClone = new EC(entity);
 					newClone.setPosition(newClone.posX + (entity.getRNG().nextBoolean() ? -0.1d : 0.1d), newClone.posY, newClone.posZ + (entity.getRNG().nextBoolean() ? -0.1d : 0.1d));
 					entity.world.spawnEntity(newClone);
 					updateClones(entity, newClone);
@@ -357,7 +362,8 @@ public class EntityKageBunshin extends ElementsNarutomodMod.ModElement {
 					chakra.consume(d);
 					Chakra.pathway(clone).setMax(d).consume(-d);
 					entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier(MAXHEALTH, "maxhealth.modifier", entity.getHealth() * clones.size() / (clones.size() + 1) - entity.getMaxHealth(), 0));
-				} else if (clones.size() > 0) {
+				}
+ else if (clones.size() > 0) {
 					entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier(MAXHEALTH, "maxhealth.modifier", -clone.getMaxHealth() * clones.size(), 0));
 				}
 				if (entity.getHealth() > entity.getMaxHealth()) {
@@ -408,7 +414,12 @@ public class EntityKageBunshin extends ElementsNarutomodMod.ModElement {
 						entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, SoundEvent.REGISTRY
 						  .getObject(new ResourceLocation("narutomod:kagebunshin")), SoundCategory.NEUTRAL, 1.0F, 1.0F);
 						for (int i = 0, j = (int)Math.pow(2, power); i < j; i++) {
-							EC newClone = new EC(entity);
+							EC newClone;
+
+							if (EntityBijuManager.cloakLevel((EntityPlayer) entity) == 3)
+								newClone = new EC(EntityBijuManager.getBijuOfPlayerInWorld((EntityPlayer) entity));
+							else
+								newClone = new EC(entity);
 							Vec3d vec = newClone.getPositionVector().addVector((entity.getRNG().nextDouble()-0.5d) * j * 0.3, 0.1, (entity.getRNG().nextDouble()-0.5d) * j * 0.3);
 							newClone.setPosition(vec.x, 0.1d + ProcedureUtils.getTopSolidBlockY(entity.world, new BlockPos(vec)), vec.z);
 							entity.world.spawnEntity(newClone);

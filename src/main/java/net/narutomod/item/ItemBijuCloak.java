@@ -97,7 +97,7 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 				int cloaklevel = getCloakLevel(stack);
 				armorModel.earLeft[0].showModel = armorModel.earRight[0].showModel = (tails != 1);
 				armorModel.sandHeadL2.showModel = tails == 1 && cloaklevel == 2;
-				armorModel.bodyShine = tails == 9 && cloaklevel == 2 && getCloakXp(stack) >= 800;
+				armorModel.bodyShine = tails == 9 && cloaklevel >= 2 && getCloakXp(stack) >= 800;
 				armorModel.layerShine = true;
 
 				applyDojutsuModelData(armorModel, living, stack, tails, cloaklevel);
@@ -1371,6 +1371,7 @@ public class ItemBijuCloak extends ElementsNarutomodMod.ModElement {
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 			int k = entity.getBrightnessForRender();
 			if (this.bodyShine) {
+				RenderUtils.disableLightMap();
 				OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
 			} else {
 				OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)(k % 65536), (float)(k / 65536));

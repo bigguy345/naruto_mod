@@ -36,6 +36,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.datasync.DataSerializers;
 
+import net.narutomod.goatee.client.RenderUtils;
 import net.narutomod.procedure.ProcedureAoeCommand;
 import net.narutomod.procedure.ProcedureSync;
 import net.narutomod.procedure.ProcedureUtils;
@@ -1728,6 +1729,8 @@ public class EntityNineTails extends ElementsNarutomodMod.ModElement {
 			@Override
 			public void render(Entity entity, float f0, float f1, float f2, float f3, float f4, float f5) {
 				GlStateManager.pushMatrix();
+				if (getEntity(entity).getBijuManager().getCloakLevel() == 3)
+					RenderUtils.disableLightMap();
 				GlStateManager.translate(0.0F, 1.5F - 1.5F * MODELSCALE, 0.0F);
 				//GlStateManager.translate(0.0F, 0.0F, 0.375F * MODELSCALE);
 				GlStateManager.scale(MODELSCALE, MODELSCALE, MODELSCALE);
@@ -1785,8 +1788,9 @@ public class EntityNineTails extends ElementsNarutomodMod.ModElement {
 					setRotationAngle(upperLegLeft, -0.5236F, 0.0F, -1.5708F);
 					setRotationAngle(midLegLeft, 0.0F, 0.0F, 2.3562F);
 					setRotationAngle(leftFoot, 0.0F, 3.1416F, 0.0F);
-				}*/
-				if (((EntityCustom)e).isShooting()) {
+				}
+*/
+				if (getEntity(e).isShooting()) {
 					//bipedHead.rotateAngleX = -0.5236F;
 					//bipedHeadwear.rotateAngleX = -0.5236F;
 					snout.rotateAngleX = -0.2618F;
@@ -1795,7 +1799,7 @@ public class EntityNineTails extends ElementsNarutomodMod.ModElement {
 					snout.rotateAngleX = 0.0F;
 					jaw.rotateAngleX = -0.1309F;
 				}
-				if (((EntityCustom) e).isFaceDown()) {
+				if (getEntity(e).isFaceDown()) {
 					body.rotationPointZ = 20.0F;
 					body.rotateAngleX = 1.0472F;
 					bipedHead.rotateAngleX += -0.2618F;
@@ -1811,5 +1815,15 @@ public class EntityNineTails extends ElementsNarutomodMod.ModElement {
 				this.copyModelAngles(bipedHead, eyes);
 			}
 		}
+	}
+
+	private static EntityCustom getEntity(Entity entity) {
+		if (entity instanceof EntityCustom)
+			return ((EntityCustom) entity);
+		else if (entity instanceof EntityClone._Base)
+			return ((EntityCustom) (((EntityClone._Base) entity).getSummoner()));
+
+
+		return null;
 	}
 }
