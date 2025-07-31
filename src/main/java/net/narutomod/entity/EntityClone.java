@@ -7,7 +7,8 @@ import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -298,7 +299,7 @@ public class EntityClone extends ElementsNarutomodMod.ModElement {
 				 && summoner.ticksExisted - summoner.getLastAttackedEntityTime() < 400) {
 					target = summoner.getLastAttackedEntity();
 				}
-				if (target != null && EntityAITarget.isSuitableTarget(this, target, false, false)) {
+				if (target != null && !summoner.isOnSameTeam(target) && EntityAITarget.isSuitableTarget(this, target, false, false)) {
 					this.setAttackTarget(target);
 				} else if (this.getAttackTarget() != null && !this.getAttackTarget().isEntityAlive()) {
 					this.setAttackTarget(null);
