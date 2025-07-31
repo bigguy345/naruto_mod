@@ -27,6 +27,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.init.MobEffects;
 
+import net.narutomod.entity.EntityClone;
 import net.narutomod.goatee.client.model.ModelDojutsu;
 import net.narutomod.goatee.data.DojutsuData;
 import net.narutomod.goatee.data.NarutoData;
@@ -288,7 +289,7 @@ public static boolean dropOnForceDojutsuDrop(Item eye){
 	public static class Hook {
 		@SubscribeEvent
 		public void onEquipmentChange(LivingEquipmentChangeEvent event) {
-			if (event.getEntity().world.isRemote || !(event.getEntity() instanceof EntityLivingBase) || event.getSlot() != EntityEquipmentSlot.HEAD)
+			if (event.getEntity().world.isRemote || !(event.getEntity() instanceof EntityLivingBase) || event.getEntity() instanceof EntityClone._Base || event.getSlot() != EntityEquipmentSlot.HEAD)
 				return;
 
 			ItemStack to = event.getTo(), from = event.getFrom();
