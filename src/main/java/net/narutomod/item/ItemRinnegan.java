@@ -252,6 +252,14 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 		}
 
 		@Override
+		public ItemDojutsu.Tier getTier(ItemStack stack) {
+			if (ItemRinnegan.isRinnesharinganActivated(stack))
+				return ItemDojutsu.Tier.RINNESHARINGAN;
+
+			return ItemDojutsu.Tier.RINNEGAN;
+		}
+		
+		@Override
 		public ItemDojutsu.Type getType() {
 			return ItemDojutsu.Type.RINNE_TENSEI;
 		}

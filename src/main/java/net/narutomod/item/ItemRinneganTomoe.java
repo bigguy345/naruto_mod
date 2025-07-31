@@ -87,6 +87,14 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             super(material);
         }
 
+        @Override
+        public ItemDojutsu.Tier getTier(ItemStack stack) {
+            if (ItemRinnegan.isRinnesharinganActivated(stack))
+                return ItemDojutsu.Tier.RINNESHARINGAN;
+            
+            return ItemDojutsu.Tier.RINNEGAN;
+        }
+        
         public void onArmorTick(World world, EntityPlayer player, ItemStack itemstack) {
             super.onArmorTick(world, player, itemstack);
             if (world.isRemote)

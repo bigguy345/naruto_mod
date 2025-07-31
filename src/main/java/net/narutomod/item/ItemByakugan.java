@@ -91,6 +91,11 @@ public class ItemByakugan extends ElementsNarutomodMod.ModElement {
 		this.elements.items.add(() -> new ItemDojutsu.Base(enuma) {
 
 			@Override
+			public ItemDojutsu.Tier getTier(ItemStack stack) {
+				return ItemDojutsu.Tier.BYAKUGAN;
+			}
+			
+			@Override
 			public ItemDojutsu.Type getType() {
 				return ItemDojutsu.Type.BYAKUGAN;
 			}

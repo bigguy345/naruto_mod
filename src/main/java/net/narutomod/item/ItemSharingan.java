@@ -1,6 +1,5 @@
 package net.narutomod.item;
 
-import com.google.common.collect.Maps;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.SoundEvent;
@@ -74,6 +73,16 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		@Override
 		public ItemDojutsu.Type getType() {
 			return ItemDojutsu.Type.SHARINGAN;
+		}
+
+		@Override
+		public ItemDojutsu.Tier getTier(ItemStack stack) {
+			if (isEternal())
+				return ItemDojutsu.Tier.ETERNAL;
+			else if (isMangekyo())
+				return ItemDojutsu.Tier.MANGEKYO;
+
+			return ItemDojutsu.Tier.SHARINGAN;
 		}
 
 		public Type getSubType() {
@@ -324,6 +333,14 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		return ItemDojutsu.getWorn(entity).getItem() instanceof Base;
 	}
 
+	public static boolean is(ItemStack stack) {
+		return stack.getItem() instanceof Base;
+	}
+
+	public static boolean isBase(ItemStack stack) { //base 3 tomoe
+		return stack.getItem() instanceof Base && ((Base) stack.getItem()).getTier(stack) == ItemDojutsu.Tier.SHARINGAN;
+	}
+	
 	public static boolean isMangekyo(ItemStack stack) {
 		return stack.getItem() instanceof Base && ((Base)stack.getItem()).isMangekyo();
 	}

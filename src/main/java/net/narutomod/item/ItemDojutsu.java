@@ -1,12 +1,9 @@
 
 package net.narutomod.item;
 
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -38,7 +35,6 @@ import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.NarutomodModVariables;
 import net.narutomod.ElementsNarutomodMod;
 
-import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -154,6 +150,8 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 		}
 		
 		public abstract Type getType();
+
+		public abstract Tier getTier(ItemStack stack);
 
 		public boolean canBuildInKamui(ItemStack stack) {
 			if (stack.getTagCompound().hasKey("kamuiCanBuild"))
@@ -294,9 +292,9 @@ public static boolean dropOnForceDojutsuDrop(Item eye){
 				return;
 
 			ItemStack to = event.getTo(), from = event.getFrom();
-			if (from.getItem().equals(to.getItem()) && hasSameData(from, to))
+			if (from.getItem().equals(to.getItem()) && hasSameData(from, to) || !ItemDojutsu.is(to) && !ItemDojutsu.is(from))
 				return;
-			
+
 			EntityLivingBase entity = (EntityLivingBase) event.getEntity();
 			if (to.getItem() instanceof Base) { //eye activation sound
 				((Base) to.getItem()).onEquip(to, entity, false);
@@ -304,7 +302,7 @@ public static boolean dropOnForceDojutsuDrop(Item eye){
 				if (ItemDojutsu.isLowerTier(from, to)) //don't play sound when descending into a lower tier sharingan
 					ItemDojutsu.playDeactivationSound(from, entity);
 				else
-					ItemDojutsu.playActivationSound(to, entity);
+					ItemDojutsu.playActivationSound(to, entity); 
 			} else if (from.getItem() instanceof Base) {//eye deactivation sound
 				((Base) from.getItem()).onEquip(to, entity, true);
 				ItemDojutsu.playDeactivationSound(from, entity);
@@ -345,7 +343,36 @@ public static boolean dropOnForceDojutsuDrop(Item eye){
 		MinecraftForge.EVENT_BUS.register(new Hook());
 	}
 
+	public static Tier getTier(ItemStack stack) {
+		if (!ItemDojutsu.is(stack))
+			return Tier.NONE;
 
+		return ((ItemDojutsu.Base) stack.getItem()).getTier(stack);
+	}
+
+	public enum Tier {
+		NONE(0),
+		BYAKUGAN(1),
+		SHARINGAN(1),
+		MANGEKYO(2),
+		ETERNAL(3),
+		RINNEGAN(4),
+		RINNESHARINGAN(5);
+
+		private final int level;
+
+		Tier(int level) {
+			this.level = level;
+		}
+
+		public int getLevel() {
+			return level;
+		}
+
+		public boolean isAtLeast(Tier other) {
+			return this.level >= other.level;
+		}
+	}
 
 	public static class ClientModel {
 		@SideOnly(Side.CLIENT)
