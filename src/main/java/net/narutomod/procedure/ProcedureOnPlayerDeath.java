@@ -17,6 +17,7 @@ import net.narutomod.NarutomodModVariables;
 import net.narutomod.PlayerTracker;
 import net.narutomod.entity.EntityBijuManager;
 import net.narutomod.goatee.data.NarutoData;
+import net.narutomod.goatee.util.AdvancementUtil;
 import net.narutomod.item.*;
 
 import java.util.List;
@@ -58,6 +59,8 @@ public class ProcedureOnPlayerDeath extends ElementsNarutomodMod.ModElement {
 						}
 					} else if (!keepInventory) {
 						stck.setCount(0);
+						if(AdvancementUtil.has((EntityPlayerMP) player,"narutomod:rinneganawakened"))
+							AdvancementUtil.revoke((EntityPlayerMP) player,"narutomod:rinneganawakened");
 					}
 				}
 			}
