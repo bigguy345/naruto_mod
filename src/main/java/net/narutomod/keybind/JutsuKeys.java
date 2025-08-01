@@ -156,7 +156,7 @@ public class JutsuKeys {
 
 			if (ItemSharingan.wearingAny(player) && keyId == 10 && pressType == 0)
 				((ItemSharingan.Base) helmet.getItem()).lockOnLookingAt(player, helmet);
-			else if ((helmet.getItem() instanceof ItemDojutsu.Base)) {
+			else if ((helmet.getItem() instanceof ItemDojutsu.Base) && keyId >= 4 && keyId <= 7) {
 				ItemDojutsu.Base eye = (ItemDojutsu.Base) helmet.getItem();
 
 				JutsuKey key = eye.data.getKey(keyId);
