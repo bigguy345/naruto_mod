@@ -241,7 +241,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		}
 
 		public void onEquip(ItemStack stack, EntityLivingBase entity, boolean takenOff) {
-			if (LockOn.isAutoLockOn(entity))
+			if (entity != null && LockOn.isAutoLockOn(entity))
 				LockOn.giveEffect(entity);
 		}
 
