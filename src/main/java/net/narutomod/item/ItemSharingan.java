@@ -220,7 +220,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		}
 
 		// returns true if evaded, false if otherwise
-		public boolean onAttackEvent(LivingAttackEvent event, EntityLivingBase entity, EntityLivingBase attacker) {
+		public boolean onAttackEvent(LivingAttackEvent event, EntityLivingBase entity, Entity attacker) {
 			if (isDodgeEnabled(ItemDojutsu.getWorn(entity)) && entity.getRNG().nextFloat() <= 0.6f) {
 		 		Entity immediateSource = event.getSource().getImmediateSource();
 				if (immediateSource == null)
@@ -465,9 +465,9 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			
 			EntityLivingBase entity = event.getEntityLiving();
 			Entity attacker = event.getSource().getTrueSource();
-			if (wearingAny(entity) && ItemJutsu.canTarget(entity) && !entity.isRiding()) {
-				((Base)ItemDojutsu.getWorn(entity).getItem()).onAttackEvent(event, entity, (EntityLivingBase)attacker);
-				if (entity instanceof EntityPlayer && !isAutoLockOn(entity)) 
+			if (wearingAny(entity) && ItemJutsu.canTarget(entity) && !entity.isRiding() && attacker instanceof EntityLivingBase) {
+				((Base) ItemDojutsu.getWorn(entity).getItem()).onAttackEvent(event, entity, attacker);
+				if (entity instanceof EntityPlayer && !isAutoLockOn(entity) && attacker instanceof EntityLivingBase) 
 					lockOnTarget(entity, (EntityLivingBase) attacker, 300);
 			}
 		}
