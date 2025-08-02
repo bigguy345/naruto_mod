@@ -32,6 +32,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 
+import net.narutomod.PlayerTracker;
 import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.ElementsNarutomodMod;
 import net.narutomod.item.ItemJutsu;
@@ -113,6 +114,12 @@ public class EntityKageBunshin extends ElementsNarutomodMod.ModElement {
 			//this.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(user.getEntityAttribute(SharedMonsterAttributes.ARMOR).getAttributeValue());
 			this.moveHelper = new EntityNinjaMob.MoveHelper(this);
 			this.entityCollisionReduction = -1.0f;
+
+			double damage = 6;
+			if (getSummoner() != null && getSummoner() instanceof EntityPlayer) {
+				damage += PlayerTracker.getNinjaLevel((EntityPlayer) getSummoner()) * 0.066;
+			}
+			this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(damage);
 		}
 
 		@Override
