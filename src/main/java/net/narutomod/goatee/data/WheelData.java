@@ -99,10 +99,26 @@ public class WheelData {
         swapSlots(seg, savedSlot);
     }
 
-    public List<ItemStack> dropAll(EntityPlayer owner, Predicate<ItemStack> condition) {
+    public void clear() {
+        clearAll(stack -> true);
+    }
+
+    public void clearAll(Predicate<ItemStack> condition) {
+        for (Segment data : wheelSegments) {
+            ItemStack stack = data.stack;
+            if (condition.test(stack))
+                data.stack = ItemStack.EMPTY;
+        }
+    }
+
+    public List<ItemStack> dropAll(EntityPlayer owner) {
+        return dropAll(owner, stack -> true, false);
+    }
+
+    public List<ItemStack> dropAll(EntityPlayer owner, Predicate<ItemStack> condition, boolean simulate) {
         List<ItemStack> toDrop = new ArrayList<>();
         for (Segment data : wheelSegments) {
-            ItemStack item = data.drop(owner, condition);
+            ItemStack item = data.drop(owner, condition, simulate);
             if (!item.isEmpty())
                 toDrop.add(item);
         }
@@ -131,11 +147,13 @@ public class WheelData {
             this.parent = parent;
         }
 
-        public ItemStack drop(EntityPlayer owner, Predicate<ItemStack> condition) {
+        public ItemStack drop(EntityPlayer owner, Predicate<ItemStack> condition, boolean simulate) {
             if (condition.test(stack)) {
                 ItemStack toDrop = stack.copy();
-                owner.dropItem(toDrop, true, true);
-                stack = ItemStack.EMPTY;
+                if (!simulate) {
+                    owner.dropItem(toDrop, true, true);
+                    stack = ItemStack.EMPTY;
+                }
                 return toDrop;
             }
             return ItemStack.EMPTY;

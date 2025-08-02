@@ -178,13 +178,25 @@ public class ProcedureOnPlayerDeath extends ElementsNarutomodMod.ModElement {
 						}
 						((stack)).shrink((int) 1);
 					}
+					EntityPlayer player = (EntityPlayer) entity;
 
-					List<ItemStack> toDrops = NarutoData.get((EntityPlayer) entity).dojutsuWheel.dropAll((EntityPlayer) entity, (eye) -> ItemDojutsu.dropOnForceDojutsuDrop(eye.getItem()));
+					NarutoData data = NarutoData.get(player);
+					List<ItemStack> toDrops = data.dojutsuWheel.dropAll(player, eye -> ItemDojutsu.isDroppable(eye), false);
+
+					if (ItemDojutsu.isDroppable(data.getDojutsuSlot())) {
+						ItemStack slot = data.getDojutsuSlot();
+						ItemStack copy = slot.copy();
+						player.dropItem(copy, true, false);
+						slot.setCount(0);
+						toDrops.add(copy);
+
+					}
+
 					for (ItemStack eye : toDrops) {
 						if (eye.getItem() == ItemMangekyoSharingan.helmet || eye.getItem() == ItemMangekyoSharinganObito.helmet) {
-							stack2 = new ItemStack(ItemSharingan.helmet, 1);
-							((ItemSharingan.Base) stack2.getItem()).copyOwner(stack2, eye);
-							ItemHandlerHelper.giveItemToPlayer(((EntityPlayer) entity), stack2);
+							ItemStack stk = new ItemStack(ItemSharingan.helmet, 1);
+							((ItemSharingan.Base) stk.getItem()).copyOwner(stk, eye);
+							ItemHandlerHelper.giveItemToPlayer(player, stk);
 						}
 					}
 				}

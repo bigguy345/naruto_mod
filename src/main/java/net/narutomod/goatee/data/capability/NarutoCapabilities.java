@@ -2,6 +2,7 @@ package net.narutomod.goatee.data.capability;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -11,6 +12,7 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -19,6 +21,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.narutomod.NarutomodMod;
 import net.narutomod.goatee.data.NarutoData;
 import net.narutomod.goatee.network.packets.NarutoSyncData;
+import net.narutomod.item.ItemDojutsu;
 
 @Mod.EventBusSubscriber
 public class NarutoCapabilities {
@@ -65,5 +68,27 @@ public class NarutoCapabilities {
         EntityPlayer clone = event.getEntityPlayer();
 
         NarutoData.get(clone).readFromNBT(NarutoData.get(original).writeToNBT());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerDeath(LivingDeathEvent event) {
+        if (!(event.getEntity() instanceof EntityPlayer))
+            return;
+
+        EntityPlayer player = (EntityPlayer) event.getEntity();
+        NarutoData data = NarutoData.get(player);
+
+
+        if (!player.world.getGameRules().getBoolean("keepInventory")) {
+            ItemStack slot = data.getDojutsuSlot();
+            if (ItemDojutsu.isDroppable(data.getDojutsuSlot()))
+                player.dropItem(slot.copy(), true, false);
+            
+            if (!slot.isEmpty())
+                slot.setCount(0);
+
+            data.dojutsuWheel.dropAll(player, eye -> ItemDojutsu.isDroppable(eye), false);
+            data.dojutsuWheel.clear();
+        }
     }
 }

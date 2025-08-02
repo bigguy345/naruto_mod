@@ -275,11 +275,14 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 	public static boolean isDojutsu(ItemStack stack) {
 		return stack.getItem() instanceof ItemDojutsu.Base;
 	}
-	
-public static boolean dropOnForceDojutsuDrop(Item eye){
-		return eye == ItemByakugan.helmet || eye == ItemSharingan.helmet||eye == ItemMangekyoSharingan.helmet||eye == ItemMangekyoSharinganObito.helmet;
-}
 
+	public static boolean isDroppable(ItemStack stack) {
+		if (stack.getItem() instanceof ItemDojutsu.Base) {
+			ItemDojutsu.Base eye = (Base) stack.getItem();
+			return eye.getTier(stack).level < Tier.ETERNAL.level;
+		}
+		return false;
+}
 	public enum Type {
 		BYAKUGAN,
 		SHARINGAN,

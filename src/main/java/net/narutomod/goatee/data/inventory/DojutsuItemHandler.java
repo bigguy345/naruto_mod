@@ -136,7 +136,9 @@ public class DojutsuItemHandler extends ItemStackHandler {
     }
 
     public void deserializeNBT(NBTTagCompound nbt) {
-        this.setSize(nbt.hasKey("Size", 3) ? nbt.getInteger("Size") : this.stacks.size());
+        int newSize = nbt.hasKey("Size", 3) ? nbt.getInteger("Size") : -1;
+        if (newSize > stacks.size())
+            this.setSize(newSize);
         NBTTagList tagList = nbt.getTagList("Items", 10);
 
         for (int i = 0; i < tagList.tagCount(); ++i) {
@@ -150,5 +152,7 @@ public class DojutsuItemHandler extends ItemStackHandler {
         this.onLoad();
     }
 
-
+    public String toString() {
+        return stacks.get(0).toString();
+    }
 }
