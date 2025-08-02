@@ -16,14 +16,14 @@ public class SideData {
     public final Side side;
     public final ItemStack stack;
     public final ItemDojutsu.Base item;
-    public NBTTagCompound tag;
+    protected NBTTagCompound tag;
 
-    private int color = 0xffffff;
-    private String texture = "", eyeBaseTexture = "";
-    private boolean isTextureHD;
+    protected int color = 0xffffff;
+    protected String texture = "", eyeBaseTexture = "";
+    protected boolean isTextureHD;
 
-    private float offsetX, offsetY;
-    private float scale = 1;
+    protected float offsetX, offsetY;
+    protected float scale = 1;
 
     public boolean inactive;
     public String inactiveTexture;
@@ -77,7 +77,7 @@ public class SideData {
     }
 
     public boolean hasTexture() {
-        return !texture.isEmpty();
+        return texture != null && !texture.isEmpty();
     }
 
     public String getTexture() {
