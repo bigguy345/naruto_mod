@@ -149,10 +149,12 @@ public class ProcedureOnPlayerDeath extends ElementsNarutomodMod.ModElement {
 					stack = ProcedureUtils.getMatchingItemStack((EntityPlayer) entity, ItemByakugan.helmet);
 					if (stack != null) {
 						((EntityPlayer) entity).dropItem(stack.copy(), true, true);
+						stack.setCount(0);
 					}
 					stack = ProcedureUtils.getMatchingItemStack((EntityPlayer) entity, ItemSharingan.helmet);
 					if (stack != null) {
 						((EntityPlayer) entity).dropItem(stack.copy(), true, true);
+						stack.setCount(0);
 					}
 					stack = ProcedureUtils.getMatchingItemStack((EntityPlayer) entity, ItemMangekyoSharingan.helmet);
 					if (stack != null) {
