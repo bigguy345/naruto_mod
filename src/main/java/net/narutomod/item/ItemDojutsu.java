@@ -1,7 +1,6 @@
 
 package net.narutomod.item;
 
-import net.minecraft.item.Item;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -31,7 +30,7 @@ import net.narutomod.entity.EntityClone;
 import net.narutomod.goatee.client.model.ModelDojutsu;
 import net.narutomod.goatee.data.DojutsuData;
 import net.narutomod.goatee.data.NarutoData;
-import net.narutomod.goatee.data.SideData;
+import net.narutomod.goatee.data.sidedata.SideData;
 import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.NarutomodModVariables;
 import net.narutomod.ElementsNarutomodMod;

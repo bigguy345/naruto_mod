@@ -13,7 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.narutomod.entity.EntityBijuManager;
 import net.narutomod.goatee.client.RenderUtils;
-import net.narutomod.goatee.data.SideData;
+import net.narutomod.goatee.data.sidedata.SideData;
 import net.narutomod.item.ItemBijuCloak;
 import net.narutomod.item.ItemDojutsu;
 import org.lwjgl.opengl.GL11;

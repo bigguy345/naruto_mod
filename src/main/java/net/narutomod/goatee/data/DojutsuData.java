@@ -2,6 +2,7 @@ package net.narutomod.goatee.data;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
+import net.narutomod.goatee.data.sidedata.SideData;
 import net.narutomod.item.ItemDojutsu;
 
 import java.util.ArrayList;

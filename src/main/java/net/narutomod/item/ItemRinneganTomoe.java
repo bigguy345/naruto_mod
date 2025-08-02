@@ -43,7 +43,7 @@ import net.narutomod.entity.EntitySusanooBase;
 import net.narutomod.entity.EntityTenTails;
 import net.narutomod.goatee.client.Sounds;
 import net.narutomod.goatee.client.model.ModelDojutsu;
-import net.narutomod.goatee.data.SideData;
+import net.narutomod.goatee.data.sidedata.SideData;
 import net.narutomod.gui.GuiNinjaScroll;
 import net.narutomod.potion.PotionReach;
 import net.narutomod.potion.PotionSpaceInversion;
@@ -94,7 +94,10 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             
             return ItemDojutsu.Tier.RINNEGAN;
         }
-        
+        public SideData getSideData(SideData.Side side, ItemStack stack) {
+            return new SideData(side, stack, this);
+        }
+
         public void onArmorTick(World world, EntityPlayer player, ItemStack itemstack) {
             super.onArmorTick(world, player, itemstack);
             if (world.isRemote)

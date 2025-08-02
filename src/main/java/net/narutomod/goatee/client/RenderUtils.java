@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.entity.Entity;
 import net.narutomod.goatee.client.model.ModelDojutsu;
-import net.narutomod.goatee.data.SideData;
+import net.narutomod.goatee.data.sidedata.SideData;
 
 public class RenderUtils {
 
