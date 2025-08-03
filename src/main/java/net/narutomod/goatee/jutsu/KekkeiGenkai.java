@@ -170,7 +170,7 @@ public enum KekkeiGenkai {
     public void give(EntityPlayer player) {
         if (!AdvancementUtil.has((EntityPlayerMP) player, achievement) || achievement.isEmpty()) {
             giveExtras(player);
-            ItemStack stack = createItemStack(item, player);
+            ItemStack stack = createItemStack(getItem(), player);
             ItemHandlerHelper.giveItemToPlayer(player, applyToItemStack(stack, player));
             grantAdvancement((EntityPlayerMP) player);
         }
