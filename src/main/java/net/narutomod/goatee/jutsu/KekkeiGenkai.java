@@ -101,11 +101,19 @@ public enum KekkeiGenkai {
     //////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////
     // Dojutsu
-    BYAKUGAN(ItemByakugan.helmet, "narutomod:byakuganopened"),
+    BYAKUGAN(ItemByakugan.helmet, "narutomod:byakuganopened"){
+        public void clearItem(EntityPlayerMP player) {
+            ProcedureUtils.clearAll(player, stack -> ItemByakugan.is(stack) && ItemDojutsu.isOwner(stack, player));
+        }
+    },
     TENSEIGAN(ItemTenseigan.helmet, "narutomod:tenseigan_achieved") {
-        public ItemStack applyToItemStack(ItemStack stack, EntityLivingBase player) {
+        public ItemStack applyToItemStack(ItemStack stack, EntityPlayer player) {
             stack.getTagCompound().setDouble("ByakuganCount", 5);
             return stack;
+        }
+
+        public void clearItem(EntityPlayerMP player) {
+            ProcedureUtils.clearAll(player, stack -> ItemTenseigan.is(stack) && ItemDojutsu.isOwner(stack, player));
         }
     },
 
