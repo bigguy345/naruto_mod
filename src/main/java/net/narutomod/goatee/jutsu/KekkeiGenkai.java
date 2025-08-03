@@ -112,41 +112,48 @@ public enum KekkeiGenkai {
         public void giveExtras(EntityPlayer player) {
             GuiScrollGenjutsuGui.giveGenjutsu(player);
         }
+
+        public void clearItem(EntityPlayerMP player) {
+            ProcedureUtils.clearAll(player, stack -> ItemSharingan.isBase(stack) && ItemDojutsu.isOwner(stack, player));
+        }
     },
     MANGEKYO(ItemMangekyoSharingan.helmet, "narutomod:mangekyosharinganopened") {
         public Item getItem() {
             return ItemSharingan.getRandomMangekyoFromPool();
         }
 
-        public void remove(EntityPlayerMP player) {
-            if (AdvancementUtil.revoke(player, achievement)) {
-                ProcedureUtils.getAllItemsOfSubType(player, ItemSharingan.Base.class).forEach((stack -> {
-                    ItemSharingan.Base sharingan = (ItemSharingan.Base) stack.getItem();
-                    if (sharingan.getTier(stack) == ItemDojutsu.Tier.MANGEKYO && sharingan.isOwner(stack, player))
-                        stack.shrink(1);
-                }));
-            }
+        public void clearItem(EntityPlayerMP player) {
+            ProcedureUtils.clearAll(player, stack -> ItemSharingan.isMangekyo(stack) && ItemDojutsu.isOwner(stack, player));
         }
-
     },
     ETERNAL_MANGEKYO(ItemMangekyoSharinganEternal.helmet, "narutomod:eternalmangekyoachieved") {
         public ItemStack applyToItemStack(ItemStack original, EntityPlayer player) {
             Item foundMangekyo = null;
-            List<ItemStack> playerMangekyos = ProcedureUtils.getAllItemsOfSubType(player, ItemSharingan.Base.class);
+            List<ItemStack> playerMangekyos = ProcedureUtils.getAllItems(player, stack -> ItemSharingan.isMangekyo(stack) && ItemDojutsu.isOwner(stack, player));
             for (ItemStack stack : playerMangekyos) {
                 ItemSharingan.Base sharingan = (ItemSharingan.Base) stack.getItem();
-                if (sharingan.getTier(stack) == ItemDojutsu.Tier.MANGEKYO && sharingan.isOwner(stack, player))
-                    foundMangekyo = sharingan.getEternalMangekyo(ItemStack.EMPTY, ItemStack.EMPTY).getItem();
+                foundMangekyo = sharingan.getEternalMangekyo(ItemStack.EMPTY, ItemStack.EMPTY).getItem();
             }
 
-
-            if (foundMangekyo == null)
+            while (foundMangekyo == null)
                 foundMangekyo = ItemSharingan.getRandomEternal();
 
             return createItemStack(foundMangekyo, player);
         }
+
+        public void clearItem(EntityPlayerMP player) {
+            ProcedureUtils.clearAll(player, stack -> ItemSharingan.isEternal(stack) && ItemDojutsu.isOwner(stack, player));
+        }
     },
-    RINNEGAN(ItemRinnegan.helmet, "narutomod:rinneganawakened");
+    RINNEGAN(ItemRinnegan.helmet, "narutomod:rinneganawakened") {
+        public Item getItem() {
+           return super.getItem();
+        }
+
+        public void clearItem(EntityPlayerMP player) {
+            ProcedureUtils.clearAll(player, stack -> ItemRinnegan.isRinnegan(stack) && ItemDojutsu.isOwner(stack, player));
+        }
+    };
 
     public Item item;
     public String achievement;
@@ -189,15 +196,19 @@ public enum KekkeiGenkai {
         if (!achievement.isEmpty())
             AdvancementUtil.revoke(player, achievement);
 
-        player.inventory.clearMatchingItems(item, -1, -1, null);
+        clearItem(player);
         removeExtras(player);
     }
 
+    public void clearItem(EntityPlayerMP player) {
+        player.inventory.clearMatchingItems(item, -1, -1, null);
+    }
+    
     public void removeExtras(EntityPlayer player) {
     }
 
     public static ItemStack createItemStack(Item item, EntityLivingBase player) {
-        ItemStack stack = new ItemStack(item, 1);
+        ItemStack stack = new ItemStack(item);
 
         if (!stack.hasTagCompound())
             stack.setTagCompound(new NBTTagCompound());

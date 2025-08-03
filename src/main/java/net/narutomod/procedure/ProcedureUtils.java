@@ -389,6 +389,26 @@ public class ProcedureUtils extends ElementsNarutomodMod.ModElement {
 		return itemlist;
 	}
 
+	public static List<ItemStack> getAllItems(EntityPlayer player, Predicate<ItemStack> condition) {
+		List<NonNullList<ItemStack>> allInv = getAllInventories(player);
+		List<ItemStack> itemlist = Lists.newArrayList();
+		for (List<ItemStack> list : allInv) {
+			Iterator iterator = list.iterator();
+			while (iterator.hasNext()) {
+				ItemStack itemstack = (ItemStack) iterator.next();
+				if (!itemstack.isEmpty() && condition.test(itemstack))
+					itemlist.add(itemstack);
+			}
+		}
+		return itemlist;
+	}
+
+	public static void clearAll(EntityPlayer player, Predicate<ItemStack> condition) {
+		List<ItemStack> items = getAllItems(player, condition);
+		for (ItemStack stack : items)
+			stack.setCount(0);
+	}
+
 	public static boolean hasItemStackIgnoreDurability(InventoryPlayer inventory, ItemStack itemStackIn) {
 		return getItemStackIgnoreDurability(inventory, itemStackIn) != null;
 	}
