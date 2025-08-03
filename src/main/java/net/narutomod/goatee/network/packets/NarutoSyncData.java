@@ -9,6 +9,7 @@ import net.narutomod.goatee.data.NarutoData;
 import net.narutomod.goatee.network.AbstractPacket;
 import net.narutomod.goatee.network.PacketHandler;
 import net.narutomod.goatee.proxy.CommonProxy;
+import scala.collection.parallel.ParIterableLike;
 
 import java.io.IOException;
 
@@ -41,6 +42,9 @@ public final class NarutoSyncData extends AbstractPacket {
             syncTrackingClients(NarutoData.get(player));
         else {
             String playerName = ByteBufUtils.readUTF8String(in);
+            if(Minecraft.getMinecraft().world == null)
+                return;
+            
             EntityPlayer sendingPlayer = Minecraft.getMinecraft().world.getPlayerEntityByName(playerName);
             if (sendingPlayer != null)
                 NarutoData.get(sendingPlayer).readFromNBT(ByteBufUtils.readTag(in));
