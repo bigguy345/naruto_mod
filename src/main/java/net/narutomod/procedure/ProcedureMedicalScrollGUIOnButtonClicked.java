@@ -149,9 +149,7 @@ public class ProcedureMedicalScrollGUIOnButtonClicked extends ElementsNarutomodM
 					}
 				}
 			}
-			if (((((stack0).getItem() == new ItemStack(ItemByakugan.helmet, (int) (1)).getItem())
-					|| ((stack0).getItem() == new ItemStack(ItemTenseigan.helmet, (int) (1)).getItem()))
-					&& ((stack1).getItem() == new ItemStack(ItemByakugan.helmet, (int) (1)).getItem()))) {
+			if (ItemByakugan.is(stack0) || ItemTenseigan.isTenseigan(stack0) && ItemByakugan.is(stack1)) {
 				UUID owner_uuid = ProcedureUtils.getOwnerId(stack0);
 				UUID other_uuid = ProcedureUtils.getOwnerId(stack1);
 				System.out.println("-- owner_uuid=" + owner_uuid + ", other_uuid=" + other_uuid);
@@ -171,7 +169,7 @@ public class ProcedureMedicalScrollGUIOnButtonClicked extends ElementsNarutomodM
 									(((stack0).hasTagCompound() ? (stack0).getTagCompound().getDouble("ByakuganCount") : -1) + 1));
 						}
 						newstack = ((stack0).copy());
-						if (((stack0).getItem() == new ItemStack(ItemByakugan.helmet, (int) (1)).getItem())) {
+						if (ItemByakugan.is(stack0)) {
 							hasKey = (boolean) newstack.hasTagCompound()
 									&& newstack.getTagCompound().hasKey(NarutomodModVariables.tenseiganEvolvedTime);;
 							if ((!(hasKey))) {

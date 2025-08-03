@@ -336,8 +336,7 @@ public class ProcedureOnPlayerPostTick extends ElementsNarutomodMod.ModElement {
 							_setstack.setCount(1);
 							ItemHandlerHelper.giveItemToPlayer(((EntityPlayer) entity), _setstack);
 						}
-					} else if (((!((entity instanceof EntityPlayer)
-							? ((EntityPlayer) entity).inventory.hasItemStack(new ItemStack(ItemByakugan.helmet, (int) (1)))
+					} else if (((!((entity instanceof EntityPlayer) ? ProcedureUtils.hasItem(((EntityPlayer) entity), stk -> ItemByakugan.is(stk))
 							: false))
 							&& (((entity instanceof EntityPlayerMP) && ((entity).world instanceof WorldServer))
 									? ((EntityPlayerMP) entity).getAdvancements()

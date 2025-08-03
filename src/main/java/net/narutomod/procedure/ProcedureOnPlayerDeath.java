@@ -72,11 +72,9 @@ public class ProcedureOnPlayerDeath extends ElementsNarutomodMod.ModElement {
 					((EntityPlayer) entity).inventory.clearMatchingItems(new ItemStack(ItemMangekyoSharinganEternal.helmet, (int) (1)).getItem(), -1,
 							(int) 1, null);
 			}
-			if (((entity instanceof EntityPlayer)
-					? ((EntityPlayer) entity).inventory.hasItemStack(new ItemStack(ItemByakugan.helmet, (int) (1)))
-					: false)) {
-				stack = ProcedureUtils.getItemStackIgnoreDurability(((EntityPlayer) entity).inventory, new ItemStack(ItemByakugan.helmet));
-				{
+			if (entity instanceof EntityPlayer) {
+				stack = ProcedureUtils.getItem((EntityPlayer) entity, stk -> ItemByakugan.is(stk));
+				if (!stack.isEmpty()) {
 					ItemStack _stack = (stack);
 					if (!_stack.hasTagCompound())
 						_stack.setTagCompound(new NBTTagCompound());
@@ -146,8 +144,8 @@ public class ProcedureOnPlayerDeath extends ElementsNarutomodMod.ModElement {
 					EntityBijuManager.toggleBijuCloak((EntityPlayer) entity);
 				}
 				if (entity.world.getGameRules().getBoolean(PlayerTracker.FORCE_DOJUTSU_DROP_RULE)) {
-					stack = ProcedureUtils.getMatchingItemStack((EntityPlayer) entity, ItemByakugan.helmet);
-					if (stack != null) {
+					stack = ProcedureUtils.getItem((EntityPlayer) entity, stk -> ItemByakugan.is(stk));
+					if (stack != null && !stack.isEmpty()) {
 						((EntityPlayer) entity).dropItem(stack.copy(), true, true);
 						stack.setCount(0);
 					}

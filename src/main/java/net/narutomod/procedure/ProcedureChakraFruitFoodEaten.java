@@ -107,8 +107,7 @@ public class ProcedureChakraFruitFoodEaten extends ElementsNarutomodMod.ModEleme
 				ItemHandlerHelper.giveItemToPlayer(((EntityPlayer) entity), _setstack);
 			}
 		} else {
-			if (((entity instanceof EntityPlayer)
-					? ((EntityPlayer) entity).inventory.hasItemStack(new ItemStack(ItemByakugan.helmet, (int) (1)))
+			if (((entity instanceof EntityPlayer) ? ProcedureUtils.hasItem((EntityPlayer) entity, stk -> ItemByakugan.is(stk))
 					: false)) {
 				stack = new ItemStack(ItemTenseigan.helmet, (int) (1));
 				{

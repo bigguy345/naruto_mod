@@ -38,7 +38,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.enchantment.Enchantment;
@@ -389,6 +388,31 @@ public class ProcedureUtils extends ElementsNarutomodMod.ModElement {
 		return itemlist;
 	}
 
+	public static boolean hasItem(EntityPlayer player, Predicate<ItemStack> condition) {
+		List<NonNullList<ItemStack>> allInv = getAllInventories(player);
+		for (List<ItemStack> list : allInv) {
+			Iterator iterator = list.iterator();
+			while (iterator.hasNext()) {
+				ItemStack itemstack = (ItemStack) iterator.next();
+				if (!itemstack.isEmpty() && condition.test(itemstack))
+					return true;
+			}
+		}
+		return false;
+	}
+
+	public static ItemStack getItem(EntityPlayer player, Predicate<ItemStack> condition) {
+		List<NonNullList<ItemStack>> allInv = getAllInventories(player);
+		for (List<ItemStack> list : allInv) {
+			Iterator iterator = list.iterator();
+			while (iterator.hasNext()) {
+				ItemStack itemstack = (ItemStack) iterator.next();
+				if (!itemstack.isEmpty() && condition.test(itemstack))
+					return itemstack;
+			}
+		}
+		return ItemStack.EMPTY;
+	}
 	public static List<ItemStack> getAllItems(EntityPlayer player, Predicate<ItemStack> condition) {
 		List<NonNullList<ItemStack>> allInv = getAllInventories(player);
 		List<ItemStack> itemlist = Lists.newArrayList();

@@ -207,7 +207,7 @@ public class EntityHakkeshoKeiten extends ElementsNarutomodMod.ModElement {
 				if (summoner instanceof EntityPlayer) {
 					double cooldown = ProcedureUtils.getCooldownModifier((EntityPlayer)summoner) * this.ticksExisted * 5;
 					ItemStack _stack = ItemDojutsu.getWorn(summoner);
-					if (_stack.getItem() == ItemByakugan.helmet) {
+					if (ItemByakugan.is(_stack)) {
 						if (!_stack.hasTagCompound()) {
 							_stack.setTagCompound(new NBTTagCompound());
 						}

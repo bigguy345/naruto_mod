@@ -108,7 +108,7 @@ public class OverlayByakuganView extends ElementsNarutomodMod.ModElement {
 			if (!event.isCancelable() && event.getType() == RenderGameOverlayEvent.ElementType.HELMET) {
 				Minecraft mc = Minecraft.getMinecraft();
 				EntityPlayer player = mc.player;
-				if (ItemDojutsu.getWorn(player).getItem() == ItemByakugan.helmet && byakuganActivated) {
+				if (ItemByakugan.is(ItemDojutsu.getWorn(player)) && byakuganActivated) {
 					int sWidth = event.getResolution().getScaledWidth();
 					int sHeight = event.getResolution().getScaledHeight();
 					int color = 0x1AFFFFFF;
