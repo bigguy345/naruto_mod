@@ -559,7 +559,7 @@ public class ItemRinnegan extends ElementsNarutomodMod.ModElement {
 
 
 	public static void giveClothes(ItemStack stack, EntityPlayer entity) {
-		if (ItemTenseigan.isTenseigan(stack)) {
+		if (ItemTenseigan.is(stack)) {
 			ProcedureUtils.swapItemToSlot(entity, EntityEquipmentSlot.CHEST, new ItemStack(ItemTenseigan.body));
 			ProcedureUtils.swapItemToSlot(entity, EntityEquipmentSlot.LEGS, new ItemStack(ItemTenseigan.legs));
 		} else if (ItemRinnegan.isRinnesharinganActivated(stack)) {

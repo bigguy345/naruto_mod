@@ -41,7 +41,7 @@ public class ProcedureAsuraPathArmorBodyTickEvent extends ElementsNarutomodMod.M
 		double ticks_used = 0;
 		ItemStack helmet = entity instanceof EntityPlayer ? ItemDojutsu.getWorn(((EntityPlayer) entity)) : ItemStack.EMPTY;
 
-		if (!(ItemRinnegan.isRinnegan(helmet) || ItemTenseigan.isTenseigan(helmet))) {
+		if (!(ItemRinnegan.isRinnegan(helmet) || ItemTenseigan.is(helmet))) {
 			itemstack.shrink(1);
 			return;
 		}

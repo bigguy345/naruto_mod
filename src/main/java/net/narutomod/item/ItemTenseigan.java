@@ -223,12 +223,12 @@ public class ItemTenseigan extends ElementsNarutomodMod.ModElement {
 		}.setUnlocalizedName("tenseiganlegs").setRegistryName("tenseiganlegs").setCreativeTab(null));
 	}
 
-	public static boolean isTenseigan(ItemStack stack) {
+	public static boolean is(ItemStack stack) {
 		return stack.getItem() instanceof ItemRinnegan.Base && ((ItemRinnegan.Base) stack.getItem()).isTenseigan();
 	}
 
 	public static boolean isWearing(EntityLivingBase player) {
-		return isTenseigan(ItemDojutsu.getWorn(player));
+		return is(ItemDojutsu.getWorn(player));
 	}
 
 	public static ItemStack getHeldChakraCloak(EntityLivingBase player) {

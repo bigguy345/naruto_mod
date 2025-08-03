@@ -2,7 +2,6 @@ package net.narutomod.procedure;
 
 import net.narutomod.item.ItemTenseigan;
 import net.narutomod.item.ItemSharingan;
-import net.narutomod.item.ItemMangekyoSharinganEternal;
 import net.narutomod.item.ItemByakugan;
 import net.narutomod.NarutomodModVariables;
 import net.narutomod.ElementsNarutomodMod;
@@ -149,7 +148,7 @@ public class ProcedureMedicalScrollGUIOnButtonClicked extends ElementsNarutomodM
 					}
 				}
 			}
-			if (ItemByakugan.is(stack0) || ItemTenseigan.isTenseigan(stack0) && ItemByakugan.is(stack1)) {
+			if (ItemByakugan.is(stack0) || ItemTenseigan.is(stack0) && ItemByakugan.is(stack1)) {
 				UUID owner_uuid = ProcedureUtils.getOwnerId(stack0);
 				UUID other_uuid = ProcedureUtils.getOwnerId(stack1);
 				System.out.println("-- owner_uuid=" + owner_uuid + ", other_uuid=" + other_uuid);

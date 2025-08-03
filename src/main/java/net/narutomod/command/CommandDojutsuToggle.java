@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -110,7 +109,7 @@ public class CommandDojutsuToggle extends ElementsNarutomodMod.ModElement {
 
                 if (ItemRinnegan.isRinnesharinganActivated(rinnegan))
                     ItemRinnegan.setRinneSharinganActivated(rinnegan, false);
-                else if (isOp || AdvancementUtil.has(player, "narutomod:rinnesharinganactivated") || ItemTenseigan.isTenseigan(rinnegan) && AdvancementUtil.has(player, "narutomod:tensei_byakugan_activated"))
+                else if (isOp || AdvancementUtil.has(player, "narutomod:rinnesharinganactivated") || ItemTenseigan.is(rinnegan) && AdvancementUtil.has(player, "narutomod:tensei_byakugan_activated"))
                     ItemRinnegan.setRinneSharinganActivated(rinnegan, true);
             } else if (type == Level1.RINNEGANTOMOE) {
                 String error = "/dojutsutoggle rinnegantomoe <on | off | eternal> player";
@@ -132,7 +131,7 @@ public class CommandDojutsuToggle extends ElementsNarutomodMod.ModElement {
             } else if (type == Level1.TENSEIGANCLOAK) {
                 player = args.length > 1 ? getPlayer(server, sender, args[1]) : player;
                 ItemStack helmet = ItemDojutsu.getWorn(player);
-                ItemStack tenseigan = ItemTenseigan.isTenseigan(player.getHeldItemMainhand()) ? player.getHeldItemMainhand() : ItemTenseigan.isTenseigan(helmet) ? helmet : ItemStack.EMPTY;
+                ItemStack tenseigan = ItemTenseigan.is(player.getHeldItemMainhand()) ? player.getHeldItemMainhand() : ItemTenseigan.is(helmet) ? helmet : ItemStack.EMPTY;
                 if (tenseigan.isEmpty())
                     return;
 

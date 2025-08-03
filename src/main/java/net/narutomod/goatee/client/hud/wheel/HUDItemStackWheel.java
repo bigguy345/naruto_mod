@@ -380,7 +380,7 @@ public class HUDItemStackWheel extends GuiScreen {
                 if (selectedItem.isEmpty() && renderHelmet)
                     entity.inventory.armorInventory.set(3, oldMcHelmet);
 
-                if (ItemTenseigan.isTenseigan(selectedItem)) {
+                if (ItemTenseigan.is(selectedItem)) {
                     entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ItemTenseigan.body));
                     entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ItemTenseigan.legs));
                 } else if (ItemRinnegan.isRinnesharinganActivated(selectedItem)) {
