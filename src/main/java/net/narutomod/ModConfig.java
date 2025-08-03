@@ -135,7 +135,10 @@ public class ModConfig extends ElementsNarutomodMod.ModElement {
 		public double SWORD_REACH = 12;
 	}
 	public static class Dojutsu {
-
+		@Config.Comment("Chance of awakening a Rinnegan after eating Zetsu flesh with EMS on. After succeeding the chance, it's then a 0.01% chance per second of awakening with EMS in inventory. (Exactly like KGs) (Default: 5)")
+		@Config.RangeDouble(min = 0, max = 100)
+		public double RINNEGAN_AWAKEN_CHANCE = 5;
+		
 		@Config.Comment("Chance of awakening a Rinnegan Tomoe instead on Rinnegan Awakening. (Default: 50)")
 		@Config.RangeDouble(min = 0, max = 100)
 		public double RINNEGAN_TOMOE_AWAKEN_CHANCE = 50;

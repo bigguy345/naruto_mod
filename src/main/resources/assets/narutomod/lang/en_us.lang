@@ -831,6 +831,10 @@ item.rinnegantomoehelmet.status_off=OFF
 item.rinnegantomoehelmet.status_on=ON
 item.rinnegantomoehelmet.status_eternal=Eternal Mangekyo
 
+item.ems.chakra_transmutation=CHAKRA TRANSMUTATION ONGOING...
+item.ems.on_zetsu_rinne_success=You see visions of a near future...
+
+
 key.dojutsu_wheel=Dojutsu Wheel
 dojutsuwheel.set_default=§aSet %s §adefault slot! (%s§a)
 dojutsuwheel.remove_default=§cRemoved %s §cdefault slot! (%s§c)

@@ -281,7 +281,13 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 			return eye.getTier(stack).level < Tier.ETERNAL.level;
 		}
 		return false;
-}
+	}
+
+	public static void setOwner(ItemStack stack, EntityLivingBase entityIn) {
+		if (stack.getItem() instanceof ItemDojutsu.Base)
+			((Base) stack.getItem()).setOwner(stack, entityIn);
+	}
+
 	public enum Type {
 		BYAKUGAN,
 		SHARINGAN,

@@ -5,6 +5,7 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.narutomod.item.ItemDojutsu;
+import net.narutomod.item.ItemSharingan;
 import net.narutomod.world.WorldKamuiDimension;
 import net.narutomod.item.ItemMangekyoSharinganObito;
 import net.narutomod.gui.overlay.OverlayByakuganView;
@@ -97,7 +98,8 @@ public class ProcedureKamuiJikukanIdo extends ElementsNarutomodMod.ModElement {
 				chakraUsage = (double) ItemMangekyoSharinganObito.getIntangibleChakraUsage((EntityLivingBase) entity);;
 				f2 = (boolean) (((is_pressed) && ((timer) <= 600)) && ((chakraAmount) > (chakraUsage)));
 				if ((f2)) {
-					ProcedureUtils.purgeHarmfulEffects((EntityLivingBase) entity);
+					if (!ItemSharingan.hasRinneganAwakenKey(ItemDojutsu.getWorn((EntityLivingBase) entity)))
+						ProcedureUtils.purgeHarmfulEffects((EntityLivingBase) entity);
 					ProcedureOnLivingUpdate.setUntargetable(entity, 3);
 					entity.extinguish();
 					entity.fallDistance = (float) (0);

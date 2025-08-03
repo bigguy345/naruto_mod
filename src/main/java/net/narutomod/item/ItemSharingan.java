@@ -2,6 +2,7 @@ package net.narutomod.item;
 
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -44,6 +45,9 @@ import net.minecraft.block.material.Material;
 import net.narutomod.ModConfig;
 import net.narutomod.goatee.client.Sounds;
 import net.narutomod.goatee.client.model.ModelDojutsu;
+import net.narutomod.goatee.data.DojutsuData;
+import net.narutomod.goatee.data.sidedata.RinneganTomoeSideData;
+import net.narutomod.goatee.util.AdvancementUtil;
 import net.narutomod.potion.PotionLockOn;
 import net.narutomod.procedure.*;
 import net.narutomod.creativetab.TabModTab;
@@ -58,7 +62,10 @@ import net.minecraft.util.math.RayTraceResult;
 public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 	@ObjectHolder("narutomod:sharinganhelmet")
 	public static final Item helmet = null;
-	
+
+	public static final String RINNEGEN_AWAKENING_KEY = "RinneganAwakening";
+
+
 	public ItemSharingan(ElementsNarutomodMod instance) {
 		super(instance, 56);
 	}
@@ -205,8 +212,8 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		}
 
 		@Override
-		public void onUpdate(ItemStack itemstack, World world, Entity entity, int par4, boolean par5) {
-			super.onUpdate(itemstack, world, entity, par4, par5);
+		public void onUpdate(ItemStack stack, World world, Entity entity, int par4, boolean par5) {
+			super.onUpdate(stack, world, entity, par4, par5);
 //			if (entity instanceof EntityPlayer && entity.ticksExisted % 20 == 0) {
 //				for (ItemStack stack1 : ProcedureUtils.getAllItemsOfSubType((EntityPlayer)entity, Base.class)) {
 //					if (!ItemStack.areItemStacksEqual(itemstack, stack1) && stack1.getItem() == helmet) {
@@ -217,8 +224,48 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 //					}
 //				}
 //			}
+			//if (entity instanceof EntityPlayerMP)
+			//	((EntityPlayerMP) entity).getFoodStats().setFoodLevel(4);
+
+			if (!world.isRemote && entity.ticksExisted % 20 == 0 && entity instanceof EntityPlayerMP && hasRinneganAwakenKey(stack)) {
+				checkRinneganAwakening(stack, world, entity);
+			}
 		}
 
+		public void checkRinneganAwakening(ItemStack stack, World world, Entity entity) {
+
+			if (Math.random() <= 0.0005) { // 0.05%
+				boolean unlockTomoe = Math.random() * 100 <= ModConfig.DOJUTSU.RINNEGAN_TOMOE_AWAKEN_CHANCE;
+
+				stack.getTagCompound().removeTag(ItemSharingan.RINNEGEN_AWAKENING_KEY);
+				ItemStack rinneganstack = new ItemStack(unlockTomoe ? ItemRinneganTomoe.helmet : ItemRinnegan.helmet);
+				ItemDojutsu.setOwner(rinneganstack, (EntityLivingBase) entity);
+
+				if (unlockTomoe) {
+					RinneganTomoeSideData rightSide = (RinneganTomoeSideData) DojutsuData.getRight(rinneganstack);
+					String eternalMangekyoTexture = RinneganTomoeSideData.getEyeTexture(stack, entity);
+					rightSide.setTexture(ItemRinneganTomoe.ETERNAL_ON, eternalMangekyoTexture);
+					ItemRinneganTomoe.setTomoeStatus(rinneganstack, ItemRinneganTomoe.ETERNAL_ON);
+				}
+				
+				ProcedureUtils.swapItemToSlot((EntityPlayer) entity, EntityEquipmentSlot.HEAD, rinneganstack);
+
+				AdvancementUtil.grant((EntityPlayerMP) entity, "narutomod:rinneganawakened");
+				entity.playSound(SoundEvent.REGISTRY.getObject(new ResourceLocation("ui.toast.challenge_complete")), 1, 1);
+			}
+		}
+
+		@Override
+		public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+			super.addInformation(stack, worldIn, tooltip, flagIn);
+			tooltip.add(TextFormatting.DARK_GRAY + I18n.translateToLocal("tooltip.sharingan.descr") + (isDodgeEnabled(stack) ? TextFormatting.GREEN + I18n.translateToLocal("tooltip.sharingan.dodge_on") : TextFormatting.RED + I18n.translateToLocal("tooltip.sharingan.dodge_off")) + TextFormatting.WHITE);
+
+			if (hasRinneganAwakenKey(stack))
+				tooltip.add("§d§l" + I18n.translateToLocal("item.ems.chakra_transmutation"));
+			
+			if (ItemDojutsu.is(stack, ItemSharingan.class))
+				tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu1") + ": " + TextFormatting.GRAY + I18n.translateToLocal("entity.genjutsu.name"));
+		}
 		// returns true if evaded, false if otherwise
 		public boolean onAttackEvent(LivingAttackEvent event, EntityLivingBase entity, Entity attacker) {
 			if (isDodgeEnabled(ItemDojutsu.getWorn(entity)) && entity.getRNG().nextFloat() <= 0.6f) {
@@ -330,15 +377,6 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 			return stack.hasTagCompound() ? stack.getTagCompound().getInteger("color") : 0;
 		}
 
-		@Override
-		public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-			super.addInformation(stack, worldIn, tooltip, flagIn);
-			tooltip.add(TextFormatting.DARK_GRAY + I18n.translateToLocal("tooltip.sharingan.descr") + (isDodgeEnabled(stack) ? TextFormatting.GREEN + I18n.translateToLocal("tooltip.sharingan.dodge_on") : TextFormatting.RED + I18n.translateToLocal("tooltip.sharingan.dodge_off")) + TextFormatting.WHITE);
-			if (ItemDojutsu.is(stack, ItemSharingan.class))
-				tooltip.add(TextFormatting.ITALIC + I18n.translateToLocal("key.mcreator.specialjutsu1") + ": " + TextFormatting.GRAY + I18n.translateToLocal("entity.genjutsu.name"));
-
-		}
-
 		protected int genjutsuCD;
 
 		public boolean applyGenjutsu(EntityPlayer entity, double range, int durationSeconds) {
@@ -377,6 +415,9 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		return ItemDojutsu.getWorn(entity).getItem() instanceof Base;
 	}
 
+	public static boolean hasRinneganAwakenKey(ItemStack stack) {
+		return stack.hasTagCompound() && stack.getTagCompound().getBoolean(RINNEGEN_AWAKENING_KEY);
+	}
 	public static boolean is(ItemStack stack) {
 		return stack.getItem() instanceof Base;
 	}
