@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.narutomod.ModConfig;
 import net.narutomod.NarutomodModVariables;
 import net.narutomod.goatee.util.AdvancementUtil;
 import net.narutomod.gui.GuiScrollGenjutsuGui;
@@ -147,7 +148,8 @@ public enum KekkeiGenkai {
     },
     RINNEGAN(ItemRinnegan.helmet, "narutomod:rinneganawakened") {
         public Item getItem() {
-           return super.getItem();
+            boolean unlockTomoe = Math.random() * 100 <= ModConfig.DOJUTSU.RINNEGAN_TOMOE_AWAKEN_CHANCE;
+            return unlockTomoe ? ItemRinneganTomoe.helmet : ItemRinnegan.helmet;
         }
 
         public void clearItem(EntityPlayerMP player) {
