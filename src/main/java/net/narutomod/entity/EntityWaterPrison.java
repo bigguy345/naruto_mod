@@ -108,6 +108,11 @@ public class EntityWaterPrison extends ElementsNarutomodMod.ModElement {
 			//	++this.totalWaterBlocks;
 			//}
 			trappedMap.put(userIn, targetIn);
+			
+			if(targetIn instanceof EntityNinjaMob.Base) {
+				((EntityNinjaMob.Base) targetIn).setAttackTarget(userIn);
+				targetIn.setRevengeTarget(userIn);
+			}
 		}
 
 		@Override
