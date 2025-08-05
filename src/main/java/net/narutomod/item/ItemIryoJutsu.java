@@ -87,29 +87,36 @@ public class ItemIryoJutsu extends ElementsNarutomodMod.ModElement {
 			 * (player instanceof EntityPlayer && ((EntityPlayer)player).isCreative() 
 			  ? 1f : (float)this.getCurrentJutsuXp(stack) / (float)this.getCurrentJutsuRequiredXp(stack));
 		}
-	}
+
+	}
 
 	public static class HealingJutsu implements ItemJutsu.IJutsuCallback {
 		@Override
 		public boolean createJutsu(ItemStack stack, EntityLivingBase entity, float power) {
 			EntityLivingBase target = null;
 			RayTraceResult res = ProcedureUtils.objectEntityLookingAt(entity, 3d);
+			float xpModifier = ItemJutsu.getCurrentJutsuXpModifier(stack, entity);
+			float correctModifier = xpModifier > 0 ? 1 / xpModifier : 0;
 			if (res != null) {
-				if (res.entityHit instanceof EntityLivingBase) {
+				if (correctModifier >= 2f && entity.isSneaking()) {
+					target = entity;
+				} else if (res.entityHit instanceof EntityLivingBase) {
 					target = (EntityLivingBase)res.entityHit;
-				} else if ((int)res.hitVec.x == (int)entity.posX 
+				} else if (correctModifier >= 2f) {
+					target = entity;
+				} else if ((int) res.hitVec.x == (int) entity.posX 
 				 && (int)res.hitVec.y == (int)entity.posY && (int)res.hitVec.z == (int)entity.posZ) {
 					target = entity;
 				}
 			}
 			if (target != null) {
-				this.createJutsu(entity, target, power);
+				this.createJutsu(stack, entity, target, power);
 				return true;
 			}
 			return false;
 		}
 
-		public void createJutsu(EntityLivingBase entity, EntityLivingBase target, float power) {
+		public void createJutsu(ItemStack stack, EntityLivingBase entity, EntityLivingBase target, float power) {
 			if (entity.ticksExisted % 3 == 0) {
 				entity.world.playSound(null, target.posX, target.posY, target.posZ, 
 				 SoundEvent.REGISTRY.getObject(new ResourceLocation("narutomod:windecho")),
@@ -118,14 +125,23 @@ public class ItemIryoJutsu extends ElementsNarutomodMod.ModElement {
 			Particles.spawnParticle(entity.world, Particles.Types.SMOKE, target.posX, target.posY+target.height/2,
 			 target.posZ, 10, 0d, 0d, 0d, 0d, 0d, 0d, 0x0000fff6|((0x20+target.getRNG().nextInt(0x20))<<24),
 			 10 + target.getRNG().nextInt(25), 0, 0xF0, -1, 0);
-			target.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 80, 6, false, false));
-			target.heal(power * 0.02f);
+
+			if (ItemJutsu.getCorrectXpModifier(stack, entity) < 2)
+				target.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 80, 5, false, false));
+
+			float entityMulti = target.getEntityData().hasKey("HealingMulti") ? target.getEntityData().getFloat("HealingMulti") : 1;
+			target.heal(power * 0.02f * entityMulti);
 		}
 
 		@Override
 		public void onUsingTick(ItemStack stack, EntityLivingBase player, float power) {
 			RangedItem item = (RangedItem)stack.getItem();
-			item.executeJutsu(stack, player, item.xpModifier(player, stack) / 15f);
+			boolean executed = item.executeJutsu(stack, player, item.xpModifier(player, stack) / 15f);
+
+			if (executed && player.ticksExisted % 200 == 0) {
+				ItemJutsu.Base base = ItemJutsu.getJutsuBase(stack);
+				base.addCurrentJutsuXp(stack, 1);
+			}
 		}
 
 		public static class PlayerHook {

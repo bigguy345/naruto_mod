@@ -17,7 +17,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -146,7 +145,33 @@ public class ItemJutsu extends ElementsNarutomodMod.ModElement {
 	public static double getMaxPower(EntityLivingBase entity, double jutsuCkakraUsage) {
 		return Chakra.pathway(entity).getAmount() / jutsuCkakraUsage * 0.9999d;
 	}
-	
+
+	public static ItemStack getHeldStack(EntityPlayer player) {
+		ItemStack stack = player.getHeldItemMainhand();
+
+		if (stack.getItem() instanceof Base)
+			return stack;
+		stack = player.getHeldItemOffhand();
+		if (stack.getItem() instanceof Base)
+			return stack;
+
+		return null;
+	}
+
+	public static ItemJutsu.Base getJutsuBase(ItemStack stack) {
+		return (ItemJutsu.Base) stack.getItem();
+	}
+
+	public static float getCurrentJutsuXpModifier(ItemStack stack, EntityLivingBase entity) {
+		return stack.getItem() instanceof Base ? getJutsuBase(stack).getCurrentJutsuXpModifier(stack, entity) : 1;
+	}
+
+	public static float getCorrectXpModifier(ItemStack stack, EntityLivingBase entity) {
+		float xpModif = getCurrentJutsuXpModifier(stack, entity);
+		return 1 / xpModif;
+	}
+
+
 	public abstract static class Base extends Item {
 		private static final String JUTSU_INDEX_KEY = "JutsuIndexKey";
 		private static final String CDMAP_KEY = "JutsuCDMapKey";
@@ -305,6 +330,10 @@ public class ItemJutsu extends ElementsNarutomodMod.ModElement {
 			 Math.min(this.getCurrentJutsuRequiredXp(stack) * 3 - this.getCurrentJutsuXp(stack), xp));
 		}
 
+		public void addCurrentJutsuXpWithoutLimit(ItemStack stack, int xp) {
+			this.addJutsuXp(stack, this.getCurrentJutsuIndex(stack), xp);
+		}
+		
 		private int getRequiredXp(ItemStack stack, int index) {
 			int requiredXp = this.jutsuList.get(index).requiredXP;
 			return this.isAffinity(stack) ? requiredXp : (int)((float)requiredXp * 2.5f);
