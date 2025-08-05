@@ -784,23 +784,27 @@ public class EntityClone extends ElementsNarutomodMod.ModElement {
 					originalArmor = NonNullList.withSize(4, ItemStack.EMPTY);
 					for (int i = 0; i < originalArmor.size(); i++)
 						originalArmor.set(i, entity.getItemStackFromSlot(EntityEquipmentSlot.values()[2 + i]).copy());
+					try {
+						CAStacksBase cosInv = CosArmorAPI.getCAStacksClient(summoner.getUniqueID());
+						if (cosInv != null) {
+							for (int i = 0; i < 4; i++) {
+								ItemStack cosmetic = cosInv.getStackInSlot(i);
+								EntityEquipmentSlot slot = EntityEquipmentSlot.values()[2 + i]; // HEAD, CHEST, LEGS, FEET
 
-					CAStacksBase cosInv = CosArmorAPI.getCAStacks(summoner.getUniqueID());
-					if (cosInv != null) {
-						for (int i = 0; i < 4; i++) {
-							ItemStack cosmetic = cosInv.getStackInSlot(i);
-							EntityEquipmentSlot slot = EntityEquipmentSlot.values()[2 + i]; // HEAD, CHEST, LEGS, FEET
-
-							if (i == 3 && hasDojutsuSlot(entity)) //if summoner wearing dojutsu in dojutsu slot, dont do anything to  clone's dojutsu
-								continue;
-							if (!cosInv.isSkinArmor(i)) {
-								if (!cosmetic.isEmpty())
-									entity.setItemStackToSlot(slot, cosmetic);
-							} else
-								entity.setItemStackToSlot(slot, ItemStack.EMPTY);
+								if (i == 3 && hasDojutsuSlot(entity)) //if summoner wearing dojutsu in dojutsu slot, dont do anything to  clone's dojutsu
+									continue;
+								if (!cosInv.isSkinArmor(i)) {
+									if (!cosmetic.isEmpty())
+										entity.setItemStackToSlot(slot, cosmetic);
+								} else
+									entity.setItemStackToSlot(slot, ItemStack.EMPTY);
+							}
 						}
+					} catch (Exception ex) {
+						ex.printStackTrace();
 					}
 				}
+				
 				try {
 					this.setPose(entity);
 					super.doRender(entity, x, y, z, entityYaw, partialTicks);
@@ -921,6 +925,18 @@ public class EntityClone extends ElementsNarutomodMod.ModElement {
 	    		}
 	    	}
 
+			private ItemStack getVanillaSlot(EntityLivingBase entity, EntityEquipmentSlot slot) {
+				if (CARLOADED) {
+					try {
+						CAStacksBase cosInv = CosArmorAPI.getCAStacksClient(entity.getUniqueID());
+						if (cosInv != null && !cosInv.getStackInSlot(slot.getIndex()).isEmpty() && !cosInv.isSkinArmor(slot.getIndex()))
+							return cosInv.getStackInSlot(slot.getIndex());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				return entity.getItemStackFromSlot(slot);
+			}
 			/**
 			 * IS CALLED FROM THE DOJUTSU SLOT ADDON !!
 			 */
@@ -928,10 +944,10 @@ public class EntityClone extends ElementsNarutomodMod.ModElement {
 
 				EntityPlayer summoner = (EntityPlayer) ((_Base) entity).getSummoner();
 
-				if (CARLOADED && CosArmorAPI.getCAStacks(summoner.getUniqueID()).isSkinArmor(3))
+				if (CARLOADED && CosArmorAPI.getCAStacksClient(summoner.getUniqueID()).isSkinArmor(3))
 					return;
 
-				ItemStack itemstack = summoner.getItemStackFromSlot(slotIn);
+				ItemStack itemstack = getVanillaSlot(summoner, slotIn);
 				NarutoData data = NarutoData.get(summoner);
 				if (data == null || data.getDojutsuSlot().isEmpty())
 					return;
