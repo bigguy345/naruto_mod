@@ -42,7 +42,7 @@ public final class NarutoSyncData extends AbstractPacket {
             syncTrackingClients(NarutoData.get(player));
         else {
             String playerName = ByteBufUtils.readUTF8String(in);
-            if(Minecraft.getMinecraft().world == null)
+            if (Minecraft.getMinecraft().world == null || playerName == null)
                 return;
             
             EntityPlayer sendingPlayer = Minecraft.getMinecraft().world.getPlayerEntityByName(playerName);
