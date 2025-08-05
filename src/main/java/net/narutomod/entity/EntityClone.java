@@ -1,6 +1,7 @@
 
 package net.narutomod.entity;
 
+import net.minecraft.entity.monster.IMob;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
@@ -74,6 +75,7 @@ import net.narutomod.PlayerRender;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -251,7 +253,7 @@ public class EntityClone extends ElementsNarutomodMod.ModElement {
 
 		@Override
 		public boolean isOnSameTeam(Entity entityIn) {
-			return entityIn.equals(this.getSummoner()) || (entityIn instanceof _Base && this.sameSummoner((_Base)entityIn));
+			return entityIn.equals(this.getSummoner()) || entityIn instanceof _Base && this.sameSummoner((_Base) entityIn) || getSummoner() != null && getSummoner().isOnSameTeam(entityIn);
 		}
 
 		@SideOnly(Side.CLIENT)
@@ -304,6 +306,24 @@ public class EntityClone extends ElementsNarutomodMod.ModElement {
 				 && summoner.ticksExisted - summoner.getLastAttackedEntityTime() < 400) {
 					target = summoner.getLastAttackedEntity();
 				}
+
+				//Any other near ally's target
+				if (target == null) {
+					List<EntityLivingBase> nearbyAllies = this.world.getEntitiesWithinAABB(this.getClass(), this.getEntityBoundingBox().grow(32));
+					for (EntityLivingBase ally : nearbyAllies) {
+						if (ally != this && isOnSameTeam(ally) && ally.getAttackingEntity() != null) {
+							target = ally.getAttackingEntity();
+						}
+					}
+				}
+				
+				//Final fallback, the closest hostile mob
+				if (target == null && this.getSummoner() instanceof EntityPlayer) {
+					List<EntityLivingBase> hostiles = this.world.getEntitiesWithinAABB(EntityLivingBase.class, summoner.getEntityBoundingBox().grow(8), e -> e instanceof IMob && e.isEntityAlive());
+					if (!hostiles.isEmpty())
+						target = hostiles.get(0);
+				}
+				
 				if (target != null && !summoner.isOnSameTeam(target) && EntityAITarget.isSuitableTarget(this, target, false, false)) {
 					this.setAttackTarget(target);
 				} else if (this.getAttackTarget() != null && !this.getAttackTarget().isEntityAlive()) {
