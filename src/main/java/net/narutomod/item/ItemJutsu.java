@@ -171,6 +171,19 @@ public class ItemJutsu extends ElementsNarutomodMod.ModElement {
 		return 1 / xpModif;
 	}
 
+	public static boolean isActivated(Item block, JutsuEnum jutsu, EntityPlayer player) {
+		ItemStack stack = ProcedureUtils.getMatchingItemStack(player, block);
+		if (stack == null || stack.isEmpty())
+			return false;
+
+		Base base = getJutsuBase(stack);
+		for (JutsuEnum enum1 : base.jutsuList) {
+			if (enum1.equals(jutsu))
+				return enum1.jutsu.isActivated(stack) || enum1.jutsu.isActivated(player);
+		}
+
+		return false;
+	}
 
 	public abstract static class Base extends Item {
 		private static final String JUTSU_INDEX_KEY = "JutsuIndexKey";

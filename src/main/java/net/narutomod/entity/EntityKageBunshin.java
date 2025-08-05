@@ -1,6 +1,7 @@
 
 package net.narutomod.entity;
 
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -33,9 +34,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 
 import net.narutomod.PlayerTracker;
+import net.narutomod.item.*;
 import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.ElementsNarutomodMod;
-import net.narutomod.item.ItemJutsu;
 import net.narutomod.Chakra;
 
 import com.google.common.collect.Lists;
@@ -316,6 +317,41 @@ public class EntityKageBunshin extends ElementsNarutomodMod.ModElement {
 		    			je.jutsu.createJutsu(stack, this, je.jutsu.getPower(stack));
 		    		}
 		    	}
+
+				if (getSummoner() instanceof EntityPlayer) {
+					EntityPlayer summoner = (EntityPlayer) getSummoner();
+
+
+					ItemJutsu.JutsuEnum jutsu = ItemFuton.CHAKRAFLOW;
+					if (jutsu.jutsu.isActivated(summoner)) {
+						jutsu.jutsu.createJutsu(stack, this, jutsu.jutsu.getPower(stack));
+					}
+
+					jutsu = ItemKaton.FLAMESLICE;
+					if (jutsu.jutsu.isActivated(summoner)) {
+						jutsu.jutsu.createJutsu(stack, this, jutsu.jutsu.getPower(stack));
+					}
+
+					jutsu = ItemRaiton.CHIDORI;
+					if (jutsu.jutsu.isActivated(summoner)) {
+						ItemStack lightning = ProcedureUtils.getMatchingItemStack(summoner, ItemRaiton.block);
+						setItemStackToSlot(EntityEquipmentSlot.MAINHAND,lightning);
+						jutsu.jutsu.createJutsu(lightning, this, jutsu.jutsu.getPower(stack));
+					}
+					
+					jutsu = ItemRaiton.CHAKRAMODE;
+					if (jutsu.jutsu.isActivated(summoner)) {
+						ItemStack lightning = ProcedureUtils.getMatchingItemStack(summoner, ItemRaiton.block);
+						jutsu.jutsu.createJutsu(lightning, this, jutsu.jutsu.getPower(stack));
+					}
+
+					jutsu = ItemIryoJutsu.POWERMODE;
+					if (jutsu.jutsu.isActivated(summoner)) {
+						setItemStackToSlot(EntityEquipmentSlot.MAINHAND,ItemStack.EMPTY);
+						jutsu.jutsu.createJutsu(stack, this, jutsu.jutsu.getPower(stack));
+					}
+				}
+
 	    	}
 	    }
 
