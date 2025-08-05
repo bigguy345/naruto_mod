@@ -1,7 +1,8 @@
 
 package net.narutomod.entity;
 
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -115,7 +116,8 @@ public class EntityEnhancedStrength extends ElementsNarutomodMod.ModElement {
 				}
 			}
 		}
-
+
+
 		@Override
 		public void onUpdate() {
 			if (this.user != null) {
@@ -141,7 +143,10 @@ public class EntityEnhancedStrength extends ElementsNarutomodMod.ModElement {
 			private static final String ID_KEY = "IryoEnhancedStrengthEntityIdKey";
 			@Override
 			public boolean createJutsu(ItemStack stack, EntityLivingBase entity, float power) {
-				Entity entity1 = entity.world.getEntityByID(stack.getTagCompound().getInteger(ID_KEY));
+				Entity entity1 = null;
+				if (stack.hasTagCompound() && stack.getTagCompound().hasKey(ID_KEY))
+					entity1 = entity.world.getEntityByID(stack.getTagCompound().getInteger(ID_KEY));
+				
 				if (entity1 instanceof EC) {
 					entity1.setDead();
 					if (entity instanceof EntityPlayer && !entity.world.isRemote) {
@@ -163,8 +168,23 @@ public class EntityEnhancedStrength extends ElementsNarutomodMod.ModElement {
 			}
 
 			@Override
+			public boolean isActivated(EntityLivingBase entity) {
+				return this.getData(entity) != null;
+			}
+			@Override
 			public boolean isActivated(ItemStack stack) {
 				return stack.hasTagCompound() && stack.getTagCompound().hasKey(ID_KEY);
+			}
+
+			@Override
+			@Nullable
+			public ItemJutsu.IJutsuCallback.JutsuData getData(EntityLivingBase entity) {
+				ItemStack stack = ProcedureUtils.getMatchingItemStack(entity, ItemIryoJutsu.block);
+				if (stack != null && stack.hasTagCompound() && stack.getTagCompound().hasKey(ID_KEY)) {
+					Entity entity1 = entity.world.getEntityByID(stack.getTagCompound().getInteger(ID_KEY));
+					return entity1 instanceof EC ? new JutsuData(entity1, stack) : null;
+				}
+				return null;
 			}
 		}
 	}
