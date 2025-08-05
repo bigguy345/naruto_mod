@@ -5,6 +5,7 @@ import lain.mods.cos.api.CosArmorAPI;
 import lain.mods.cos.api.inventory.CAStacksBase;
 import net.minecraft.client.renderer.entity.*;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.util.*;
 import net.minecraftforge.fml.common.Loader;
@@ -768,7 +769,8 @@ public class EntityClone extends ElementsNarutomodMod.ModElement {
 		    	EntityLivingBase summoner = entity.getSummoner();
 		        if (summoner instanceof AbstractClientPlayer) {
 		        	this.mainModel = ((AbstractClientPlayer)summoner).getSkinType().equals("slim") ? this.slimModel : this.normalModel;
-		        } else if (summoner != null) {
+					((ModelClone) mainModel).bipedHeadwear.showModel = ((AbstractClientPlayer) summoner).isWearing(EnumPlayerModelParts.HAT);
+				} else if (summoner != null) {
 					Render<Entity> renderer = this.renderManager.getEntityRenderObject(summoner);
 					if (renderer instanceof RenderLivingBase) {// && ((RenderLivingBase)renderer).getMainModel() instanceof ModelBiped) {
 						this.mainModel = ((RenderLivingBase) renderer).getMainModel();
