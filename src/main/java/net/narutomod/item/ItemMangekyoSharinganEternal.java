@@ -102,7 +102,7 @@ public class ItemMangekyoSharinganEternal extends ElementsNarutomodMod.ModElemen
 
 			@Override
 			public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
-				return "narutomod:textures/mangekyosharinganhelmet_eternal.png";
+				return "narutomod:textures/eye/mangekyosharinganhelmet_fugaku.png";
 			}
 
 			@Override

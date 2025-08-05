@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.narutomod.entity.EntityBijuManager;
 import net.narutomod.goatee.client.RenderUtils;
+import net.narutomod.goatee.data.sidedata.RinneganTomoeSideData;
 import net.narutomod.goatee.data.sidedata.SideData;
 import net.narutomod.item.ItemBijuCloak;
 import net.narutomod.item.ItemDojutsu;
@@ -380,6 +381,12 @@ public class ModelDojutsu extends ModelBiped {
 
         SideData left = eye.data.getLeft(stack);
         SideData right = eye.data.getRight(stack);
+
+      //  RinneganTomoeSideData tomoeData = (RinneganTomoeSideData) right;
+
+      //  String tex = "narutomod:textures/eye/mangekyosharinganeternalhelmet_indra.png";
+     //  tomoeData.setTexture(1, tex);
+
 
         model.leftTexture = left.getFinalTexture(living);
         model.leftBaseTex = left.getEyeBaseTexture();
