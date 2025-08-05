@@ -1,0 +1,78 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
+
+version = "1.0.3"
+group = "com.yourname.modid"
+archivesBaseName = "narutomod-0.3.2_goatee"
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
+minecraft {
+    mappings channel: 'snapshot', version: '20171003-1.12'
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            args '--username', 'gg'
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'mixin.debug.export', 'true'
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+
+    accessTransformer = file('src/main/resources/META-INF/narutomod_at.cfg')
+}
+
+sourceSets {
+    main { output.resourcesDir = output.classesDir }
+}
+
+
+
+repositories {
+    maven {
+        url 'https://maven.cleanroommc.com'
+    }
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2855'
+    //  implementation((project.files("libs/mixinbooter-9.1.jar")))
+      implementation((project.files("libs/CosmeticArmorReworked-1.12.2-v5a.jar")))
+
+}
+
+apply from: 'mcreator.gradle'
+
+
