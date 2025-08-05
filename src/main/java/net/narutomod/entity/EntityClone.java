@@ -1,10 +1,15 @@
 
 package net.narutomod.entity;
 
+import lain.mods.cos.api.CosArmorAPI;
+import lain.mods.cos.api.inventory.CAStacksBase;
+import net.minecraft.client.renderer.entity.*;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.util.*;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -15,11 +20,7 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.common.MinecraftForge;
 
 import net.minecraft.world.World;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.EnumHandSide;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.item.Item;
@@ -44,14 +45,9 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityXPOrb;
-import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.model.ModelBox;
-import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.entity.RenderLivingBase;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -66,6 +62,7 @@ import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.block.material.Material;
 
+import net.narutomod.goatee.data.NarutoData;
 import net.narutomod.item.ItemDojutsu;
 import net.narutomod.potion.PotionFeatherFalling;
 import net.narutomod.procedure.ProcedureUtils;
@@ -74,12 +71,8 @@ import net.narutomod.ElementsNarutomodMod;
 import net.narutomod.PlayerRender;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import javax.annotation.Nullable;
-import com.google.common.collect.Maps;
 
 @ElementsNarutomodMod.ModElement.Tag
 public class EntityClone extends ElementsNarutomodMod.ModElement {
@@ -731,6 +724,7 @@ public class EntityClone extends ElementsNarutomodMod.ModElement {
 
     public static class ClientRLM {
     	private static ClientRLM instance;
+		private static final boolean CARLOADED = Loader.isModLoaded("cosmeticarmorreworked");
 
     	public ClientRLM() {
     		instance = this;
@@ -743,11 +737,19 @@ public class EntityClone extends ElementsNarutomodMod.ModElement {
     		return instance;
     	}
 
+		private static boolean hasDojutsuSlot(EntityLivingBase e) {
+			if (e instanceof _Base) {
+				Entity summoner = ((_Base) e).getSummoner();
+				if (summoner instanceof EntityPlayer && !NarutoData.get((EntityPlayer) summoner).getDojutsuSlot().isEmpty())
+					return true;
+			}
+			return false;
+		}
+
 		@SideOnly(Side.CLIENT)
 		public class RenderClone<T extends _Base> extends RenderLivingBase<T> {
 			private final ModelClone normalModel;
 			private final ModelClone slimModel = new ModelClone(0.0F, true);
-	
 		    public RenderClone(RenderManager renderManager) {
 		        super(renderManager, new ModelClone(0.0F, false), 0.5F);
 		        this.normalModel = (ModelClone)this.mainModel;
@@ -767,13 +769,47 @@ public class EntityClone extends ElementsNarutomodMod.ModElement {
 		        if (summoner instanceof AbstractClientPlayer) {
 		        	this.mainModel = ((AbstractClientPlayer)summoner).getSkinType().equals("slim") ? this.slimModel : this.normalModel;
 		        } else if (summoner != null) {
-		        	Render renderer = this.renderManager.getEntityRenderObject(summoner);
-			    	if (renderer instanceof RenderLivingBase) {// && ((RenderLivingBase)renderer).getMainModel() instanceof ModelBiped) {
-		    			this.mainModel = ((RenderLivingBase)renderer).getMainModel();
-			    	}
-		        }
-		    	this.setPose(entity);
-		    	super.doRender(entity, x, y, z, entityYaw, partialTicks);
+					Render<Entity> renderer = this.renderManager.getEntityRenderObject(summoner);
+					if (renderer instanceof RenderLivingBase) {// && ((RenderLivingBase)renderer).getMainModel() instanceof ModelBiped) {
+						this.mainModel = ((RenderLivingBase) renderer).getMainModel();
+					}
+				}
+
+				// If Cosmetic Armors Reworked is loaded, override with cosmetic armor
+				NonNullList<ItemStack> originalArmor = null;
+				boolean CAR = CARLOADED && summoner instanceof EntityPlayer;
+				if (CAR) {
+					originalArmor = NonNullList.withSize(4, ItemStack.EMPTY);
+					for (int i = 0; i < originalArmor.size(); i++)
+						originalArmor.set(i, entity.getItemStackFromSlot(EntityEquipmentSlot.values()[2 + i]).copy());
+
+					CAStacksBase cosInv = CosArmorAPI.getCAStacks(summoner.getUniqueID());
+					if (cosInv != null) {
+						for (int i = 0; i < 4; i++) {
+							ItemStack cosmetic = cosInv.getStackInSlot(i);
+							EntityEquipmentSlot slot = EntityEquipmentSlot.values()[2 + i]; // HEAD, CHEST, LEGS, FEET
+
+							if (i == 3 && hasDojutsuSlot(entity)) //if summoner wearing dojutsu in dojutsu slot, dont do anything to  clone's dojutsu
+								continue;
+							if (!cosInv.isSkinArmor(i)) {
+								if (!cosmetic.isEmpty())
+									entity.setItemStackToSlot(slot, cosmetic);
+							} else
+								entity.setItemStackToSlot(slot, ItemStack.EMPTY);
+						}
+					}
+				}
+				try {
+					this.setPose(entity);
+					super.doRender(entity, x, y, z, entityYaw, partialTicks);
+				} finally {
+					if (CAR) {
+						for (int i = 0; i < 4; i++) {
+							EntityEquipmentSlot slot = EntityEquipmentSlot.values()[2 + i];
+							entity.setItemStackToSlot(slot, originalArmor.get(i));
+						}
+					}
+				}
 		    }
 
 		    private void setPose(T entity) {
@@ -873,11 +909,56 @@ public class EntityClone extends ElementsNarutomodMod.ModElement {
 	    		if (this.renderer.getMainModel() instanceof ModelBiped) {
 		    		GlStateManager.enableBlend();
 		    		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+
+					if (hasDojutsuSlot(entityIn))
+						renderVanillaHelmet(entityIn, limbSwing * 1.8F / entityIn.height, f1, f2, f3, f4, f5, f6, EntityEquipmentSlot.HEAD);
+					
 		    		super.doRenderLayer(entityIn, limbSwing * 1.8F / entityIn.height, f1, f2, f3, f4, f5, f6);
 		    		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		    		GlStateManager.disableBlend();
 	    		}
 	    	}
+
+			/**
+			 * IS CALLED FROM THE DOJUTSU SLOT ADDON !!
+			 */
+			private void renderVanillaHelmet(EntityLivingBase entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale, EntityEquipmentSlot slotIn) {
+
+				EntityPlayer summoner = (EntityPlayer) ((_Base) entity).getSummoner();
+
+				if (CARLOADED && CosArmorAPI.getCAStacks(summoner.getUniqueID()).isSkinArmor(3))
+					return;
+
+				ItemStack itemstack = summoner.getItemStackFromSlot(slotIn);
+				NarutoData data = NarutoData.get(summoner);
+				if (data == null || data.getDojutsuSlot().isEmpty())
+					return;
+
+				if (itemstack.getItem() instanceof ItemArmor) {
+					ItemArmor itemarmor = (ItemArmor) itemstack.getItem();
+					if (itemarmor.getEquipmentSlot() == slotIn) {
+						ModelBiped t = this.getModelFromSlot(slotIn);
+						t = getArmorModelHook(summoner, itemstack, slotIn, t);
+						t.setModelAttributes(this.renderer.getMainModel());
+						t.setLivingAnimations(entity, limbSwing, limbSwingAmount, partialTicks);
+						this.setModelSlotVisible(t, slotIn);
+						this.renderer.bindTexture(this.getArmorResource(summoner, itemstack, slotIn, null));
+
+						if (itemarmor.hasOverlay(itemstack)) {
+							GlStateManager.color(0, 0, 0, 1.0F);
+							t.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+							this.renderer.bindTexture(this.getArmorResource(summoner, itemstack, slotIn, "overlay"));
+						}
+						{ // Non-colored
+							GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+							t.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+						} // Default
+						if (itemstack.hasEffect()) {
+							renderEnchantedGlint(this.renderer, entity, t, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
+						}
+					}
+				}
+			}
 	
 	    	@Override
 	    	protected void setModelSlotVisible(ModelBiped model, EntityEquipmentSlot slotIn) {
