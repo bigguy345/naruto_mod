@@ -90,7 +90,11 @@ public abstract class EntityBijuManager<T extends EntityTailedBeast.Base> {
 		EntityBijuManager tb = mapByClass.get(clazz);
 		return tb != null && player.equals(tb.getJinchurikiPlayer());
 	}
-
+	public static boolean isJinchurikiOf(EntityPlayer player, int tails) {
+		EntityBijuManager tb = mapByTailnum.get(tails);
+		return tb != null && player.equals(tb.getJinchurikiPlayer());
+	}
+	
 	@Nullable
 	public static EntityTailedBeast.Base getBijuOfPlayerInWorld(EntityPlayer player) {
 		EntityBijuManager bm = getBijuManagerFrom(player);

@@ -397,30 +397,48 @@ public class EntityKageBunshin extends ElementsNarutomodMod.ModElement {
 					if (ec != null && ec.isEntityAlive())
 						clones.add(ids[i]);
 				}
-				entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(MAXHEALTH);
+				//entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(MAXHEALTH);
 				if (!clone.isDead) {
+					boolean kyuubiJin = EntityBijuManager.isJinchurikiOf((EntityPlayer) entity, 9);
+
 					clones.add(clone.getEntityId());
 					Chakra.Pathway chakra = Chakra.pathway(entity);
 					double d = chakra.getAmount() / (clones.size()+1);
-					chakra.consume(d);
+					if (kyuubiJin)
+						chakra.consume(0.05f);
+					else
+						chakra.consume(d);
 					Chakra.pathway(clone).setMax(d).consume(-d);
-					entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier(MAXHEALTH, "maxhealth.modifier", entity.getHealth() * clones.size() / (clones.size() + 1) - entity.getMaxHealth(), 0));
-				}
- else if (clones.size() > 0) {
-					entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier(MAXHEALTH, "maxhealth.modifier", -clone.getMaxHealth() * clones.size(), 0));
+
+
+	
+					if (clone.ticksExisted < 2) {
+						ItemStack helmet = ItemDojutsu.getWorn(entity);
+						boolean wearingRinnegan = ItemRinnegan.isRinnegan(helmet) && ItemDojutsu.isOwner(helmet, entity);
+						
+						float newHealth = wearingRinnegan ? entity.getHealth() : (float) (entity.getHealth() / Math.pow(2, clones.size()));
+						if (!wearingRinnegan)
+							newHealth = Math.max(2, kyuubiJin ? newHealth * 2 : newHealth);
+						
+						clone.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(newHealth);
+						clone.setHealth(newHealth);
+					}
+					//	entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier(MAXHEALTH, "maxhealth.modifier", entity.getHealth() * clones.size() / (clones.size() + 1) - entity.getMaxHealth(), 0));
+				} else if (clones.size() > 0) {
+					//	entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier(MAXHEALTH, "maxhealth.modifier", -clone.getMaxHealth() * clones.size(), 0));
 				}
 				if (entity.getHealth() > entity.getMaxHealth()) {
-					entity.setHealth(entity.getMaxHealth());
+					//entity.setHealth(entity.getMaxHealth());
 				}
-				if (!clone.isDead) {
-					for (Integer i : clones) {
-						EC e = getCloneByID(entity.world, i.intValue());
-						e.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(entity.getHealth());
-						if (e.ticksExisted < 2 || e.getHealth() > e.getMaxHealth()) {
-							e.setHealth(e.getMaxHealth());
-						}
-					}
-				}
+				//				if (!clone.isDead) {
+				//					for (Integer i : clones) {t
+				//						EC e = getCloneByID(entity.world, i.intValue());
+				//						e.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(entity.getHealth());
+				//						if (e.ticksExisted < 2 || e.getHealth() > e.getMaxHealth()) {
+				//							e.setHealth(e.getMaxHealth());
+				//						}
+				//					}
+				//				}
 				if (clones.isEmpty()) {
 					entity.getEntityData().removeTag(ID_KEY);
 				} else {
