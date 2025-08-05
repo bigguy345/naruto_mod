@@ -35,6 +35,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.Potion;
 import net.minecraft.block.Block;
 
+import net.narutomod.entity.EntityClone;
 import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.procedure.ProcedureAirPunch;
 import net.narutomod.Chakra;
@@ -107,7 +108,7 @@ public class PotionChakraEnhancedStrength extends ElementsNarutomodMod.ModElemen
 
 	public class EntityHook {
 		public class Punch extends ProcedureAirPunch {
-			private final boolean griefing;
+			private boolean griefing;
 
 			public Punch(World world) {
 				this.blockDropChance = 0.1F;
@@ -137,6 +138,9 @@ public class PotionChakraEnhancedStrength extends ElementsNarutomodMod.ModElemen
 
 			@Override
 			protected EntityItem processAffectedBlock(Entity player, BlockPos pos, EnumFacing facing) {
+				if (player instanceof EntityClone._Base)
+					return ProcedureUtils.breakBlockAndDropWithChance(player.world, pos, this.blockHardnessLimit, 0f, this.blockDropChance, false);
+				
 				if (this.griefing && player.world.getBlockState(pos).isFullBlock()
 				 && player.world.getBlockState(pos.up()).getCollisionBoundingBox(player.world, pos.up()) == Block.NULL_AABB) {
 					EntityFallingBlock entity = new EntityFallingBlock(player.world, 0.5d+pos.getX(), pos.getY(), 0.5d+pos.getZ(), player.world.getBlockState(pos));
