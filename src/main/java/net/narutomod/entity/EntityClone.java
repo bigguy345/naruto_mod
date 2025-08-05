@@ -65,6 +65,7 @@ import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.block.material.Material;
 
+import net.narutomod.item.ItemDojutsu;
 import net.narutomod.potion.PotionFeatherFalling;
 import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.item.ItemOnBody;
@@ -171,6 +172,10 @@ public class EntityClone extends ElementsNarutomodMod.ModElement {
 			for (EntityEquipmentSlot entityequipmentslot : EntityEquipmentSlot.values()) {
 				this.setItemStackToSlot(entityequipmentslot, entity.getItemStackFromSlot(entityequipmentslot).copy());
 			}
+
+			ItemStack dojutsu = ItemDojutsu.getWorn(entity);
+			if (!dojutsu.isEmpty())
+				setItemStackToSlot(EntityEquipmentSlot.HEAD, dojutsu);
 		}
 
 		protected float getScale() {
