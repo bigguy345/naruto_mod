@@ -100,7 +100,7 @@ public class EntitySwampPit extends ElementsNarutomodMod.ModElement {
 							//this.world.setBlockState(this.center.add(i, 1 - this.ticksExisted, k), BlockMud.block.getDefaultState(), 3);
 							map.put(this.center.add(i, 1 - this.ticksExisted, k), BlockMud.block.getDefaultState());
 						}
-					}
+					} 
 				}
 				new net.narutomod.event.EventSetBlocks(this.world, map, 0, 600, false, false);
 			}
