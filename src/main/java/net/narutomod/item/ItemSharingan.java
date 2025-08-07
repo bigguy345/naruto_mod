@@ -1,5 +1,6 @@
 package net.narutomod.item;
 
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
@@ -221,7 +222,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 //						if (uuid1 != null && uuid1.equals(ProcedureUtils.getOwnerId(stack1))) {
 //							stack1.shrink(1);
 //						}
-//					}
+			//					}w
 //				}
 //			}
 			//if (entity instanceof EntityPlayerMP)
@@ -272,6 +273,8 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		 		Entity immediateSource = event.getSource().getImmediateSource();
 				if (immediateSource == null)
 					return false;
+				Entity trueSource = event.getSource().getTrueSource();
+				
 		    	List<BlockPos> list = ProcedureUtils.getAllAirBlocks(entity.world, entity.getEntityBoundingBox().grow(2.5d));
 		    	for (int i = 0; i < list.size(); i++) {
 		    		BlockPos pos = list.get(entity.getRNG().nextInt(list.size()));
@@ -280,6 +283,12 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 		    		 && immediateSource.getDistanceSqToCenter(pos) > 6.25d && ProcedureUtils.isSpaceOpenToStandOn(entity, pos)) {
 			 			event.setCanceled(true);
 			 			entity.setPositionAndUpdate(0.5d+pos.getX(), pos.getY(), 0.5d+pos.getZ());
+
+						if (entity instanceof EntityLiving && trueSource instanceof EntityLivingBase) {
+							EntityLiving living = (EntityLiving) entity;
+							if (living.getAttackTarget() == null)
+								living.setAttackTarget((EntityLivingBase) trueSource);
+						}
 			 			return true;
 		    		}
 		    	}
