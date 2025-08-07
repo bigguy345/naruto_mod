@@ -324,12 +324,14 @@ public class EntityKageBunshin extends ElementsNarutomodMod.ModElement {
 
 					ItemJutsu.JutsuEnum jutsu = ItemFuton.CHAKRAFLOW;
 					if (jutsu.jutsu.isActivated(summoner)) {
-						jutsu.jutsu.createJutsu(stack, this, jutsu.jutsu.getPower(stack));
+						ItemStack wind = ProcedureUtils.getMatchingItemStack(summoner, ItemFuton.block);
+						jutsu.jutsu.createJutsu(wind, this, jutsu.jutsu.getPower(stack));
 					}
 
 					jutsu = ItemKaton.FLAMESLICE;
 					if (jutsu.jutsu.isActivated(summoner)) {
-						jutsu.jutsu.createJutsu(stack, this, jutsu.jutsu.getPower(stack));
+						ItemStack fire = ProcedureUtils.getMatchingItemStack(summoner, ItemKaton.block);
+						jutsu.jutsu.createJutsu(fire, this, jutsu.jutsu.getPower(stack));
 					}
 
 					jutsu = ItemRaiton.CHIDORI;
@@ -347,8 +349,9 @@ public class EntityKageBunshin extends ElementsNarutomodMod.ModElement {
 
 					jutsu = ItemIryoJutsu.POWERMODE;
 					if (jutsu.jutsu.isActivated(summoner)) {
+						ItemStack heal = ProcedureUtils.getMatchingItemStack(summoner, ItemIryoJutsu.block);
 						setItemStackToSlot(EntityEquipmentSlot.MAINHAND,ItemStack.EMPTY);
-						jutsu.jutsu.createJutsu(stack, this, jutsu.jutsu.getPower(stack));
+						jutsu.jutsu.createJutsu(heal, this, jutsu.jutsu.getPower(stack));
 					}
 				}
 
