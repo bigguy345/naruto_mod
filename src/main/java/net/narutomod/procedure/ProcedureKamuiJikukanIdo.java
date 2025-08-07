@@ -1,5 +1,6 @@
 package net.narutomod.procedure;
 
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -105,18 +106,21 @@ public class ProcedureKamuiJikukanIdo extends ElementsNarutomodMod.ModElement {
 					entity.fallDistance = (float) (0);
 				}
 				if (entity instanceof EntityPlayer) {
-					((EntityPlayer) entity).capabilities.allowEdit = (!(f2));
-					((EntityPlayer) entity).sendPlayerAbilities();
+					EntityPlayer player = (EntityPlayer) entity;
+					player.capabilities.allowEdit = (!(f2));
+					player.capabilities.isFlying = (f2);
+
+					if (player.capabilities.allowFlying)
+						player.setNoGravity(f2);
+
+					player.sendPlayerAbilities();
+					if (!entity.world.isRemote) {
+						player.sendStatusMessage(new TextComponentString((I18n.translateToLocal("chattext.intangible")) + "" + f2), true);
+					}
 				}
-				if (entity instanceof EntityPlayer) {
-					((EntityPlayer) entity).capabilities.isFlying = (f2);
-					((EntityPlayer) entity).sendPlayerAbilities();
-				}
+
 				ProcedureOnLivingUpdate.setNoClip(entity, f2);
-				if (entity instanceof EntityPlayer && !entity.world.isRemote) {
-					((EntityPlayer) entity).sendStatusMessage(new TextComponentString(
-							((net.minecraft.util.text.translation.I18n.translateToLocal("chattext.intangible")) + "" + ((f2)))), (true));
-				}
+
 				entity.getEntityData().setBoolean("kamui_intangible", (f2));
 				if ((!(f2))) {
 					if (((timer) > 400)) {
