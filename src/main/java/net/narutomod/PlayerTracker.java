@@ -101,6 +101,19 @@ public class PlayerTracker extends ElementsNarutomodMod.ModElement {
 		}
 	}
 
+	public static double getMaxNinjaXp() {
+		return ModConfig.MAX_NINJA_XP;
+	}
+
+	public static void setBattleXp(EntityPlayer entity, double xp, boolean notifyPlayer) {
+		entity.getEntityData().setDouble(BATTLEXP, xp);
+		if (entity instanceof EntityPlayerMP) {
+			sendBattleXPToTracking((EntityPlayerMP) entity);
+			if (notifyPlayer) {
+				entity.sendStatusMessage(new TextComponentString(net.minecraft.util.text.translation.I18n.translateToLocal("chattext.ninjaexperience") + String.format("%.1f", getBattleXp(entity))), true);
+			}
+		}
+	}
 	private static void sendBattleXPToSelf(EntityPlayerMP player) {
 		ProcedureSync.EntityNBTTag.sendToSelf(player, BATTLEXP, getBattleXp(player));
 	}
