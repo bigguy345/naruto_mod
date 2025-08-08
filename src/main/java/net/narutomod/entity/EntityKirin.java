@@ -200,8 +200,13 @@ public class EntityKirin extends ElementsNarutomodMod.ModElement {
 
 		@Override
 		protected void onImpact(RayTraceResult result) {
+			Entity target = result.entityHit;
 			if (result.entityHit != null && result.entityHit.equals(this.shootingEntity))
 				return;
+			
+			if (target != null && shootingEntity.getRidingEntity().equals(target))
+				return;
+
 			if (!this.world.isRemote) {
 				this.playSound(SoundEvents.ENTITY_LIGHTNING_IMPACT, 5.0F, 0.5F + this.rand.nextFloat() * 0.2F);
 				Vec3d vec = result.entityHit != null ? result.entityHit.getPositionVector() : result.hitVec;
@@ -212,7 +217,7 @@ public class EntityKirin extends ElementsNarutomodMod.ModElement {
 				float size = this.getEntityScale();
 				boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.world, this.shootingEntity);
 				this.world.newExplosion(this.shootingEntity, vec.x, vec.y, vec.z, size, flag, flag);
-				ProcedureAoeCommand.set(this.world, vec.x, vec.y, vec.z, 0.0D, 10.0D).exclude(this).exclude(this.shootingEntity)
+				ProcedureAoeCommand.set(this.world, vec.x, vec.y, vec.z, 0.0D, 10.0D).exclude(this).exclude(this.shootingEntity).exclude(shootingEntity.getRidingEntity())
 				 .setFire(15).damageEntities(ItemJutsu.causeJutsuDamage(this, this.shootingEntity), 100f * size);
 			}
 			//this.haltMotion();
