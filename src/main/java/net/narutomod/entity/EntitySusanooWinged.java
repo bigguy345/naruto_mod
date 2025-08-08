@@ -282,25 +282,42 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			super.onEntityUpdate();
 		}
 
-		@Override
-		public void travel(float ti, float tj, float tk) {
-			if (this.isBeingRidden()) {
-				EntityLivingBase entity = (EntityLivingBase) this.getControllingPassenger();
-				if ((!this.onGround || entity.rotationPitch < 0.0F) && entity.moveForward > 0.0F) {
-					this.motionY -= entity.rotationPitch / 45.0D;
-				}
-				if (!this.onGround)
- {
-					this.extendWings();
-				} else
- {
-					this.detractWings();
-				}
-			}
-			super.travel(ti, tj, tk);
-			this.setMotionXZ((float)(this.posX - this.lastX), (float)(this.posZ - this.lastZ), this.rotationYawHead);
+		protected float getJumpUpwardsMotion() {
+			return 1.5F;
 		}
 
+		protected float getJumpMovementFactor(EntityPlayer rider) {
+			return 4;
+		}
+		@Override
+		public void wingedSusanooTravel(EntityLivingBase entity, float strafe, float vertical, float forward) {
+			if (!this.onGround) {
+					this.extendWings();
+
+				// If moving forward/strafing → flight mode
+				if (strafe > 0.0F || forward > 0 || entity.isJumping) {
+
+					if (!entity.isJumping) {
+						double verticalSpeed = -entity.rotationPitch / 45.0D;
+						verticalSpeed *= 0.5; // flight climb/descend sensitivity
+						this.motionY += verticalSpeed;
+					}
+
+					//Slow down descend
+					if (this.motionY < 0) {
+						this.motionY *= 0.4; // 60% slower descent
+					}
+				}
+			} else {
+					this.detractWings();
+				}
+		}
+
+		@Override
+		public void travel(float ti, float tj, float tk) {
+			super.travel(ti, tj, tk);
+			this.setMotionXZ((float) (this.posX - this.lastX), (float) (this.posZ - this.lastZ), this.rotationYawHead);
+		}
 		@Override
 		protected void collideWithEntity(Entity entity) {
 			if (!this.world.isRemote && entity instanceof EntityLivingBase && !entity.equals(this.getOwnerPlayer()))

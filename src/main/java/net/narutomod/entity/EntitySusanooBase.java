@@ -1,5 +1,6 @@
 package net.narutomod.entity;
 
+import net.minecraft.block.material.Material;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import net.minecraft.world.World;
@@ -31,6 +32,7 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 
 import net.narutomod.item.*;
+import net.narutomod.procedure.ProcedureBasicNinjaSkills;
 import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.procedure.ProcedureSusanoo;
 import net.narutomod.PlayerTracker;
@@ -145,7 +147,7 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
 		this.getAttributeMap().registerAttribute(EntityPlayer.REACH_DISTANCE);
 		//this.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(100.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.1D);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.2D);
 		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(100.0D);
 		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(10.0D);
 		this.getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(1.0D);
@@ -232,9 +234,24 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 		}
 		return false;
 	}
+	
+	//Distance jumped
+	protected float getJumpUpwardsMotion() {
+		return 0.6F;
+	}
 
+	//Speed Multiplier in jump movement
+	protected float getJumpMovementFactor(EntityPlayer rider) {
+		return 1;
+	}
+
+	protected void wingedSusanooTravel(EntityLivingBase entity, float strafe, float vertical, float forward) {
+	}
+	
 	@Override
 	public void travel(float ti, float tj, float tk) {
+		if (!world.isRemote)
+			return;
 		if (this.isBeingRidden() && this.isAIDisabled()) {
 			Entity entity = this.getControllingPassenger();
 			this.rotationYaw = entity.rotationYaw;
@@ -245,10 +262,33 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 			this.renderYawOffset = entity.rotationYaw;
 			this.rotationYawHead = entity.rotationYaw;
 			if (entity instanceof EntityLivingBase) {
-				this.setAIMoveSpeed((float) this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue());
+				EntityLivingBase e = (EntityLivingBase) entity;
+				float speed = (float) this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue();
+				this.setAIMoveSpeed(e.isSprinting() ? speed * 3f : speed);
 				float forward = ((EntityLivingBase) entity).moveForward;
 				float strafe = ((EntityLivingBase) entity).moveStrafing;
-				super.travel(strafe, 0.0F, forward);
+
+				if (onGround && e.isJumping && !isJumping) {
+					isJumping = true;
+				} else if (isJumping && !e.isJumping)
+					isJumping = false;
+
+				//Sprinting jump speed
+				if (entity instanceof EntityPlayer) {
+					EntityPlayer p = (EntityPlayer) entity;
+					tj = p.moveVertical;
+					float playerJumpFactor = p.capabilities.getFlySpeed() * (float) (p.isSprinting() ? 10 : 5);
+					this.jumpMovementFactor = playerJumpFactor * getJumpMovementFactor(p);
+				}
+
+				// Float on water
+				if (ProcedureBasicNinjaSkills.floatOnMaterial(this, Material.WATER) && world.isRemote) {
+					motionY = 0.02;
+					fallDistance = 0;
+				}
+
+				wingedSusanooTravel(e, strafe, tj, forward);
+				super.travel(strafe, tj, forward);
 			}
 		} else {
 			this.jumpMovementFactor = 0.02F;
@@ -309,8 +349,8 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 	private void clampMotion(double d) {
 		if (Math.abs(this.motionX) > d)
 			this.motionX = (this.motionX > 0.0D) ? d : -d;
-		if (Math.abs(this.motionY) > d)
-			this.motionY = (this.motionY > 0.0D) ? d : -d;
+		//	if (Math.abs(this.motionY) > d)
+		//	this.motionY = (this.motionY > 0.0D) ? d : -d;
 		if (Math.abs(this.motionZ) > d)
 			this.motionZ = (this.motionZ > 0.0D) ? d : -d;
 	}
@@ -350,7 +390,7 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 
 		this.updateArmSwingProgress();
 		super.onLivingUpdate();
-		
+
 		this.clampMotion(0.05D);
 
 		if (this.ticksExisted % 30 == 0)

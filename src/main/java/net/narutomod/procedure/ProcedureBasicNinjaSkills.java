@@ -21,6 +21,14 @@ public class ProcedureBasicNinjaSkills extends ElementsNarutomodMod.ModElement {
 		super(instance, 220);
 	}
 
+	public static boolean floatOnMaterial(Entity entity, Material material) {
+		BlockPos pos = new BlockPos(entity.posX, entity.posY, entity.posZ);
+		Material current = entity.world.getBlockState(pos).getMaterial();
+		Material above = entity.world.getBlockState(pos.up()).getMaterial();
+
+		return current == material && above != material;
+	}
+
 	public static void executeProcedure(Map<String, Object> dependencies) {
 		if (dependencies.get("entity") == null) {
 			System.err.println("Failed to load dependency entity for procedure BasicNinjaSkills!");

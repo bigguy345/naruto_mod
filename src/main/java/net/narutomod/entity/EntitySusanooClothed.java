@@ -294,6 +294,14 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 	    	super.setDead();
 	    	this.killBullet();
 	    }
+
+		protected float getJumpUpwardsMotion() {
+			return hasLegs() ? 1 : 0.7F;
+		}
+
+		protected float getJumpMovementFactor(EntityPlayer rider) {
+			return hasLegs() ? 2 : 1;
+		}
 	}
 
 	public static class EntityMagatama extends EntityScalableProjectile.Base {
