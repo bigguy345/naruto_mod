@@ -907,6 +907,7 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 				GlStateManager.scale(this.modelscale, this.modelscale, this.modelscale);
 				GlStateManager.enableBlend();
 				GlStateManager.disableCull();
+				GlStateManager.depthMask(true);
 				if (this.renderFlame) {
 					GlStateManager.matrixMode(5890);
 					GlStateManager.loadIdentity();

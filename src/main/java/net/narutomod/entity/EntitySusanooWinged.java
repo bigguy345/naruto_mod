@@ -1221,6 +1221,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 				GlStateManager.scale(this.modelScale, this.modelScale, this.modelScale);
 				GlStateManager.enableBlend();
 				GlStateManager.disableCull();
+				GlStateManager.depthMask(true);
 				if (this.renderFlame) {
 					GlStateManager.matrixMode(5890);
 					GlStateManager.loadIdentity();

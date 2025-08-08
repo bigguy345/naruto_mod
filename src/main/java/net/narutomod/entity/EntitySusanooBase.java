@@ -109,6 +109,11 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 		return entity instanceof EntityLivingBase ? (EntityLivingBase)entity : null;
 	}
 
+	//cmon bruh, this is VERY IMPORTANT for transparent entity rendering !!! CANT FORGET THIS !!
+	public boolean shouldRenderInPass(int pass) {
+		return pass == 1;
+	}
+	
 	protected void setOwnerPlayer(EntityLivingBase owner) {
 		this.dataManager.set(OWNER_ID, Integer.valueOf(owner.getEntityId()));
 	}
