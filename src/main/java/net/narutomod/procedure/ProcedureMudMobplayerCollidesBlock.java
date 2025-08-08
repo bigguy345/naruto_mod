@@ -59,7 +59,7 @@ public class ProcedureMudMobplayerCollidesBlock extends ElementsNarutomodMod.Mod
 			if (((world.getBlockState(new BlockPos((int) Math.floor((entity.posX)), (int) (eyepos), (int) Math.floor((entity.posZ)))))
 					.getBlock() == BlockMud.block.getDefaultState().getBlock())) {
 				ProcedureRenderView.changeFog(entity, 1, 10, 10, 0.12f, 0.08f, 0.06f, 2.0f);
-				entity.attackEntityFrom(DamageSource.DROWN, (float) 5);
+				entity.attackEntityFrom(DamageSource.DROWN, (float) 10);
 			}
 		}
 	}
