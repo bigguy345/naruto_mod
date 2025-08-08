@@ -1,0 +1,13 @@
+{
+  "package": "net.narutomod.goatee.mixin.late",
+  "required": true,
+  "refmap": "mixins.dojutsuslot.refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.6.5",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "server": [],
+  "client": [
+  ]
+}
