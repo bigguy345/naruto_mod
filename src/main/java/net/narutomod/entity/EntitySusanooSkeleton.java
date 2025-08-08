@@ -61,8 +61,8 @@ public class EntitySusanooSkeleton extends ElementsNarutomodMod.ModElement {
 		public EntityCustom(EntityLivingBase player, boolean full) {
 			super(player);
 			this.setSize(2.4F, 2.4F);
-			this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE)
-			 .setBaseValue(Math.min(this.playerXp, EntitySusanooBase.BXP_REQUIRED_L2) * 0.003d);
+			double baseDamage = 50;
+			this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(baseDamage + Math.min(this.playerXp, EntitySusanooBase.BXP_REQUIRED_L2) * 0.003d);
 			if (!full) {
 				this.getEntityAttribute(EntityPlayer.REACH_DISTANCE).setBaseValue(0.0D);
 				this.chakraUsage = 30d;

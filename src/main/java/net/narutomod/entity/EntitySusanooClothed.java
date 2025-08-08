@@ -98,10 +98,11 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 				this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(ItemTotsukaSword.block));
 				this.setNoAI(false);
 			} else {
+				double baseDamage = hasLegs()? 150 : 75;
 				this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
 				 .applyModifier(new AttributeModifier("susanoo.maxhealth", this.hasLegs() ? 10d : 3d, 2));
 				this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE)
-				 .setBaseValue(Math.min(this.playerXp, this.hasLegs() ? EntitySusanooBase.BXP_REQUIRED_L4 : EntitySusanooBase.BXP_REQUIRED_L3) * 0.003d);
+				 .setBaseValue(baseDamage + Math.min(this.playerXp, this.hasLegs() ? EntitySusanooBase.BXP_REQUIRED_L4 : EntitySusanooBase.BXP_REQUIRED_L3) * 0.003d);
 			}
 			this.setHealth(this.getMaxHealth());
 			this.chakraUsage = this.hasLegs() ? 70d : 60d;
