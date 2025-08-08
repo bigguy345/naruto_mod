@@ -52,7 +52,7 @@ import java.util.HashMap;
 public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 	public static final int ENTITYID = 36;
 	public static final int ENTITYID_RANGED = 37;
-	private static final float MODELSCALE = 4.0F;
+	private static float MODELSCALE = 4.0F;
 
 	public EntitySusanooClothed(ElementsNarutomodMod instance) {
 		super(instance, 219);
@@ -76,6 +76,7 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 
 		public EntityCustom(World world) {
 			super(world);
+			//MODELSCALE = 6;
 			this.setSize(MODELSCALE * 0.8F, MODELSCALE * (this.hasLegs() ? 2.0F : 1.25F));
 			this.getEntityData().setDouble("entityModelScale", (double)MODELSCALE);
 			this.lifeSpan = Integer.MAX_VALUE;
@@ -901,10 +902,10 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 
 			@Override
 			public void render(Entity entity, float f, float f1, float age, float f3, float f4, float f5) {
-				float translate = 1.5F - 1.5F * this.modelscale / (((EntityCustom) entity).hasLegs() ? 1 : 2);
+				float translate = 1.5F - 1.5F * MODELSCALE / (((EntityCustom) entity).hasLegs() ? 1 : 2);
 				GlStateManager.pushMatrix();
 				GlStateManager.translate(0.0F, translate, 0.0F);
-				GlStateManager.scale(this.modelscale, this.modelscale, this.modelscale);
+				GlStateManager.scale(MODELSCALE, MODELSCALE, MODELSCALE);
 				GlStateManager.enableBlend();
 				GlStateManager.disableCull();
 				GlStateManager.depthMask(true);

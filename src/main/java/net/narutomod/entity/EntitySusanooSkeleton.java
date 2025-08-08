@@ -36,7 +36,8 @@ import net.narutomod.ElementsNarutomodMod;
 @ElementsNarutomodMod.ModElement.Tag
 public class EntitySusanooSkeleton extends ElementsNarutomodMod.ModElement {
 	public static final int ENTITYID = 32;
-	
+	private static float MODELSCALE = 1;
+
 	public EntitySusanooSkeleton(ElementsNarutomodMod instance) {
 		super(instance, 217);
 	}
@@ -51,7 +52,11 @@ public class EntitySusanooSkeleton extends ElementsNarutomodMod.ModElement {
 
 		public EntityCustom(World world) {
 			super(world);
-			this.setSize(2.4F, 2.4F);
+			//this.setSize(2.4F, 2.4F);
+			//MODELSCALE = 1;
+			this.setSize(MODELSCALE * 0.8f, MODELSCALE * 0.8f);
+			this.getEntityData().setDouble("entityModelScale", (double) MODELSCALE);
+
 		}
 
 		public EntityCustom(EntityLivingBase player) {
@@ -60,7 +65,10 @@ public class EntitySusanooSkeleton extends ElementsNarutomodMod.ModElement {
 
 		public EntityCustom(EntityLivingBase player, boolean full) {
 			super(player);
-			this.setSize(2.4F, 2.4F);
+			//	this.setSize(2.4F, 2.4F);
+			MODELSCALE = 1;
+			this.setSize(MODELSCALE * 0.8f, MODELSCALE *  0.8f);
+			this.getEntityData().setDouble("entityModelScale", (double) MODELSCALE);
 			double baseDamage = 50;
 			this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(baseDamage + Math.min(this.playerXp, EntitySusanooBase.BXP_REQUIRED_L2) * 0.01d); 
 			if (!full) {
@@ -72,6 +80,7 @@ public class EntitySusanooSkeleton extends ElementsNarutomodMod.ModElement {
 			this.stepHeight = this.height / 3.0F;
 		}
 
+	
 		@Override
 		protected void entityInit() {
 			super.entityInit();
@@ -91,7 +100,9 @@ public class EntitySusanooSkeleton extends ElementsNarutomodMod.ModElement {
 		public void notifyDataManagerChange(DataParameter<?> key) {
 			super.notifyDataManagerChange(key);
 			if (FULL_BODY.equals(key) && this.world.isRemote) {
-				this.setSize(2.4f, this.isFullBody() ? 3.6f : 2.4f);
+				//this.setSize(2.4f, this.isFullBody() ? 3.6f : 2.4f);
+				this.setSize(MODELSCALE * 0.8F, MODELSCALE * (this.isFullBody() ? 1.2f : 0.8F));
+
 			}
 		}
 
@@ -144,7 +155,7 @@ public class EntitySusanooSkeleton extends ElementsNarutomodMod.ModElement {
 			private final ResourceLocation flameTexture = new ResourceLocation("narutomod:textures/gas256.png");
 
 			public RenderSusanooSkeleton(RenderManager renderManagerIn) {
-				super(renderManagerIn, new ModelSusanooSkeleton(), 1.5F);
+				super(renderManagerIn, new ModelSusanooSkeleton(), MODELSCALE * 0.5f);
 			}
 
 			@Override
@@ -163,6 +174,20 @@ public class EntitySusanooSkeleton extends ElementsNarutomodMod.ModElement {
 				model.bipedRightArm.showModel = flag;
 				model.bipedLeftArm.showModel = flag;
 			}
+
+			//@Override
+			//protected void renderLayers(EntitySusanooSkeleton.EntityCustom entity, float f0, float limbSwingAmount, float f2, float f3, float f4, float headPitch, float f6) {
+
+				//float modelscale = MODELSCALE;
+				//GlStateManager.pushMatrix();
+				//GlStateManager.translate(0.0F, 1.5F - 1.5F * modelscale, 0.0F);
+				//float offset = 1.5F - 1.5F * MODELSCALE / (entity.isFullBody() ? 1 : 2);
+
+				//GlStateManager.translate(0.0F, offset, 0.0F);
+				//GlStateManager.scale(modelscale, modelscale, modelscale);
+				//super.renderLayers(entity, f0, limbSwingAmount, f2, f3, f4, headPitch, f6);
+				//GlStateManager.popMatrix();
+			//}
 
 			@Override
 			protected void renderModel(EntityCustom entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
@@ -446,6 +471,9 @@ public class EntitySusanooSkeleton extends ElementsNarutomodMod.ModElement {
 				float green = (float) (color >> 8 & 0xFF) / 255.0F;
 				float blue = (float) (color & 0xFF) / 255.0F;
 				GlStateManager.enableBlend();
+				GlStateManager.pushMatrix();
+				GlStateManager.translate(0.0F,1.5F - 1.5F * MODELSCALE , 0.0F);
+				GlStateManager.scale(MODELSCALE, MODELSCALE, MODELSCALE);
 				//GlStateManager.enableCull();
 				//GlStateManager.depthMask(false);
 				if (this.renderFlame) {
@@ -474,6 +502,7 @@ public class EntitySusanooSkeleton extends ElementsNarutomodMod.ModElement {
 				//GlStateManager.depthMask(true);
 				//GlStateManager.disableCull();
 				GlStateManager.disableBlend();
+				GlStateManager.popMatrix();
 			}
 
 			public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
