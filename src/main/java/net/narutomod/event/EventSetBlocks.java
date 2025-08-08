@@ -23,7 +23,7 @@ import java.util.List;
 
 public class EventSetBlocks extends SpecialEvent {
 	private List<Template.BlockInfo> blocksList = Lists.newArrayList();
-	private int lifespan;
+	public int lifespan;
 	private int addIndex;
 	private int removeIndex;
 	
