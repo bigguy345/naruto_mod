@@ -102,7 +102,14 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 				this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
 				 .applyModifier(new AttributeModifier("susanoo.maxhealth", this.hasLegs() ? 10d : 3d, 2));
 				this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE)
-				 .setBaseValue(baseDamage + Math.min(this.playerXp, this.hasLegs() ? EntitySusanooBase.BXP_REQUIRED_L4 : EntitySusanooBase.BXP_REQUIRED_L3) * 0.003d);
+				 .setBaseValue(baseDamage + Math.min(this.playerXp, this.hasLegs() ? EntitySusanooBase.BXP_REQUIRED_L4 : EntitySusanooBase.BXP_REQUIRED_L3) * 0.009d);
+
+				//SKELETON ARM MAX DAMAGE WAS 30, NOW 100 (+50 base = 150 total)
+				//CLOTHED MAX WAS 60, NOW 180 (+75 = 255)
+				//LEGS MAX WAS 120, NOW 360 (+150 = 510)
+				//FULL WINGED MAX IS UNLIMITED, GOES UP WITH NINJA XP
+
+
 			}
 			this.setHealth(this.getMaxHealth());
 			this.chakraUsage = this.hasLegs() ? 70d : 60d;
