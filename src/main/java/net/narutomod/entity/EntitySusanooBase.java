@@ -273,8 +273,26 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 				float forward = ((EntityLivingBase) entity).moveForward;
 				float strafe = ((EntityLivingBase) entity).moveStrafing;
 
+
+				// Walk on water
+				boolean onSurface = ProcedureBasicNinjaSkills.floatOnMaterial(this, Material.WATER) && world.isRemote;
+				if (onSurface) {
+					motionY = 0.02;
+					fallDistance = 0;
+					onGround = true;
+				}
+
+				if (inWater && e.isJumping) {
+					motionY = 0.4; //float to surface inside water superfast
+				}
+				
 				if (onGround && e.isJumping && !isJumping) {
 					isJumping = true;
+
+					if (onSurface) { //for on-water surface jumping
+						jump();
+						jumpTicks = 10;
+					}
 				} else if (isJumping && !e.isJumping)
 					isJumping = false;
 
@@ -286,11 +304,6 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 					this.jumpMovementFactor = playerJumpFactor * getJumpMovementFactor(p);
 				}
 
-				// Float on water
-				if (ProcedureBasicNinjaSkills.floatOnMaterial(this, Material.WATER) && world.isRemote) {
-					motionY = 0.02;
-					fallDistance = 0;
-				}
 
 				wingedSusanooTravel(e, strafe, tj, forward);
 				super.travel(strafe, tj, forward);
