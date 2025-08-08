@@ -52,7 +52,7 @@ import java.util.HashMap;
 public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 	public static final int ENTITYID = 36;
 	public static final int ENTITYID_RANGED = 37;
-	private static float MODELSCALE = 4.0F;
+	private static float MODELSCALE = 5f;
 
 	public EntitySusanooClothed(ElementsNarutomodMod instance) {
 		super(instance, 219);
@@ -76,7 +76,7 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 
 		public EntityCustom(World world) {
 			super(world);
-			//MODELSCALE = 6;
+			//MODELSCALE = 5;
 			this.setSize(MODELSCALE * 0.8F, MODELSCALE * (this.hasLegs() ? 2.0F : 1.25F));
 			this.getEntityData().setDouble("entityModelScale", (double)MODELSCALE);
 			this.lifeSpan = Integer.MAX_VALUE;
@@ -89,7 +89,7 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 			this.getEntityData().setDouble("entityModelScale", (double)MODELSCALE);
 			//this.setFlameColor(0x20b83dba);
 			if (this.hasLegs()) {
-				this.getEntityAttribute(EntityPlayer.REACH_DISTANCE).applyModifier(new AttributeModifier("susanoo.reachExtension", 3.0D, 0));
+				this.getEntityAttribute(EntityPlayer.REACH_DISTANCE).applyModifier(new AttributeModifier("susanoo.reachExtension", 4.0D, 0));
 				this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).applyModifier(new AttributeModifier("susanoo.speedboost", 0.2D, 0));
 			}
 			if (!(entity instanceof EntityPlayer)) {
@@ -132,14 +132,16 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 
 		protected void setLegs(boolean hasLegs) {
 			this.getDataManager().set(HAS_LEGS, Boolean.valueOf(hasLegs));
-			this.setSize(MODELSCALE * 0.8F, MODELSCALE * (hasLegs ? 2.0F : 1.25F));
+			float scale = hasLegs() ? MODELSCALE + 2 : MODELSCALE;
+			this.setSize(scale * 0.8F, scale * (hasLegs ? 2.0F : 1.25F));
 		}
 
 		@Override
 		public void notifyDataManagerChange(DataParameter<?> key) {
 			super.notifyDataManagerChange(key);
 			if (HAS_LEGS.equals(key) && this.world.isRemote) {
-				this.setSize(MODELSCALE * 0.8F, MODELSCALE * (this.hasLegs() ? 2.0F : 1.25F));
+				float scale = hasLegs() ? MODELSCALE + 2 : MODELSCALE;
+				this.setSize(scale * 0.8F, scale * (this.hasLegs() ? 2.0F : 1.25F));
 			}
 		}
 
@@ -188,7 +190,7 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 		@Override
 		public double getMountedYOffset() {
 			if (this.hasLegs())
-				return (double)MODELSCALE;
+				return (double) width + 1;
 			return super.getMountedYOffset();
 		}
 
@@ -902,10 +904,10 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 
 			@Override
 			public void render(Entity entity, float f, float f1, float age, float f3, float f4, float f5) {
-				float translate = 1.5F - 1.5F * MODELSCALE / (((EntityCustom) entity).hasLegs() ? 1 : 2);
+				float translate = 1.5F - 1.5F * entity.width / (((EntityCustom) entity).hasLegs() ? 1 : 2);
 				GlStateManager.pushMatrix();
 				GlStateManager.translate(0.0F, translate, 0.0F);
-				GlStateManager.scale(MODELSCALE, MODELSCALE, MODELSCALE);
+				GlStateManager.scale(entity.width, entity.width, entity.width);
 				GlStateManager.enableBlend();
 				GlStateManager.disableCull();
 				GlStateManager.depthMask(true);
