@@ -15,6 +15,7 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.NetHandlerPlayServer;
 
+import net.narutomod.goatee.data.NarutoData;
 import net.narutomod.item.*;
 import net.narutomod.potion.PotionFeatherFalling;
 import net.narutomod.entity.EntitySusanooWinged;
@@ -58,7 +59,8 @@ public class ProcedureSusanoo extends ElementsNarutomodMod.ModElement {
 			 && Chakra.pathway(player).consume(BASE_CHAKRA_USAGE)) {
 				player.getEntityData().setBoolean("susanoo_activated", true);
 				player.getEntityData().setDouble("susanoo_cd", NarutomodModVariables.world_tick + 2400.0D);
-				EntitySusanooBase entityCustom = new EntitySusanooSkeleton.EntityCustom(player);
+				boolean isMini = NarutoData.get(player).susanooData.FULL_WINGED.mini;
+				EntitySusanooBase entityCustom = !isMini ? new EntitySusanooSkeleton.EntityCustom(player) : new EntitySusanooWinged.EntityCustom(player);
 				world.spawnEntity(entityCustom);
 				player.getEntityData().setInteger(SUMMONED_SUSANOO, entityCustom.getEntityId());
 			}
