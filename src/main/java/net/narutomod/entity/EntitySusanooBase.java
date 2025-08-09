@@ -1,7 +1,6 @@
 package net.narutomod.entity;
 
 import net.minecraft.block.material.Material;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import net.minecraft.world.World;
 import net.minecraft.util.CombatRules;
@@ -16,7 +15,6 @@ import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.EnumCreatureAttribute;
@@ -40,15 +38,13 @@ import net.narutomod.Particles;
 import net.narutomod.Chakra;
 import net.narutomod.ElementsNarutomodMod;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.List;
 import javax.annotation.Nullable;
 
 @ElementsNarutomodMod.ModElement.Tag
 public abstract class EntitySusanooBase extends EntityCreature implements IRangedAttackMob {
 	private static final DataParameter<Integer> OWNER_ID = EntityDataManager.<Integer>createKey(EntitySusanooBase.class, DataSerializers.VARINT);
 	private static final DataParameter<Integer> FLAME_COLOR = EntityDataManager.<Integer>createKey(EntitySusanooBase.class, DataSerializers.VARINT);
+	protected static final DataParameter<Float> SIZE = EntityDataManager.createKey(EntitySusanooBase.class, DataSerializers.FLOAT);
 	public static final double BXP_REQUIRED_L0 = 2000.0d;
 	public static final double BXP_REQUIRED_L1 = 5000.0d;
 	public static final double BXP_REQUIRED_L2 = 10000.0d;
@@ -101,6 +97,7 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 		super.entityInit();
 		this.dataManager.register(OWNER_ID, Integer.valueOf(-1));
 		this.dataManager.register(FLAME_COLOR, Integer.valueOf(0x202C183D));
+		this.dataManager.register(SIZE, Float.valueOf(1));
 	}
 
 	@Nullable
@@ -124,6 +121,14 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 
 	public int getFlameColor() {
 		return ((Integer)this.dataManager.get(FLAME_COLOR)).intValue();
+	}
+
+	public void setSize(float size) {
+		this.dataManager.set(SIZE, Float.valueOf(size));
+	}
+
+	public float getSize() {
+		return this.dataManager.get(SIZE).floatValue();
 	}
 
 	public abstract boolean shouldShowSword();

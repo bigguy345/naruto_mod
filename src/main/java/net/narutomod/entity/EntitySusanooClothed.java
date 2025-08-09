@@ -8,8 +8,6 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 import net.minecraft.world.World;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.potion.PotionEffect;
@@ -18,7 +16,6 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.EntityLivingBase;
@@ -77,7 +74,6 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 		public EntityCustom(World world) {
 			super(world);
 			//MODELSCALE = 5;
-			this.setSize(MODELSCALE * 0.8F, MODELSCALE * (this.hasLegs() ? 2.0F : 1.25F));
 			this.getEntityData().setDouble("entityModelScale", (double)MODELSCALE);
 			this.lifeSpan = Integer.MAX_VALUE;
 			this.chakraUsage = this.hasLegs() ? 70d : 60d;
@@ -114,7 +110,7 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 			}
 			this.setHealth(this.getMaxHealth());
 			this.chakraUsage = this.hasLegs() ? 70d : 60d;
-			this.stepHeight = this.height / 3.0F;
+			this.stepHeight = Math.max(1, this.height / 3.0F);
 			this.lifeSpan = Integer.MAX_VALUE;
 		}
 
@@ -132,17 +128,11 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 
 		protected void setLegs(boolean hasLegs) {
 			this.getDataManager().set(HAS_LEGS, Boolean.valueOf(hasLegs));
-			float scale = hasLegs() ? MODELSCALE + 2 : MODELSCALE;
-			this.setSize(scale * 0.8F, scale * (hasLegs ? 2.0F : 1.25F));
-		}
-
-		@Override
-		public void notifyDataManagerChange(DataParameter<?> key) {
-			super.notifyDataManagerChange(key);
-			if (HAS_LEGS.equals(key) && this.world.isRemote) {
-				float scale = hasLegs() ? MODELSCALE + 2 : MODELSCALE;
-				this.setSize(scale * 0.8F, scale * (this.hasLegs() ? 2.0F : 1.25F));
-			}
+			float model = MODELSCALE = 3f;
+			float scale = hasLegs() ? model + 0.5f : model;
+			setSize(scale);
+			//	this.setSize(scale * 0.8F, scale * (hasLegs ? 2.0F : 1.25F));
+			this.setSize(scale * 0.75F, scale * (this.hasLegs() ? 3.0F : 1.5F));
 		}
 
 		@Override
@@ -190,7 +180,7 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 		@Override
 		public double getMountedYOffset() {
 			if (this.hasLegs())
-				return (double) width + 1;
+				return (double) width + 2.25f;
 			return super.getMountedYOffset();
 		}
 
@@ -305,6 +295,19 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 
 		protected float getJumpMovementFactor(EntityPlayer rider) {
 			return hasLegs() ? 2 : 1;
+		}
+
+		@Override
+		public void notifyDataManagerChange(DataParameter<?> key) {
+			super.notifyDataManagerChange(key);
+			if (HAS_LEGS.equals(key) && this.world.isRemote) {
+				float scale = getSize();
+				this.setSize(scale * 0.75F, scale * (this.hasLegs() ? 3.0F : 1.5F));
+				stepHeight = 3;
+
+				//this.setSize(scale * 0.8F, scale * (hasLegs ? 2.0F : 1.25F));
+
+			}
 		}
 	}
 
@@ -433,6 +436,7 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 					this.copyLimbSwing(entity, passenger);
 				}
 				this.setModelVisibilities(entity);
+				shadowSize = 1f * entity.width;
 				super.doRender(entity, x, y, z, entityYaw, partialTicks);
 			}
 
@@ -905,10 +909,11 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 
 			@Override
 			public void render(Entity entity, float f, float f1, float age, float f3, float f4, float f5) {
-				float translate = 1.5F - 1.5F * entity.width / (((EntityCustom) entity).hasLegs() ? 1 : 2);
+				float scale = entity.width * 1.75f;
+				float translate = 1.5F - 1.5F * scale / (((EntityCustom) entity).hasLegs() ? 1 : 2);
 				GlStateManager.pushMatrix();
 				GlStateManager.translate(0.0F, translate, 0.0F);
-				GlStateManager.scale(entity.width, entity.width, entity.width);
+				GlStateManager.scale(scale, scale, scale);
 				GlStateManager.enableBlend();
 				GlStateManager.disableCull();
 				GlStateManager.depthMask(true);

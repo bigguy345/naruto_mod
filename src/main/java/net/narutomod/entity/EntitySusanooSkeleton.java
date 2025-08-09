@@ -52,9 +52,6 @@ public class EntitySusanooSkeleton extends ElementsNarutomodMod.ModElement {
 
 		public EntityCustom(World world) {
 			super(world);
-			//this.setSize(2.4F, 2.4F);
-			//MODELSCALE = 1;
-			this.setSize(MODELSCALE * 0.8f, MODELSCALE * 0.8f);
 			this.getEntityData().setDouble("entityModelScale", (double) MODELSCALE);
 
 		}
@@ -65,19 +62,15 @@ public class EntitySusanooSkeleton extends ElementsNarutomodMod.ModElement {
 
 		public EntityCustom(EntityLivingBase player, boolean full) {
 			super(player);
-			//	this.setSize(2.4F, 2.4F);
-			MODELSCALE = 1;
-			this.setSize(MODELSCALE * 0.8f, MODELSCALE *  0.8f);
 			this.getEntityData().setDouble("entityModelScale", (double) MODELSCALE);
 			double baseDamage = 50;
-			this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(baseDamage + Math.min(this.playerXp, EntitySusanooBase.BXP_REQUIRED_L2) * 0.01d); 
+			this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(baseDamage + Math.min(this.playerXp, EntitySusanooBase.BXP_REQUIRED_L2) * 0.01d);
+			this.setFullBody(full);
 			if (!full) {
 				this.getEntityAttribute(EntityPlayer.REACH_DISTANCE).setBaseValue(0.0D);
 				this.chakraUsage = 30d;
-			} else {
-				this.setFullBody(true);
 			}
-			this.stepHeight = this.height / 3.0F;
+			this.stepHeight = Math.max(1, this.height / 3.0F);
 		}
 
 	
@@ -93,7 +86,7 @@ public class EntitySusanooSkeleton extends ElementsNarutomodMod.ModElement {
 
 		protected void setFullBody(boolean b) {
 			this.getDataManager().set(FULL_BODY, Boolean.valueOf(b));
-			this.setSize(2.4f, b ? 3.6f : 2.4f);
+			this.setSize(MODELSCALE * 2, MODELSCALE * (this.isFullBody() ? 3.6f : 2));
 		}
 
 		@Override
@@ -101,7 +94,7 @@ public class EntitySusanooSkeleton extends ElementsNarutomodMod.ModElement {
 			super.notifyDataManagerChange(key);
 			if (FULL_BODY.equals(key) && this.world.isRemote) {
 				//this.setSize(2.4f, this.isFullBody() ? 3.6f : 2.4f);
-				this.setSize(MODELSCALE * 0.8F, MODELSCALE * (this.isFullBody() ? 1.2f : 0.8F));
+				this.setSize(MODELSCALE * 2, MODELSCALE * (this.isFullBody() ? 3.6f : 2));
 
 			}
 		}
