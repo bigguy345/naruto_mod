@@ -8,7 +8,6 @@ public class ModConfig extends ElementsNarutomodMod.ModElement {
 
 	public static Techniques TECHNIQUES = new Techniques();
 	public static Items ITEMS = new Items();
-	public static WingedSusanoo WINGED_SUSANOO = new WingedSusanoo();
 	public static Dojutsu DOJUTSU = new Dojutsu();
 
 	public ModConfig(ElementsNarutomodMod instance) {
@@ -116,24 +115,7 @@ public class ModConfig extends ElementsNarutomodMod.ModElement {
 		@Config.Comment({"Black Receivers Attack Speed. (Default: -2.4)"})
 		public double BLACK_RECEIVER_ATTACK_SPEED= -2.4;
 	}
-
-	public static class WingedSusanoo {
-		@Config.RangeDouble(min = 1, max = 50)
-		@Config.Comment({"(Default: 8)"})
-		public float MODEL_SCALE = 8;
-
-		@Config.RangeDouble(min = 1, max = 200)
-		@Config.Comment({" Y Offset where player lies within Susanoo. (Adjust with MODEL_SCALE) (Default: 14)"})
-		public double PLAYER_Y_OFFSET = 14;
-		
-		@Config.RangeDouble(min = 1, max = 512)
-		@Config.Comment({"(Default: 43)"})
-		public float MAX_HEALTH = 43;
-
-		@Config.RangeDouble(min = 1, max = 100)
-		@Config.Comment({"Maximum Amenotejikara teleportation range. (Default: 12)"})
-		public double SWORD_REACH = 12;
-	}
+	
 	public static class Dojutsu {
 		@Config.Comment("Chance of awakening a Rinnegan after eating Zetsu flesh with EMS on. After succeeding the chance, it's then a 0.01% chance per second of awakening with EMS in inventory. (Exactly like KGs) (Default: 5)")
 		@Config.RangeDouble(min = 0, max = 100)
