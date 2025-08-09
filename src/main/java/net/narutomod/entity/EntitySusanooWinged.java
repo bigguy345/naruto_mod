@@ -95,10 +95,9 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			this.isWingExtending = false;
 			ignoreFrustumCheck = true;
 
-			double swordReach = player.getEntityData().hasKey("susanooReach") ? player.getEntityData().getDouble("susanooReach") : 18;//ModConfig.WINGED_SUSANOO.SWORD_REACH;
-			//this.getEntityAttribute(EntityPlayer.REACH_DISTANCE).applyModifier(new AttributeModifier("susanoo.reachExtension", swordReach, 0));
+			this.getEntityAttribute(EntityPlayer.REACH_DISTANCE).applyModifier(new AttributeModifier("susanoo.reachExtension", 12, 0));
 			this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).applyModifier(new AttributeModifier("susanoo.speedboost", 0.5D, 0));
-			this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier("susanoo.maxhealth", ModConfig.WINGED_SUSANOO.MAX_HEALTH, 2));
+			this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier("susanoo.maxhealth", 43, 2));
 			double baseDamage = 250;
 			this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(baseDamage + this.playerXp * 0.003d);
 			//this.getEntityData().setDouble("entityModelScale", (double) DEFAULT_SIZE);
@@ -114,10 +113,6 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			}
 			this.setHealth(this.getMaxHealth());
 
-			if (player.getEntityData().hasKey("susanooModelScale"))
-				DEFAULT_SIZE = player.getEntityData().getFloat("susanooModelScale");
-			if (player.getEntityData().hasKey("susanooYOffset"))
-				customYOffset = player.getEntityData().getDouble("susanooYOffset");
 
 			float size = getDefaultSize();
 			SusanooData.Entry data = NarutoData.getSusanooData(player);
@@ -251,7 +246,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 
 			if (this.isWingExtending) {
 				float sizeLerp = lerp(1, 0.125f, getSize() / 5); //slow speeds for higher sizes 
-				float speed = (float) (0.0025 * sizeLerp);
+				float speed = (float) (0.00125 * sizeLerp);
 				wingProgressRatio += speed;
 				if (wingProgressRatio >= 1f) {
 					wingProgressRatio = 1f;
@@ -263,7 +258,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 
 			if (this.isWingDetracting) {
 				float sizeLerp = lerp(1, 0.125f, getSize() / 5);
-				float speed = (float) (0.0025 * sizeLerp);
+				float speed = (float) (0.00125 * sizeLerp);
 				wingProgressRatio -= speed;
 				if (wingProgressRatio <= 0f) {
 					wingProgressRatio = 0f;
@@ -518,7 +513,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 						headPitch += this.getFlyingBodyRotationAmount(entity) * -90f;
 					}
 				}
-				float modelscale = DEFAULT_SIZE;
+				float modelscale = entity.width * 1.7f;
 				GlStateManager.pushMatrix();
 				GlStateManager.translate(0.0F, 1.5F - 1.5F * modelscale, 0.0F);
 				GlStateManager.scale(modelscale, modelscale, modelscale);

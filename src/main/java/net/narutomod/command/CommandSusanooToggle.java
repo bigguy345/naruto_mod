@@ -115,7 +115,7 @@ public class CommandSusanooToggle extends ElementsNarutomodMod.ModElement {
 
                     EntitySusanooBase mounted = getMountedSusanoo(player);
                     if (mounted != null) {
-                        mounted.setSize(size >= 0 ? size : EntitySusanooWinged.MODELSCALE);
+                        mounted.setSize(size >= 0 ? size : mounted.getDefaultSize());
                     }
                 } else
                     throw new WrongUsageException("Player must be in Full Winged Susanoo to use this command!");
@@ -162,7 +162,7 @@ public class CommandSusanooToggle extends ElementsNarutomodMod.ModElement {
 
                     EntitySusanooBase mounted = getMountedSusanoo(player);
                     if (mounted != null)
-                        mounted.setSize(bo ? riddenSusanoo.size : EntitySusanooWinged.MODELSCALE);
+                        mounted.setSize(bo ? riddenSusanoo.size : mounted.getDefaultSize());
                 } else
                     throw new WrongUsageException("Player must be in Full Winged Susanoo to use this command!");
             }

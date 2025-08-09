@@ -246,6 +246,8 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 					RinneganTomoeSideData rightSide = (RinneganTomoeSideData) DojutsuData.getRight(rinneganstack);
 					String eternalMangekyoTexture = RinneganTomoeSideData.getEyeTexture(stack, entity);
 					rightSide.setTexture(ItemRinneganTomoe.ETERNAL_ON, eternalMangekyoTexture);
+
+					setColor(rinneganstack, getColor(stack));
 					ItemRinneganTomoe.setTomoeStatus(rinneganstack, ItemRinneganTomoe.ETERNAL_ON);
 				}
 				
