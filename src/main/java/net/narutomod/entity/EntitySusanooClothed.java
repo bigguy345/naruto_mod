@@ -290,7 +290,7 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 	    }
 
 		protected float getJumpUpwardsMotion() {
-			return hasLegs() ? 1 : 0.7F;
+			return hasLegs() ? 1.5f : 0.7F;
 		}
 
 		protected float getJumpMovementFactor(EntityPlayer rider) {

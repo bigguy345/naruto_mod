@@ -197,6 +197,10 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 	    	}
 	    }
 
+		protected float getJumpUpwardsMotion() {
+			return Math.max(1f, height / 14);
+		}
+		
 	    private void setMotionXZ(float x, float z, float headYaw) {
 	    	this.dataManager.set(MOTION_X, Float.valueOf(x));
 	    	this.dataManager.set(MOTION_Z, Float.valueOf(z));
