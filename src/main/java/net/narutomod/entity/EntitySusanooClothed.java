@@ -951,7 +951,7 @@ public class EntitySusanooClothed extends ElementsNarutomodMod.ModElement {
 
 			@Override
 			public void setRotationAngles(float limbSwing, float f1, float f2, float f3, float f4, float f5, Entity entityIn) {
-				super.setRotationAngles(limbSwing * 2.0F / entityIn.height, f1, f2, f3, f4, f5, entityIn);
+				super.setRotationAngles(limbSwing *0.5f* ((EntityLivingBase)entityIn).getAIMoveSpeed(), f1, f2, f3, f4, f5, entityIn);
 				if (((EntityCustom)entityIn).isSwingingArms()) {
 					this.bipedLeftArm.rotateAngleY = 0.1F + this.bipedHead.rotateAngleY;
 					this.bipedLeftArm.rotateAngleX = -((float)Math.PI / 2F) + this.bipedHead.rotateAngleX;

@@ -513,7 +513,7 @@ public class EntitySusanooSkeleton extends ElementsNarutomodMod.ModElement {
 
 			@Override
 			public void setRotationAngles(float limbSwing, float f1, float f2, float f3, float f4, float f5, Entity entityIn) {
-				super.setRotationAngles(limbSwing * 2.0F / entityIn.height, f1, f2, f3, f4, f5, entityIn);
+				super.setRotationAngles(limbSwing *1.5f*  ((EntityLivingBase)entityIn).getAIMoveSpeed(), f1, f2, f3, f4, f5, entityIn);
 				bipedHead.rotationPointY += -8.0F;
 				bipedHeadwear.rotationPointY += -8.0F;
 				bipedRightArm.rotationPointZ += -1.0F;
