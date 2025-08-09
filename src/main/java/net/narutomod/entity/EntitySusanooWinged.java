@@ -96,7 +96,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			this.isWingExtending = false;
 
 			double swordReach = player.getEntityData().hasKey("susanooReach") ? player.getEntityData().getDouble("susanooReach") : 18;//ModConfig.WINGED_SUSANOO.SWORD_REACH;
-			this.getEntityAttribute(EntityPlayer.REACH_DISTANCE).applyModifier(new AttributeModifier("susanoo.reachExtension", swordReach, 0));
+			//this.getEntityAttribute(EntityPlayer.REACH_DISTANCE).applyModifier(new AttributeModifier("susanoo.reachExtension", swordReach, 0));
 			this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).applyModifier(new AttributeModifier("susanoo.speedboost", 0.5D, 0));
 			this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier("susanoo.maxhealth", ModConfig.WINGED_SUSANOO.MAX_HEALTH, 2));
 			double baseDamage = 250;
@@ -130,6 +130,9 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 				//this.setSize(scale *1.f, scale * 4f); //1st iteration 
 				float scale = getSize();
 				this.setSize(scale * 1.5f, scale * 5.3f);
+
+				float reach = this.width * 0.5f + this.height + 6;
+				this.getEntityAttribute(EntityPlayer.REACH_DISTANCE).setBaseValue(reach);
 			}
 		}
 
