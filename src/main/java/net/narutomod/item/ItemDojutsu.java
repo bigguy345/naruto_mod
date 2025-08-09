@@ -390,6 +390,19 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 				return true;
 			return this.level >= caster.level - 1; //sharingan+ removes mangekyo, mangekyo+ removes eternal, eternal+ removes rinnegan, rinne+ removes rinnesharin
 		}
+
+		public boolean is(ItemStack stack) {
+			return getTier(stack) == this;
+		}
+
+		public boolean GEQUAL(ItemStack stack) { //GREATER OR EQUAL
+			return getTier(stack).level >= this.level;
+		}
+		
+		public boolean LEQUAL(ItemStack stack) {
+			return getTier(stack).level <= this.level;
+		}
+		
 	}
 
 	public static class ClientModel {
