@@ -10,7 +10,6 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraft.world.World;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.DamageSource;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Item;
@@ -28,7 +27,6 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.datasync.DataParameter;
@@ -41,7 +39,6 @@ import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.procedure.ProcedureTotsukaSwordToolInHandTick;
 import net.narutomod.procedure.ProcedureKagutsuchiSwordToolInUseTick;
 import net.narutomod.potion.PotionAmaterasuFlame;
-import net.narutomod.NarutomodMod;
 import net.narutomod.ElementsNarutomodMod;
 
 import java.util.HashMap;
@@ -336,10 +333,10 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 		public void wingedSusanooTravel(EntityLivingBase entity, float strafe, float vertical, float forward) {
 			if (!this.onGround) {
 				// If moving forward/strafing → flight mode
-
 				float pitch = entity.rotationPitch;
+				boolean isMoving = strafe > 0.0F || forward > 0;
 
-				if ((jumpTicks < 0 || pitch < -20) && (strafe > 0.0F || forward > 0)) {
+				if ((jumpTicks < 0 || pitch < -20) && isMoving) {
 					double verticalSpeed = -pitch / 45.0D;
 					verticalSpeed *= pitch < 0 ? 0.15 : 0.05; // flight climb/descend sensitivity
 					this.extendWings();
@@ -347,12 +344,12 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 				}
 
 				boolean isSpaceHeld = getOwnerPlayer().isJumping && !isJumping;
-				if (isSpaceHeld && pitch > -20 && !inWater) { //not looking greater than 20 degs up
+				if (isSpaceHeld && (pitch > -20 || !isMoving) && !inWater) { //not looking greater than 20 degs up
 					this.motionY *= 0.1; // 90% slower descent
 				} else if (motionY < 0) //increase susanoo gravity
 					motionY *= 1.1f;
 			}
-			if (onGround && wingSwingProgressInt > 0 || !isWingExtending && motionY < -0.5) {
+			if (onGround && wingSwingProgressInt > 0 || !isWingExtending && motionY < -1) {
 					this.detractWings();
 				}
 		}
