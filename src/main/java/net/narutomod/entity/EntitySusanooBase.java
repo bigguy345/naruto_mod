@@ -180,6 +180,10 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 			return false;
 		if (source == DamageSource.CACTUS)
 			return false;
+		if (source == DamageSource.LAVA)
+			return false;
+		if (source == DamageSource.IN_FIRE||source == DamageSource.ON_FIRE)
+			return false;
 		if (source == DamageSource.DROWN)
 			return false;
 		if (source == DamageSource.MAGIC)
@@ -410,6 +414,7 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 			if (!this.world.isRemote && this.ticksExisted % 20 == 1) {
 				ownerPlayer.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 22, 6, false, false));
 			}
+			ownerPlayer.extinguish();
 		}
 
 		this.updateArmSwingProgress();
