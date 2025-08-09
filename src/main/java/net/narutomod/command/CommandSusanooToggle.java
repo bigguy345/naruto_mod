@@ -155,8 +155,8 @@ public class CommandSusanooToggle extends ElementsNarutomodMod.ModElement {
                     player.sendMessage(new TextComponentString("\u00a76Toggled " + (bo ? "\u00a7aOn" : "\u00a7cOff")));
                     sync = true;
 
-                    riddenSusanoo.size = bo ? 1 : -1;
-                    riddenSusanoo.offset = bo ? 3 : -1;
+                    riddenSusanoo.size = bo ? 0.4f : -1;
+                    riddenSusanoo.offset = bo ? 0.5f : -1;
                     riddenSusanoo.renderPlayer = bo ? false : true;
 
 
