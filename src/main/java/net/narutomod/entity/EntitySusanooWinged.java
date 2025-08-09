@@ -94,6 +94,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			this.wingSwingProgressInt = 0;
 			this.isWingDetracting = false;
 			this.isWingExtending = false;
+			ignoreFrustumCheck = true;
 
 			double swordReach = player.getEntityData().hasKey("susanooReach") ? player.getEntityData().getDouble("susanooReach") : 18;//ModConfig.WINGED_SUSANOO.SWORD_REACH;
 			//this.getEntityAttribute(EntityPlayer.REACH_DISTANCE).applyModifier(new AttributeModifier("susanoo.reachExtension", swordReach, 0));
@@ -136,6 +137,12 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			}
 		}
 
+		@SideOnly(Side.CLIENT)
+		@Override
+		public boolean isInRangeToRender3d(double x, double y, double z) {
+			return true;
+		}
+		
 		@Override
 		public double getMountedYOffset() {
 			return customYOffset == -1 ? height * 0.85f : customYOffset;
