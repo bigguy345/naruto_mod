@@ -50,7 +50,7 @@ import java.util.HashMap;
 public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 	public static final int ENTITYID = 42;
 	public static final int ENTITYID_RANGED = 43;
-	private static float MODELSCALE = ModConfig.WINGED_SUSANOO.MODEL_SCALE;
+	private static float MODELSCALE = 7.5f;
 	
 	public EntitySusanooWinged(ElementsNarutomodMod instance) {
 		super(instance, 232);
@@ -81,22 +81,21 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 
 		public EntityCustom(World world) {
 			super(world);
-			this.setSize(MODELSCALE * 0.8f, MODELSCALE * 2.0f);
+			//this.setSize(MODELSCALE * 0.8f, MODELSCALE * 1.7f);
 			this.getEntityData().setDouble("entityModelScale", (double)MODELSCALE);
 			this.chakraUsage = 100d;
 		}
 
 		public EntityCustom(EntityLivingBase player) {
 			super(player);
-			this.setSize(MODELSCALE * 0.8f, MODELSCALE * 2.0f);
-			this.stepHeight = this.height / 3.0F;
+			this.stepHeight = Math.max(1, this.height / 3.0F); 
 			//this.setFlameColor(0x20b83dba);
 			this.chakraUsage = 100d;
 			this.wingSwingProgressInt = 0;
 			this.isWingDetracting = false;
 			this.isWingExtending = false;
 
-			double swordReach = player.getEntityData().hasKey("susanooReach") ? player.getEntityData().getDouble("susanooReach") : ModConfig.WINGED_SUSANOO.SWORD_REACH;
+			double swordReach = player.getEntityData().hasKey("susanooReach") ? player.getEntityData().getDouble("susanooReach") : 18;//ModConfig.WINGED_SUSANOO.SWORD_REACH;
 			this.getEntityAttribute(EntityPlayer.REACH_DISTANCE).applyModifier(new AttributeModifier("susanoo.reachExtension", swordReach, 0));
 			this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).applyModifier(new AttributeModifier("susanoo.speedboost", 0.5D, 0));
 			this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier("susanoo.maxhealth", ModConfig.WINGED_SUSANOO.MAX_HEALTH, 2));
@@ -119,8 +118,24 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 				MODELSCALE = player.getEntityData().getFloat("susanooModelScale");
 			if (player.getEntityData().hasKey("susanooYOffset"))
 				customYOffset = player.getEntityData().getDouble("susanooYOffset");
-			
-		
+
+			setSize(MODELSCALE);
+		}
+
+		@Override
+		public void notifyDataManagerChange(DataParameter<?> key) {
+			super.notifyDataManagerChange(key);
+			if (SIZE.equals(key)) {
+				//this.setSize(MODELSCALE * 0.8f, MODELSCALE * 1.7f); //original 
+				//this.setSize(scale *1.f, scale * 4f); //1st iteration 
+				float scale = getSize();
+				this.setSize(scale * 1.5f, scale * 5.3f);
+			}
+		}
+
+		@Override
+		public double getMountedYOffset() {
+			return customYOffset == -1 ? height * 0.85f : customYOffset;
 		}
 
 		@Override
@@ -180,10 +195,6 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 	    }
 
 		private double customYOffset = -1;
-		@Override
-		public double getMountedYOffset() {
-			return customYOffset == -1 ? ModConfig.WINGED_SUSANOO.PLAYER_Y_OFFSET : customYOffset;
-		}
 
 		protected int getWingSwingAnimationEnd() {
 			return 60;
@@ -369,6 +380,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 	    	}
 	    	this.setSwingingArms(false);
 	    }
+
 	}
 
 	@Override
@@ -399,6 +411,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 					this.copyLimbSwing(entity, (AbstractClientPlayer) entity.getControllingPassenger());
 				}
 				this.setModelVisibilities(entity);
+				shadowSize = 1f * entity.width;
 				super.doRender(entity, x, y, z, entityYaw, partialTicks);
 			}
 	
@@ -1217,8 +1230,10 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 					this.flap16.rotateAngleZ = this.wingSwingProgress * -105.0F * 0.017453292F;
 				}
 				GlStateManager.pushMatrix();
-				GlStateManager.translate(0.0F, 1.5F - 1.5F * this.modelScale, 0.0F);
-				GlStateManager.scale(this.modelScale, this.modelScale, this.modelScale);
+				float scale = entity.width * 1.7f;
+
+				GlStateManager.translate(0.0F, 1.5F - 1.5F * scale, 0.0F);
+				GlStateManager.scale(scale, scale, scale);
 				GlStateManager.enableBlend();
 				GlStateManager.disableCull();
 				GlStateManager.depthMask(true);
