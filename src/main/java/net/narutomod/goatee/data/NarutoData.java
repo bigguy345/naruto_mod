@@ -1,6 +1,7 @@
 package net.narutomod.goatee.data;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,6 +19,7 @@ public class NarutoData {
     public WheelData dojutsuWheel = new WheelData("DojutsuWheel");
     public DojutsuItemHandler dojutsuSlotHandler;
 
+    public SusanooData susanooData;
 
     public NarutoData() {
     }
@@ -25,6 +27,7 @@ public class NarutoData {
     public NarutoData(EntityPlayer player) {
         this.player = dojutsuWheel.player = player;
         dojutsuSlotHandler = new DojutsuItemHandler(player);
+        susanooData = new SusanooData(this);
     }
 
     public ItemStack getDojutsuSlot() {
@@ -37,6 +40,7 @@ public class NarutoData {
         NBTTagCompound compound = new NBTTagCompound();
         dojutsuWheel.writeToNBT(compound);
         compound.setTag("dojutsuSlot", dojutsuSlotHandler.serializeNBT());
+        susanooData.writeToNBT(compound);
 
         return compound;
     }
@@ -44,7 +48,14 @@ public class NarutoData {
     public void readFromNBT(NBTTagCompound compound) {
         dojutsuWheel.readFromNBT(compound);
         dojutsuSlotHandler.deserializeNBT(compound.getCompoundTag("dojutsuSlot"));
+        susanooData.readFromNBT(compound);
 
+    }
+
+    public static SusanooData.Entry getSusanooData(EntityLivingBase p) {
+        if (p == null || !(p instanceof EntityPlayer))
+            return null;
+        return NarutoData.get((EntityPlayer) p).susanooData.getFromEntity(p.getRidingEntity());
     }
 
     public void tick() {

@@ -55,6 +55,10 @@ public final class NarutoSyncData extends AbstractPacket {
         PacketHandler.Instance.sendToServer(new NarutoSyncData(data));
     }
 
+    public static void syncTrackingClients(EntityPlayer player) {
+        syncTrackingClients(NarutoData.get(player));
+    }
+    
     public static void syncTrackingClients(NarutoData data) {
         PacketHandler.Instance.sendToPlayer(data.player, new NarutoSyncData(data));
         PacketHandler.Instance.sendToTrackingPlayers(data.player, new NarutoSyncData(data));

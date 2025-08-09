@@ -119,8 +119,11 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			if (player.getEntityData().hasKey("susanooYOffset"))
 				customYOffset = player.getEntityData().getDouble("susanooYOffset");
 
-			setSize(MODELSCALE);
 			float size = getDefaultSize();
+			SusanooData.Entry data = NarutoData.getSusanooData(player);
+			if (data != null && data.size >= 0)
+				size = data.size;
+
 			setSize(size);
 		}
 
@@ -150,7 +153,12 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 		
 		@Override
 		public double getMountedYOffset() {
-			return customYOffset == -1 ? height * 0.85f : customYOffset;
+			SusanooData.Entry data = NarutoData.getSusanooData(getOwnerPlayer());
+			if (data != null && data.offset >= 0)
+				return data.offset > height ? height : data.offset;
+
+
+			return height * 0.85f;
 		}
 
 		@Override
