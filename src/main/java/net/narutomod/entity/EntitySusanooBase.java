@@ -2,12 +2,9 @@ package net.narutomod.entity;
 
 import net.minecraft.block.material.Material;
 
+import net.minecraft.util.*;
 import net.minecraft.world.World;
-import net.minecraft.util.CombatRules;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.DamageSource;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -317,6 +314,10 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 			this.jumpMovementFactor = 0.02F;
 			super.travel(ti, tj, tk);
 		}
+	}
+	
+	public float getDefaultSize(){
+		return 1;
 	}
 
 	@Override

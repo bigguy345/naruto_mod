@@ -34,6 +34,8 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 
 import net.narutomod.ModConfig;
+import net.narutomod.goatee.data.NarutoData;
+import net.narutomod.goatee.data.SusanooData;
 import net.narutomod.item.*;
 import net.narutomod.procedure.ProcedureUtils;
 import net.narutomod.procedure.ProcedureTotsukaSwordToolInHandTick;
@@ -47,7 +49,7 @@ import java.util.HashMap;
 public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 	public static final int ENTITYID = 42;
 	public static final int ENTITYID_RANGED = 43;
-	private static float MODELSCALE = 7.5f;
+	public static float DEFAULT_SIZE = 5f;
 	
 	public EntitySusanooWinged(ElementsNarutomodMod instance) {
 		super(instance, 232);
@@ -79,7 +81,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 		public EntityCustom(World world) {
 			super(world);
 			//this.setSize(MODELSCALE * 0.8f, MODELSCALE * 1.7f);
-			this.getEntityData().setDouble("entityModelScale", (double)MODELSCALE);
+			//this.getEntityData().setDouble("entityModelScale", (double)MODELSCALE);
 			this.chakraUsage = 100d;
 		}
 
@@ -99,7 +101,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier("susanoo.maxhealth", ModConfig.WINGED_SUSANOO.MAX_HEALTH, 2));
 			double baseDamage = 250;
 			this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(baseDamage + this.playerXp * 0.003d);
-			this.getEntityData().setDouble("entityModelScale", (double)MODELSCALE);
+			//this.getEntityData().setDouble("entityModelScale", (double) DEFAULT_SIZE);
 			Item helmet = ItemDojutsu.getWorn(player).getItem();
 			if (player instanceof EntityPlayer && helmet instanceof ItemSharingan.Base) {
 				if (((ItemSharingan.Base)helmet).isEternal() || ((ItemSharingan.Base)helmet).getSubType() == ItemSharingan.Type.AMATERASU) {
@@ -113,11 +115,13 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			this.setHealth(this.getMaxHealth());
 
 			if (player.getEntityData().hasKey("susanooModelScale"))
-				MODELSCALE = player.getEntityData().getFloat("susanooModelScale");
+				DEFAULT_SIZE = player.getEntityData().getFloat("susanooModelScale");
 			if (player.getEntityData().hasKey("susanooYOffset"))
 				customYOffset = player.getEntityData().getDouble("susanooYOffset");
 
 			setSize(MODELSCALE);
+			float size = getDefaultSize();
+			setSize(size);
 		}
 
 		@Override
@@ -138,6 +142,10 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 		@Override
 		public boolean isInRangeToRender3d(double x, double y, double z) {
 			return true;
+		}
+
+		public float getDefaultSize() {
+			return DEFAULT_SIZE;
 		}
 		
 		@Override
@@ -391,7 +399,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 	    @Override
 	    public void attackEntityRanged(double x, double y, double z) {
 	    	if (this.bulletEntity == null) {
-	    		this.createBullet(MODELSCALE * 0.5f);
+				this.createBullet(getSize() * 0.5f);
 	    	}
 	    	this.bulletEntity.shoot(x, y, z, 0.99f, 0.0f);
 	    	this.bulletEntity = null;
@@ -439,7 +447,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			private final ResourceLocation flameTexture = new ResourceLocation("narutomod:textures/gas256.png");
 	
 			public RenderSusanooWinged(RenderManager renderManagerIn) {
-				super(renderManagerIn, new ModelSusanooWinged(), MODELSCALE * 0.5F);
+				super(renderManagerIn, new ModelSusanooWinged(), DEFAULT_SIZE * 0.5F);
 				this.addLayer(new LayerHeldItem(this));
 			}
 	
@@ -502,7 +510,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 						headPitch += this.getFlyingBodyRotationAmount(entity) * -90f;
 					}
 				}
-				float modelscale = MODELSCALE;
+				float modelscale = DEFAULT_SIZE;
 				GlStateManager.pushMatrix();
 				GlStateManager.translate(0.0F, 1.5F - 1.5F * modelscale, 0.0F);
 				GlStateManager.scale(modelscale, modelscale, modelscale);
@@ -644,7 +652,6 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			private final ModelRenderer flap14;
 			private final ModelRenderer flap15;
 			private final ModelRenderer flap16;
-			private final float modelScale = MODELSCALE;
 			private final float maxAlpha = 1.0f;
 			private boolean renderFlame;
 			public float wingSwingProgress;
