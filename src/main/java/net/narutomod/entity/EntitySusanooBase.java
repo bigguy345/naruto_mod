@@ -298,8 +298,8 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 				if (onGround && e.isJumping && !isJumping) {
 					isJumping = true;
 					jump();
-					jumpTicks = 20;
-				} else if (isJumping && jumpTicks <= 0)
+					jumpTicks = 40;
+				} else if (isJumping && jumpTicks <= 20)
 					isJumping = false;
 
 				//Sprinting jump speed

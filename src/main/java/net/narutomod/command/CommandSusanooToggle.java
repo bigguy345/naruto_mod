@@ -216,7 +216,7 @@ public class CommandSusanooToggle extends ElementsNarutomodMod.ModElement {
             }
 
             public static boolean isValidType(String str) {
-                return COMMANDS.containsKey(str);
+                return COMMANDS.containsKey(str.toUpperCase());
             }
 
             public static List<String> getAllCommands() {
