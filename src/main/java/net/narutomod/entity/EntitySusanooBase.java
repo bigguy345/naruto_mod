@@ -264,19 +264,22 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 			return;
 		if (this.isBeingRidden() && this.isAIDisabled()) {
 			Entity entity = this.getControllingPassenger();
-			this.rotationYaw = entity.rotationYaw;
-			this.prevRotationYaw = this.rotationYaw;
-			this.rotationPitch = entity.rotationPitch;
-			this.setRotation(this.rotationYaw, this.rotationPitch);
+			this.prevRotationYaw = entity.prevRotationYaw;
+			this.prevRotationPitch = entity.prevRotationPitch;
+			this.setRotation(entity.rotationYaw, entity.rotationPitch);
 			this.jumpMovementFactor = this.getAIMoveSpeed();
 			this.renderYawOffset = entity.rotationYaw;
 			this.rotationYawHead = entity.rotationYaw;
 			if (entity instanceof EntityLivingBase) {
 				EntityLivingBase e = (EntityLivingBase) entity;
+				this.renderYawOffset = e.renderYawOffset;
+				this.cameraPitch = e.cameraPitch;
 				float speed = (float) this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue();
 				this.setAIMoveSpeed(e.isSprinting() ? speed * 3f : speed);
 				float forward = ((EntityLivingBase) entity).moveForward;
 				float strafe = ((EntityLivingBase) entity).moveStrafing;
+
+				setSprinting(entity.isSprinting()); //used in limb swing speed calculation in rendering 
 
 
 				// Walk on water
@@ -288,17 +291,14 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 				}
 
 				if (inWater && e.isJumping) {
-					motionY = 0.4; //float to surface inside water superfast
+					motionY = 0.8; //float to surface inside water superfast
 				}
 				
 				if (onGround && e.isJumping && !isJumping) {
 					isJumping = true;
-
-					if (onSurface) { //for on-water surface jumping
-						jump();
-						jumpTicks = 10;
-					}
-				} else if (isJumping && !e.isJumping)
+					jump();
+					jumpTicks = 20;
+				} else if (isJumping && jumpTicks <= 0)
 					isJumping = false;
 
 				//Sprinting jump speed

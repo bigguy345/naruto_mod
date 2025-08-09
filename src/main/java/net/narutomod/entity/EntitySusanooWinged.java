@@ -296,33 +296,30 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			super.onEntityUpdate();
 		}
 
-		protected float getJumpUpwardsMotion() {
-			return 1.5F;
-		}
-
 		protected float getJumpMovementFactor(EntityPlayer rider) {
-			return 4;
+			return 4 + (12 * wingSwingProgressInt / 100) / getSize() * 0.5f; //goes faster the smaller the susanoo, with a base speed of 4
 		}
 		@Override
 		public void wingedSusanooTravel(EntityLivingBase entity, float strafe, float vertical, float forward) {
 			if (!this.onGround) {
-					this.extendWings();
-
 				// If moving forward/strafing → flight mode
-				if (strafe > 0.0F || forward > 0 || entity.isJumping) {
 
-					if (!entity.isJumping) {
-						double verticalSpeed = -entity.rotationPitch / 45.0D;
-						verticalSpeed *= 0.5; // flight climb/descend sensitivity
-						this.motionY += verticalSpeed;
-					}
+				float pitch = entity.rotationPitch;
 
-					//Slow down descend
-					if (this.motionY < 0) {
-						this.motionY *= 0.4; // 60% slower descent
-					}
+				if ((jumpTicks < 0 || pitch < -20) && (strafe > 0.0F || forward > 0)) {
+					double verticalSpeed = -pitch / 45.0D;
+					verticalSpeed *= pitch < 0 ? 0.15 : 0.05; // flight climb/descend sensitivity
+					this.extendWings();
+					this.motionY += verticalSpeed;
 				}
-			} else {
+
+				boolean isSpaceHeld = getOwnerPlayer().isJumping && !isJumping;
+				if (isSpaceHeld && pitch > -20 && !inWater) { //not looking greater than 20 degs up
+					this.motionY *= 0.1; // 90% slower descent
+				} else if (motionY < 0) //increase susanoo gravity
+					motionY *= 1.1f;
+			}
+			if (onGround && wingSwingProgressInt > 0 || !isWingExtending && motionY < -0.5) {
 					this.detractWings();
 				}
 		}
@@ -330,7 +327,15 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 		@Override
 		public void travel(float ti, float tj, float tk) {
 			super.travel(ti, tj, tk);
-			this.setMotionXZ((float) (this.posX - this.lastX), (float) (this.posZ - this.lastZ), this.rotationYawHead);
+
+
+			//if wing animation is 20% through
+			if (wingSwingProgressInt > getWingSwingAnimationEnd() / 6 && !isWingDetracting)
+				this.setMotionXZ((float) (this.posX - this.lastX), (float) (this.posZ - this.lastZ), this.rotationYawHead);
+			else
+				this.setMotionXZ(0, 0, this.rotationYawHead);
+
+
 		}
 		@Override
 		protected void collideWithEntity(Entity entity) {
@@ -443,7 +448,8 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			protected void renderModel(EntityCustom entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
 	            if (this.bindEntityTexture(entity)) {
 					if (!entity.onGround) {
-						limbSwingAmount = 0f;
+						if (entity.wingSwingProgressInt > 0) //swing limbs when jumping and NOT flying
+							limbSwingAmount = 0f;
 						if (this.isMovingTowardsLookDirection(entity)) {
 							headPitch += this.getFlyingBodyRotationAmount(entity) * -90f;
 						}
@@ -1280,7 +1286,11 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 	
 			@Override
 			public void setRotationAngles(float limbSwing, float f1, float f2, float f3, float f4, float f5, Entity entityIn) {
-				super.setRotationAngles(limbSwing *0.25f * ((EntityLivingBase) entityIn).getAIMoveSpeed(), f1, f2, f3, f4, f5, entityIn);
+				//Limb swing speed, accounts for sprint and susanoo size
+				EntityCustom susanoo = (EntityCustom) entityIn;
+				float sizeMult = MathHelper.clamp(susanoo.getSize(), 1, 3);
+				float sprintMulti = susanoo.isSprinting() ? 1.75f : 1;
+				super.setRotationAngles(limbSwing * 0.8f * sprintMulti / sizeMult, f1, f2, f3, f4, f5, entityIn);
 				if (((EntityCustom)entityIn).isSwingingArms()) {
 					this.bipedLeftArm.rotateAngleY = 0.1F + this.bipedHead.rotateAngleY;
 					this.bipedLeftArm.rotateAngleX = -((float)Math.PI / 2F) + this.bipedHead.rotateAngleX;
