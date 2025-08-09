@@ -74,7 +74,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 		private final ItemStack kamuiShuriken = new ItemStack(ItemKamuiShuriken.block);
 		private boolean isWingExtending;
 		private boolean isWingDetracting;
-		private int wingSwingProgressInt;
+		private float wingSwingProgressInt;
 		private EntitySusanooClothed.EntityMagatama bulletEntity;
 		private double lastX;
 		private double lastZ;
@@ -220,23 +220,49 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			this.isWingDetracting = true;
 		}
 
+		private static float easeOutCubic(double t) {
+			return (float) (1 - Math.pow(1 - t, 3));
+		}
+
+		private static float lerp(float start, float end, float alpha) {
+			if (alpha >= 1)
+				return end;
+			
+			return start + (end - start) * alpha;
+		}
+
+		public float wingProgressRatio;
 		protected void updateWingSwing() {
-			int i = this.getWingSwingAnimationEnd();
+			int end = this.getWingSwingAnimationEnd();
+			float eased = wingProgressRatio;
+
 			if (this.isWingExtending) {
-				this.wingSwingProgressInt++;
-				if (this.wingSwingProgressInt >= i) {
-					this.wingSwingProgressInt = i;
+				float sizeLerp = lerp(1, 0.125f, getSize() / 5); //slow speeds for higher sizes 
+				float speed = (float) (0.0025 * sizeLerp);
+				wingProgressRatio += speed;
+				if (wingProgressRatio >= 1f) {
+					wingProgressRatio = 1f;
 					this.isWingExtending = false;
 				}
+				eased = easeOutCubic(wingProgressRatio);
+				this.wingSwingProgressInt = lerp(0, end, eased);
 			}
+
 			if (this.isWingDetracting) {
-				this.wingSwingProgressInt--;
-				if (this.wingSwingProgressInt <= 0) {
-					this.wingSwingProgressInt = 0;
+				float sizeLerp = lerp(1, 0.125f, getSize() / 5);
+				float speed = (float) (0.0025 * sizeLerp);
+				wingProgressRatio -= speed;
+				if (wingProgressRatio <= 0f) {
+					wingProgressRatio = 0f;
 					this.isWingDetracting = false;
 				}
+
+				eased = (float) Math.pow(wingProgressRatio, 3);
+				this.wingSwingProgressInt = lerp(0, end, eased);
+
 			}
-			this.setWingSwingProgress((float) this.wingSwingProgressInt / (float) i);
+
+			this.setWingSwingProgress(eased);
 		}
 
 		@Override
@@ -299,7 +325,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			this.lastX = this.posX;
 			this.lastZ = this.posZ;
 			this.showHeldWeapons();
-			this.updateWingSwing();
+			//			this.updateWingSwing();
 			super.onEntityUpdate();
 		}
 
@@ -426,6 +452,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 					this.copyLimbSwing(entity, (AbstractClientPlayer) entity.getControllingPassenger());
 				}
 				this.setModelVisibilities(entity);
+				entity.updateWingSwing();
 				shadowSize = 1f * entity.width;
 				super.doRender(entity, x, y, z, entityYaw, partialTicks);
 			}
