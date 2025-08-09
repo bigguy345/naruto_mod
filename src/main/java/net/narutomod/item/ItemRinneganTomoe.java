@@ -146,7 +146,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                     player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 6, false, false));
                     player.addPotionEffect(new PotionEffect(PotionReach.potion, 100, 1, false, false));
 
-                    if (!isRinnesharinganActivated(itemstack))
+                    if (!isRinnesharinganActivated(itemstack) && !player.isCreative())
                         Chakra.pathway(player).consume(getEternalChakraUsage(itemstack, player));
                 }
             }
