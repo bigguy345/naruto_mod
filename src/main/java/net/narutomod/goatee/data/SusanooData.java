@@ -40,12 +40,14 @@ public class SusanooData {
 
     public static class Entry {
         public float size = -1, offset = -1;
+        public boolean showParticles;
         public boolean renderPlayer, mini;
 
         public NBTTagCompound writeToNBT() {
             NBTTagCompound compound = new NBTTagCompound();
             compound.setFloat("size", size);
             compound.setFloat("offset", offset);
+            compound.setBoolean("showParticles", showParticles);
             compound.setBoolean("renderPlayer", renderPlayer);
             compound.setBoolean("mini", mini);
             return compound;
@@ -57,6 +59,12 @@ public class SusanooData {
 
             if (compound.hasKey("offset"))
                 offset = compound.getFloat("offset");
+            
+            if (compound.hasKey("showParticles"))
+                showParticles = compound.getBoolean("showParticles");
+
+            if (compound.hasKey("mini"))
+                mini = compound.getBoolean("mini");
 
             if (compound.hasKey("renderPlayer"))
                 renderPlayer = compound.getBoolean("renderPlayer");

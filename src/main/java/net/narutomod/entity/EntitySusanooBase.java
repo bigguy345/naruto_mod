@@ -2,6 +2,7 @@ package net.narutomod.entity;
 
 import net.minecraft.block.material.Material;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraft.util.math.MathHelper;
@@ -26,6 +27,10 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.narutomod.goatee.data.NarutoData;
+import net.narutomod.goatee.data.SusanooData;
 import net.narutomod.item.*;
 import net.narutomod.procedure.ProcedureBasicNinjaSkills;
 import net.narutomod.procedure.ProcedureUtils;
@@ -422,17 +427,33 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 
 		this.clampMotion(0.05D);
 
-		if (this.ticksExisted % 30 == 0)
- {
-			this.playSound(net.minecraft.util.SoundEvent.REGISTRY
-			 .getObject(new ResourceLocation("block.fire.ambient")),
- 1.0F, this.rand.nextFloat() * 0.7F + 0.3F);
+		if (this.ticksExisted % 30 == 0) {
+			this.playSound(net.minecraft.util.SoundEvent.REGISTRY.getObject(new ResourceLocation("block.fire.ambient")), 1.0F, this.rand.nextFloat() * 0.7F + 0.3F);
 		}
-		for (int i = 0; i < (int) this.height; i++) {
-			double d0 = this.posX + (this.rand.nextFloat() - 0.5D) * this.width;
-			double d1 = this.posY + this.rand.nextFloat() * this.height;
-			double d2 = this.posZ + (this.rand.nextFloat() - 0.5D) * this.width;
-			this.world.spawnAlwaysVisibleParticle(Particles.Types.FLAME.getID(), d0, d1, d2, 0.0D, 0.05D, 0.0D, this.getFlameColor(), (int)(this.width * 15f));
+
+		if (world.isRemote) {
+			spawnParticles();
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void spawnParticles() {
+		boolean show = true;
+
+
+		SusanooData.Entry data = NarutoData.getSusanooData(getOwnerPlayer());
+		if (data != null)
+			show = Minecraft.getMinecraft().gameSettings.thirdPersonView != 0 || data.showParticles && Minecraft.getMinecraft().player.equals(getOwnerPlayer());
+
+		if (show) {
+			for (int i = 0; i < 4; i++) {
+				double d0 = this.posX + (this.rand.nextFloat() - 0.5D) * this.width;
+				double d1 = this.posY + this.rand.nextFloat() * this.height;
+				double d2 = this.posZ + (this.rand.nextFloat() - 0.5D) * this.width;
+				int col = this.getFlameColor();
+				//this.world.spawnAlwaysVisibleParticle(Particles.Types.FLAME.getID(), d0, d1, d2, 0.0D, 0.05D, 0.0D,col , (int) (this.width * 25f));
+				Minecraft.getMinecraft().renderGlobal.spawnParticle(Particles.Types.FLAME.getID(), true, d0, d1, d2, 0.0D, 0.05D, 0.0D, col, (int) (this.width * 55f));
+			}
 		}
 	}
 

@@ -134,6 +134,17 @@ public class CommandSusanooToggle extends ElementsNarutomodMod.ModElement {
                     sync = true;
                 } else
                     throw new WrongUsageException("Player must be in Full Winged Susanoo to use this command!");
+            } else if (type == Level1.PARTICLES) {
+                player = args.length > 1 ? getPlayer(server, sender, args[1]) : player;
+                SusanooData.Entry riddenSusanoo = getSusanooData(player);
+
+                if (riddenSusanoo != null) {
+                    boolean bo = !riddenSusanoo.showParticles;
+                    riddenSusanoo.showParticles = bo;
+                    player.sendMessage(new TextComponentString("\u00a76Toggled " + (bo ? "\u00a7aOn" : "\u00a7cOff")));
+                    sync = true;
+                } else
+                    throw new WrongUsageException("Player must be in Full Winged Susanoo to use this command!");
             } else if (type == Level1.PLAYER) {
                 player = args.length > 1 ? getPlayer(server, sender, args[1]) : player;
                 SusanooData.Entry riddenSusanoo = getSusanooData(player);
@@ -185,6 +196,7 @@ public class CommandSusanooToggle extends ElementsNarutomodMod.ModElement {
         public enum Level1 {
             SIZE("SIZE"),
             PLAYER("RENDER_PLAYER"),
+            PARTICLES("SHOW_PARTICLES"),
             OFFSET("OFFSET"),
             MINI("MINI");
 
