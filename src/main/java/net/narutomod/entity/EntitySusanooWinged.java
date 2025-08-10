@@ -198,7 +198,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 	    }
 
 		protected float getJumpUpwardsMotion() {
-			return Math.max(1f, height / 14);
+			return MathHelper.clamp(height / 5, 1f, 3);
 		}
 		
 	    private void setMotionXZ(float x, float z, float headYaw) {
@@ -233,7 +233,7 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 		}
 
 		private static float easeOutCubic(double t) {
-			return (float) (1 - Math.pow(1 - t, 3));
+			return t >= 1 ? 1 : (float) (1 - Math.pow(1 - t, 3));
 		}
 
 		private static float lerp(float start, float end, float alpha) {
@@ -249,8 +249,8 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			float eased = wingProgressRatio;
 
 			if (this.isWingExtending) {
-				float sizeLerp = lerp(1, 0.125f, getSize() / 5); //slow speeds for higher sizes 
-				float speed = (float) (0.00125 * sizeLerp);
+				float sizeLerp = lerp(1, 0.25f, getSize() / 5); //slow speeds for higher sizes 
+				float speed = (float) (0.005 * sizeLerp);
 				wingProgressRatio += speed;
 				if (wingProgressRatio >= 1f) {
 					wingProgressRatio = 1f;
@@ -261,15 +261,16 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 			}
 
 			if (this.isWingDetracting) {
-				float sizeLerp = lerp(1, 0.125f, getSize() / 5);
-				float speed = (float) (0.00125 * sizeLerp);
+				float sizeLerp = lerp(1, 0.1f, getSize() / 5);
+
+				float speed = (float) (0.005 * sizeLerp);
 				wingProgressRatio -= speed;
 				if (wingProgressRatio <= 0f) {
 					wingProgressRatio = 0f;
 					this.isWingDetracting = false;
 				}
 
-				eased = (float) Math.pow(wingProgressRatio, 3);
+				eased = (float) Math.pow(wingProgressRatio, 2);
 				this.wingSwingProgressInt = lerp(0, end, eased);
 
 			}
