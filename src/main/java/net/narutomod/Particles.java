@@ -322,7 +322,8 @@ public class Particles extends ElementsNarutomodMod.ModElement {
 		private int viewerId;
 
 		protected Smoke(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, 
-		 double motionX, double motionY, double motionZ, int color, float scale, int maxAge, int brightness, 
+		 double motionX, double motionY, double motionZ, int color,
+ float scale, int maxAge, int brightness, 
 		 int playerId, double floatSpeed, double bounceMotionIn) {
 			super(worldIn, xCoordIn, yCoordIn, zCoordIn, 0.0D, 0.0D, 0.0D);
 			//super(worldIn, xCoordIn, yCoordIn, zCoordIn);
@@ -401,7 +402,8 @@ public class Particles extends ElementsNarutomodMod.ModElement {
 			this.prevPosX = this.posX;
 			this.prevPosY = this.posY;
 			this.prevPosZ = this.posZ;
-			if (this.particleMaxAge == 0 || this.particleAge++ >= this.particleMaxAge) {
+			if (this.particleMaxAge == 0 || this.particleAge++ >= this.particleMaxAge)
+ {
 				this.setExpired();
 				return;
 			}
@@ -648,7 +650,7 @@ public class Particles extends ElementsNarutomodMod.ModElement {
 	        float f6 = (float)(this.prevPosY + (this.posY - this.prevPosY) * (double)partialTicks - interpPosY);
 	        float f7 = (float)(this.prevPosZ + (this.posZ - this.prevPosZ) * (double)partialTicks - interpPosZ);
 	        float f9 = this.particleAlpha * f8;
-	        float f10 = this.particleGreen * (1.0F - f);
+	        float f10 = this.particleGreen ; //this.particleGreen * (1.0F - f); why? it shifts the color
 	        int j = 0xF0;
 	        int k = 0xF0;
 	        Vec3d[] avec3d = new Vec3d[] {new Vec3d((double)(-rotationX * f4 - rotationXY * f4), (double)(-rotationZ * f4), (double)(-rotationYZ * f4 - rotationXZ * f4)), new Vec3d((double)(-rotationX * f4 + rotationXY * f4), (double)(rotationZ * f4), (double)(-rotationYZ * f4 + rotationXZ * f4)), new Vec3d((double)(rotationX * f4 + rotationXY * f4), (double)(rotationZ * f4), (double)(rotationYZ * f4 + rotationXZ * f4)), new Vec3d((double)(rotationX * f4 - rotationXY * f4), (double)(-rotationZ * f4), (double)(rotationYZ * f4 - rotationXZ * f4))};
@@ -662,7 +664,8 @@ public class Particles extends ElementsNarutomodMod.ModElement {
 			this.prevPosX = this.posX;
 			this.prevPosY = this.posY;
 			this.prevPosZ = this.posZ;
-			if (this.particleAge++ >= this.particleMaxAge) {
+			if (this.particleAge++ >= this.particleMaxAge)
+ {
 				this.setExpired();
 			}
 			this.particleTextureIndexX = (this.particleAge / 2) % 8;
