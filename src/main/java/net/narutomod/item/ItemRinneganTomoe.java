@@ -345,7 +345,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
 
         @Override
         public boolean onJutsuKey3(boolean is_pressed, ItemStack stack, EntityPlayer entity) {
-            if (!eternalOn(stack))
+            if (getTomoeStatus(stack) < SHARINGAN_ON)
                 return false;
 
             Map<String, Object> $_dependencies = Maps.newHashMap();
