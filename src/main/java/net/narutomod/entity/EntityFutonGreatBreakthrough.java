@@ -108,7 +108,7 @@ public class EntityFutonGreatBreakthrough extends ElementsNarutomodMod.ModElemen
 			int particleMaxAge = 16;
 			int particleColor = 0x40FFFFFF;
 			if (!inAir) {
-				for (int i = 0; i < 5; i++) {
+				for (int i = 0; i < 2; i++) {
 					Vec3d vec1 = vec0.scale((this.rand.nextDouble()*0.7d+0.3d) * range * 0.2d);
 					double d = vec1.lengthVector() / range;
 					this.world.spawnEntity(new EntityWindParticle(this, vec.x, vec.y, vec.z,
@@ -122,7 +122,7 @@ public class EntityFutonGreatBreakthrough extends ElementsNarutomodMod.ModElemen
 				particleColor = 0x10FFFFFF;
 			}
 			Particles.Renderer particles = new Particles.Renderer(this.world);
-			for (int i = 1; i <= 50; i++) {
+			for (int i = 1; i <= 5; i++) {
 				int maxage = (int)((double)particleMaxAge / (this.rand.nextDouble()*0.8D+0.2D));
 				Vec3d vec1 = vec0.scale((this.rand.nextDouble()*0.7d+0.3d) * range * 0.2d);
 				double d = vec1.lengthVector() / range;
