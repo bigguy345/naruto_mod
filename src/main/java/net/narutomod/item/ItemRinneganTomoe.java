@@ -144,9 +144,9 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                     player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 4, false, false));
                     player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 4, false, false));
                 } else if (tomoeStatus == ETERNAL_ON) {
-                    player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 15, false, false));
-                    player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 8, false, false));
-                    player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 6, false, false));
+                    player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 25, false, false));
+                    player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 12, false, false));
+                    player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 20, false, false));
                     player.addPotionEffect(new PotionEffect(PotionReach.potion, 100, 1, false, false));
                 }
             }
