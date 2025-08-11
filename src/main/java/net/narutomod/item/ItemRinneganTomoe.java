@@ -119,6 +119,9 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
 
             applyEffects(player, itemstack);
 
+            if (player.ticksExisted % 10 == 0 && !isRinnesharinganActivated(itemstack) && !player.isCreative())
+                Chakra.pathway(player).consume(getEternalChakraUsage(itemstack, player) * 10);
+
             int x = (int) player.posX;
             int y = (int) player.posY;
             int z = (int) player.posZ;
@@ -145,9 +148,6 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                     player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 8, false, false));
                     player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 6, false, false));
                     player.addPotionEffect(new PotionEffect(PotionReach.potion, 100, 1, false, false));
-
-                    if (!isRinnesharinganActivated(itemstack) && !player.isCreative())
-                        Chakra.pathway(player).consume(getEternalChakraUsage(itemstack, player));
                 }
             }
         }
