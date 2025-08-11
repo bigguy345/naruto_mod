@@ -230,7 +230,8 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 					stack.getItem().hitEntity(stack, (EntityLivingBase)entityIn, this);
 				}
 				if (f2 > 0.8f) {
-					ProcedureUtils.pushEntity(this, entityIn, ProcedureUtils.getReachDistance(this) + 1.0d, f2 * 2.5F);
+					double knockBack = MathHelper.clamp(getSize() * 3 + 3.0d, 6, 40);
+					ProcedureUtils.pushEntity(this, entityIn, knockBack, f2 * 2.5F);
 					this.motionX *= 0.6D;
 					this.motionZ *= 0.6D;
 				}
