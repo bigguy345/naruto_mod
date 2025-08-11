@@ -517,7 +517,7 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
 
     public static boolean sharinganOff(ItemStack stack) {
         int status = getTomoeStatus(stack);
-        return status < SHARINGAN_ON || status > ETERNAL_ON;
+        return status >= 0 && status < SHARINGAN_ON || status > ETERNAL_ON;
     }
 
     public static boolean sharinganOn(ItemStack stack) {

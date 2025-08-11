@@ -60,6 +60,10 @@ public class ProcedureSusanoo extends ElementsNarutomodMod.ModElement {
 				player.getEntityData().setBoolean("susanoo_activated", true);
 				player.getEntityData().setDouble("susanoo_cd", NarutomodModVariables.world_tick + 2400.0D);
 				boolean isMini = NarutoData.get(player).susanooData.FULL_WINGED.mini;
+				if (isMini && ItemRinneganTomoe.sharinganOff(helmet)) {
+					ItemRinneganTomoe.setTomoeStatus(helmet, ItemRinneganTomoe.SHARINGAN_ON);
+					ItemDojutsu.playActivationSound(helmet, player);
+				}
 				EntitySusanooBase entityCustom = !isMini ? new EntitySusanooSkeleton.EntityCustom(player) : new EntitySusanooWinged.EntityCustom(player);
 				world.spawnEntity(entityCustom);
 				player.getEntityData().setInteger(SUMMONED_SUSANOO, entityCustom.getEntityId());
@@ -152,10 +156,6 @@ public class ProcedureSusanoo extends ElementsNarutomodMod.ModElement {
 				boolean hasLegs = ((EntitySusanooClothed.EntityCustom) susanoo).hasLegs();
 				if (hasLegs && playerXp >= EntitySusanooBase.BXP_REQUIRED_L4) {
 					if (Chakra.pathway(player).consume(BASE_CHAKRA_USAGE)) {
-						if (!ItemRinneganTomoe.eternalOn(tomoe)) {
-							ItemRinneganTomoe.setTomoeStatus(tomoe, ItemRinneganTomoe.ETERNAL_ON);
-							ItemDojutsu.playActivationSound(tomoe, player);
-						}
 						changeEntity(player, susanoo, new EntitySusanooWinged.EntityCustom(player));
 					}
 				} else if (!hasLegs && playerXp >= EntitySusanooBase.BXP_REQUIRED_L3) {
