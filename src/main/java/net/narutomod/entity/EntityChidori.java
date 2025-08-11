@@ -467,8 +467,8 @@ public class EntityChidori extends ElementsNarutomodMod.ModElement {
 						Vec3d vec0 = this.transform3rdPerson(new Vec3d(0d, -0.7d, 0d), mainarmAngles, user, mainhandside, partialTicks);
 						Particles.spawnParticle(entity.world, Particles.Types.SMOKE, vec0.x, vec0.y, vec0.z, 1, 0d, 0d, 0d, 0d, 0d, 0d,
 								0x20FFFFFF, 5 + user.getRNG().nextInt(55), 5, 0xF0, -1, 0);
-						if (!(entity instanceof Spear)) {
-							EntityLightningArc.spawnAsParticle(entity.world, vec0.x, vec0.y, vec0.z, entity.getGrowth(), 0d, 0d, 0d, 0xc00000ff, 1);
+						if (!(entity instanceof Spear) && entity.ticksExisted %2  == 0) {
+							EntityLightningArc.spawnAsParticle(entity.world, vec0.x, vec0.y, vec0.z, entity.getGrowth(), 0d, 0d, 0d, 0xc00000ff, 2);
 						}
 						if (viewer.equals(user)) {
 							ProcedureSync.CPacketVec3d.sendToServer(entity, vec0);
