@@ -359,7 +359,8 @@ public class EntitySusanooWinged extends ElementsNarutomodMod.ModElement {
 					this.motionY += verticalSpeed;
 				}
 
-				boolean isSpaceHeld = getOwnerPlayer().isJumping && !isJumping;
+				EntityLivingBase p = getOwnerPlayer();
+				boolean isSpaceHeld = p != null && p.isJumping && !isJumping;
 				if (isSpaceHeld && (pitch > -20 || !isMoving) && !inWater) { //not looking greater than 20 degs up
 					this.motionY *= 0.1; // 90% slower descent
 				} else if (motionY < 0) //increase susanoo gravity
