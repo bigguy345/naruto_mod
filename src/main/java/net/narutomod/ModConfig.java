@@ -136,5 +136,13 @@ public class ModConfig extends ElementsNarutomodMod.ModElement {
 		@Config.RangeDouble(min = 1, max = 256)
 		@Config.Comment({"Sharingan's Lock On default range.", "Value is multiplied by 1.25x if Mangekyo, 1.5x if Eternal, and 2x if Rinnegan Tomoe. (Default: 50)"})
 		public double SHARINGAN_LOCK_ON_RANGE = 50;
+
+		@Config.RangeDouble(min = 1, max = 10000)
+		@Config.Comment({"Chakra consumed by Mangekyo Sharingan per second. (Default: 50)", "Mangekyo Sharingans not owned by player consume 3x this amount."})
+		public double MANGEKYO_CHAKRA_USAGE = 75;
+
+		@Config.RangeDouble(min = 1, max = 10000)
+		@Config.Comment({"Chakra consumed by Eternal Mangekyo Sharingan per second. (Default: 50)", "Eternal Mangekyo Sharingans not owned by player consume 3x this amount."})
+		public double ETERNAL_CHAKRA_USAGE = 50;
 	}
 }

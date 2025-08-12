@@ -43,6 +43,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.block.material.Material;
 
+import net.narutomod.Chakra;
 import net.narutomod.ModConfig;
 import net.narutomod.goatee.client.Sounds;
 import net.narutomod.goatee.client.model.ModelDojutsu;
@@ -66,7 +67,18 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 
 	public static final String RINNEGEN_AWAKENING_KEY = "RinneganAwakening";
 
+	public static double getMangekyoChakraUsage(EntityLivingBase entity) {
+		double chakraUsage = ModConfig.DOJUTSU.MANGEKYO_CHAKRA_USAGE;
+		ItemStack stack = ItemDojutsu.getWorn(entity);
+		return ItemDojutsu.isOwner(stack, entity) ? chakraUsage : chakraUsage * 3;
+	}
 
+	public static double getEternalChakraUsage(EntityLivingBase entity) {
+		double chakraUsage = ModConfig.DOJUTSU.ETERNAL_CHAKRA_USAGE;
+		ItemStack stack = ItemDojutsu.getWorn(entity);
+		return ItemDojutsu.isOwner(stack, entity) ? chakraUsage : chakraUsage * 3;
+	}
+	
 	public ItemSharingan(ElementsNarutomodMod instance) {
 		super(instance, 56);
 	}
@@ -208,6 +220,14 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 
 			}
 
+			if (entity.ticksExisted % 20 == 0) {
+				if (isEternal()) {
+					Chakra.pathway(entity).consume(getEternalChakraUsage(entity));
+				} else if (isMangekyo()) {
+					Chakra.pathway(entity).consume(getMangekyoChakraUsage(entity));
+				}
+			}
+
 			if (genjutsuCD > 0)
 				genjutsuCD--;
 		}
@@ -227,6 +247,7 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 //			}
 			//if (entity instanceof EntityPlayerMP)
 			//	((EntityPlayerMP) entity).getFoodStats().setFoodLevel(4);
+
 
 			if (!world.isRemote && entity.ticksExisted % 20 == 0 && entity instanceof EntityPlayerMP && hasRinneganAwakenKey(stack)) {
 				checkRinneganAwakening(stack, world, entity);
