@@ -117,10 +117,8 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                 ProcedureWhenPlayerAttcked.setInvulnerable(player, 2);
             }
 
-            applyEffects(player, itemstack);
+            
 
-            if (player.ticksExisted % 10 == 0 && !isRinnesharinganActivated(itemstack) && !player.isCreative())
-                Chakra.pathway(player).consume(getEternalChakraUsage(itemstack, player) * 10);
 
             int x = (int) player.posX;
             int y = (int) player.posY;
@@ -133,6 +131,14 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             $_dependencies.put("itemstack", itemstack);
             $_dependencies.put("world", world);
             ProcedureRinneganHelmetTickEvent.executeProcedure($_dependencies);
+        }
+
+        public void consumeChakra(EntityPlayer player, ItemStack stack) {
+            if (player.isCreative())
+                return;
+
+            if (eternalOn(stack) && player.ticksExisted % 20 == 0F && !isRinnesharinganActivated(stack))
+                Chakra.pathway(player).consume(ItemSharingan.getEternalChakraUsage(player));
         }
 
         public void applyEffects(EntityPlayer player, ItemStack itemstack) {

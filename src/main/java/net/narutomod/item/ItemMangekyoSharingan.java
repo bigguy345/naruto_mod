@@ -54,18 +54,6 @@ public class ItemMangekyoSharingan extends ElementsNarutomodMod.ModElement {
 		ItemArmor.ArmorMaterial enuma = EnumHelper.addArmorMaterial("MANGEKYOSHARINGAN", "narutomod:mangekyosharingan_sasuke_", 1024,
 				new int[]{2, 5, 6, 10}, 0, null, 1.0F);
 		this.elements.items.add(() -> new ItemSharingan.Base(enuma) {
-			@Override
-			public void onArmorTick(World world, EntityPlayer entity, ItemStack itemstack) {
-				super.onArmorTick(world, entity, itemstack);
-				if (world.isRemote) 
-					return;
-
-				if(entity.ticksExisted % 60 == 0) {
-					entity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 1, false, false));
-					entity.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 3, false, false));
-					entity.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 2, false, false));
-				}
-			}
 
 			@Override
 			public ItemSharingan.Type getSubType() {

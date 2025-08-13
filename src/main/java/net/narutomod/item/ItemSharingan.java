@@ -212,25 +212,43 @@ public class ItemSharingan extends ElementsNarutomodMod.ModElement {
 				((Base)itemstack.getItem()).canDamage = false;
 			}
 
-			if(entity.ticksExisted % 60 == 0) {
-				entity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 0, false, false));
-				entity.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 2, false, false));
-				entity.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 1, false, false));
-
-
-			}
-
-			if (entity.ticksExisted % 20 == 0) {
-				if (isEternal()) {
-					Chakra.pathway(entity).consume(getEternalChakraUsage(entity));
-				} else if (isMangekyo()) {
-					Chakra.pathway(entity).consume(getMangekyoChakraUsage(entity));
-				}
-			}
+			
 
 			if (genjutsuCD > 0)
 				genjutsuCD--;
 		}
+
+		public void applyEffects(EntityPlayer player, ItemStack itemstack) {
+			if (player.ticksExisted % 60 == 0) {
+				if (isEternal()) {
+					player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 2, false, false));
+					player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 4, false, false));
+					player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 3, false, false));
+				} else if (isMangekyo()) {
+					player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 1, false, false));
+					player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 3, false, false));
+					player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 2, false, false));
+				} else {
+					player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 0, false, false));
+					player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 2, false, false));
+					player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 1, false, false));
+				}
+			}
+		}
+
+		public void consumeChakra(EntityPlayer player, ItemStack stack) {
+			if (player.isCreative())
+				return;
+
+			if (player.ticksExisted % 20 == 0) {
+				if (isEternal()) {
+					Chakra.pathway(player).consume(getEternalChakraUsage(player));
+				} else if (isMangekyo()) {
+					Chakra.pathway(player).consume(getMangekyoChakraUsage(player));
+				}
+			}
+		}
+
 
 		@Override
 		public void onUpdate(ItemStack stack, World world, Entity entity, int par4, boolean par5) {

@@ -83,12 +83,6 @@ public class ItemMangekyoSharinganObito extends ElementsNarutomodMod.ModElement 
 						ProcedureWhenPlayerAttcked.setInvulnerable(entity, 2);
 						//entity.getEntityData().setDouble(NarutomodModVariables.InvulnerableTime, 2.0d);
 					}
-
-					if(entity.ticksExisted % 60 == 0) {
-						entity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 1, false, false));
-						entity.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 3, false, false));
-						entity.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 2, false, false));
-					}
 				}
 			}
 
@@ -102,6 +96,10 @@ public class ItemMangekyoSharinganObito extends ElementsNarutomodMod.ModElement 
 				return true;
 			}
 
+			public ItemStack getEternalMangekyo(ItemStack mangekyo1, ItemStack mangekyo2) {
+				return new ItemStack(ItemMangekyoSharinganEternal.helmet);
+			}
+			
 			public boolean canBuildInKamui(ItemStack stack) {
 				return true;
 			}

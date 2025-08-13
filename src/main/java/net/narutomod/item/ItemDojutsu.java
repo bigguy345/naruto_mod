@@ -73,6 +73,9 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 			if (entity.ticksExisted % 20 == 1) {
 				entity.getEntityData().setLong(NarutomodModVariables.MostRecentWornDojutsuTime, world.getTotalWorldTime());
 			}
+
+			consumeChakra(entity, itemstack);
+			applyEffects(entity, itemstack);
 		}
 
 		@SideOnly(Side.CLIENT)
@@ -160,6 +163,13 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 			return false;
 		}
 
+		public void consumeChakra(EntityPlayer player, ItemStack stack) {
+
+		}
+
+		public void applyEffects(EntityPlayer player, ItemStack itemstack) {
+		}
+		
 		public SoundEvent getActivationSound(ItemStack eye) {
 			return null;
 		}

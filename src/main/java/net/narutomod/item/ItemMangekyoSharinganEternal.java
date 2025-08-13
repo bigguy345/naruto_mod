@@ -52,7 +52,6 @@ public class ItemMangekyoSharinganEternal extends ElementsNarutomodMod.ModElemen
 			public void onArmorTick(World world, EntityPlayer entity, ItemStack itemstack) {
 				super.onArmorTick(world, entity, itemstack);
 				if (!world.isRemote) {
-					entity.addPotionEffect(new PotionEffect(MobEffects.SPEED, 2, 2, false, false));
 					entity.capabilities.allowFlying = entity.isCreative() || entity.dimension == WorldKamuiDimension.DIMID;
 					entity.sendPlayerAbilities();
 					if (entity.getEntityData().getBoolean("kamui_teleport")) {
@@ -63,11 +62,6 @@ public class ItemMangekyoSharinganEternal extends ElementsNarutomodMod.ModElemen
 						entity.getEntityData().setDouble(NarutomodModVariables.InvulnerableTime, 2.0d);
 					}
 
-					if(entity.ticksExisted % 60 == 0) {
-						entity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 100, 2, false, false));
-						entity.addPotionEffect(new PotionEffect(MobEffects.SPEED, 100, 4, false, false));
-						entity.addPotionEffect(new PotionEffect(MobEffects.HASTE, 100, 3, false, false));
-					}
 				}
 			}
 
@@ -102,7 +96,7 @@ public class ItemMangekyoSharinganEternal extends ElementsNarutomodMod.ModElemen
 
 			@Override
 			public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
-				return "narutomod:textures/eye/mangekyosharinganhelmet_fugaku.png";
+				return "narutomod:textures/mangekyosharinganhelmet_eternal.png";
 			}
 
 			@Override
@@ -187,5 +181,13 @@ public class ItemMangekyoSharinganEternal extends ElementsNarutomodMod.ModElemen
 	@SideOnly(Side.CLIENT)
 	public void registerModels(ModelRegistryEvent event) {
 		ModelLoader.setCustomModelResourceLocation(helmet, 0, new ModelResourceLocation("narutomod:mangekyosharinganeternalhelmet", "inventory"));
+
+		//		ModelLoader.setCustomMeshDefinition(myItem, stack -> {
+		//			String tex = stack.hasTagCompound() && stack.getTagCompound().getBoolean("special")
+		//					? "mymod:my_item_special"
+		//					: "mymod:my_item_normal";
+		//
+		//			return new ModelResourceLocation(tex, "inventory");
+		//		});
 	}
 }
