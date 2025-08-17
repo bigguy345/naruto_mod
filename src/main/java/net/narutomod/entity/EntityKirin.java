@@ -203,8 +203,8 @@ public class EntityKirin extends ElementsNarutomodMod.ModElement {
 			Entity target = result.entityHit;
 			if (result.entityHit != null && result.entityHit.equals(this.shootingEntity))
 				return;
-			
-			if (target != null && shootingEntity.getRidingEntity().equals(target))
+
+			if (target != null && shootingEntity != null && shootingEntity.getRidingEntity() == target)
 				return;
 
 			if (!this.world.isRemote) {
