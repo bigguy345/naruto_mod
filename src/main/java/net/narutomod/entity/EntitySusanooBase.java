@@ -447,7 +447,7 @@ public abstract class EntitySusanooBase extends EntityCreature implements IRange
 			show = Minecraft.getMinecraft().gameSettings.thirdPersonView != 0 || data.showParticles && Minecraft.getMinecraft().player.equals(getOwnerPlayer());
 
 		if (show) {
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < 1; i++) { //originally 4
 				double d0 = this.posX + (this.rand.nextFloat() - 0.5D) * this.width;
 				double d1 = this.posY + this.rand.nextFloat() * this.height;
 				double d2 = this.posZ + (this.rand.nextFloat() - 0.5D) * this.width;
