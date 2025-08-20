@@ -217,7 +217,7 @@ public class EntityKirin extends ElementsNarutomodMod.ModElement {
 				float size = this.getEntityScale();
 				boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.world, this.shootingEntity);
 				this.world.newExplosion(this.shootingEntity, vec.x, vec.y, vec.z, size, flag, flag);
-				ProcedureAoeCommand.set(this.world, vec.x, vec.y, vec.z, 0.0D, 10.0D).exclude(this).exclude(this.shootingEntity).exclude(shootingEntity.getRidingEntity())
+				ProcedureAoeCommand.set(this.world, vec.x, vec.y, vec.z, 0.0D, 10.0D).exclude(this).exclude(this.shootingEntity).exclude(shootingEntity != null ? shootingEntity.getRidingEntity() : null)
 				 .setFire(15).damageEntities(ItemJutsu.causeJutsuDamage(this, this.shootingEntity), 100f * size);
 			}
 			//this.haltMotion();
