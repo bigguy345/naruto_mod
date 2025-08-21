@@ -97,6 +97,10 @@ public class ItemDojutsu extends ElementsNarutomodMod.ModElement {
 			return false;
 		}
 		
+		public String getItemTexture(){
+			return "narutomod:blocks/sharingan";
+		}
+		
 		public String getRightEyeTexture(ItemStack stack, Entity entity, SideData side) {
 			return getArmorTexture(stack, entity, EntityEquipmentSlot.HEAD, null);
 		}

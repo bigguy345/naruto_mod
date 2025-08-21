@@ -1,6 +1,7 @@
 package net.narutomod.goatee.data;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 import net.narutomod.goatee.data.sidedata.SideData;
 import net.narutomod.item.ItemDojutsu;
@@ -54,6 +55,24 @@ public class DojutsuData {
         return eye.getSideData(SideData.Side.RIGHT, stack);
     }
 
+    public static void setItemIcon(ItemStack stack, String tex) {
+        if (!stack.hasTagCompound())
+            stack.setTagCompound(new NBTTagCompound());
+        stack.getTagCompound().setString("itemIcon", tex);
+    }
+
+    public static String getItemIcon(ItemStack stack) {
+        if (stack.getTagCompound() == null || !stack.getTagCompound().hasKey("itemIcon"))
+            return null;
+        return stack.getTagCompound().getString("itemIcon");
+    }
+
+    public static void setEyeTexture(ItemStack stack, String texture) {
+        getRight(stack).setTexture(texture);
+        getLeft(stack).setTexture(texture);
+    }
+    
+    
     public boolean useAdvancedModel(ItemStack stack) {
         return eye.useAdvancedModel() || stack.hasTagCompound() && stack.getTagCompound().getBoolean("useAdvancedModel");
     }

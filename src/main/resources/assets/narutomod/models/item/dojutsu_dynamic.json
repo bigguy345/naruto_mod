@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "1": "narutomod:blocks/sharingan"
+  }
+}
