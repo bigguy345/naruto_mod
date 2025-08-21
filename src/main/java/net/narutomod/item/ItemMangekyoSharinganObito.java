@@ -22,6 +22,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 
+import net.narutomod.goatee.data.DojutsuData;
 import net.narutomod.world.WorldKamuiDimension;
 import net.narutomod.procedure.ProcedureGrabEntity;
 import net.narutomod.procedure.ProcedureKamuiJikukanIdo;
@@ -97,7 +98,10 @@ public class ItemMangekyoSharinganObito extends ElementsNarutomodMod.ModElement 
 			}
 
 			public ItemStack getEternalMangekyo(ItemStack mangekyo1, ItemStack mangekyo2) {
-				return new ItemStack(ItemMangekyoSharinganEternal.helmet);
+				ItemStack stack = new ItemStack(ItemMangekyoSharinganEternal.helmet);
+				DojutsuData.setItemIcon(stack, "narutomod:eye/item/obitoems");
+				DojutsuData.setEyeTexture(stack, "narutomod:textures/eye/mangekyosharinganeternalhelmet_obito.png");
+				return stack;
 			}
 			
 			public boolean canBuildInKamui(ItemStack stack) {

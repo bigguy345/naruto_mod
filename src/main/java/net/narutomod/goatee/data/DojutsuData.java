@@ -70,6 +70,7 @@ public class DojutsuData {
     public static void setEyeTexture(ItemStack stack, String texture) {
         getRight(stack).setTexture(texture);
         getLeft(stack).setTexture(texture);
+        useAdvancedModel(stack, true);
     }
     
     
@@ -77,7 +78,7 @@ public class DojutsuData {
         return eye.useAdvancedModel() || stack.hasTagCompound() && stack.getTagCompound().getBoolean("useAdvancedModel");
     }
 
-    public void useAdvancedModel(ItemStack stack, boolean use) {
+    public static void useAdvancedModel(ItemStack stack, boolean use) {
         if (stack.hasTagCompound())
             stack.getTagCompound().setBoolean("useAdvancedModel", use);
     }

@@ -154,6 +154,7 @@ public class BakedModelDojutsuIcon implements IBakedModel {
         String dir = "narutomod:eye/item/";
         map.registerSprite(new ResourceLocation(dir + "indrams"));
         map.registerSprite(new ResourceLocation(dir + "madaraemss"));
+        map.registerSprite(new ResourceLocation(dir + "obitoems"));
         map.registerSprite(new ResourceLocation(dir + "eternalindra"));
         map.registerSprite(new ResourceLocation(dir + "eternalnaori"));
         map.registerSprite(new ResourceLocation(dir + "madaraemss"));

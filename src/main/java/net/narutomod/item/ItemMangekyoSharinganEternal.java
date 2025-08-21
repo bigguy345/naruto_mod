@@ -94,6 +94,10 @@ public class ItemMangekyoSharinganEternal extends ElementsNarutomodMod.ModElemen
 				return true;
 			}
 
+			public String getItemTexture() {
+				return "narutomod:blocks/mangekyosharingan_eterna";
+			}
+			
 			@Override
 			public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
 				return "narutomod:textures/mangekyosharinganhelmet_eternal.png";
@@ -181,6 +185,7 @@ public class ItemMangekyoSharinganEternal extends ElementsNarutomodMod.ModElemen
 	@SideOnly(Side.CLIENT)
 	public void registerModels(ModelRegistryEvent event) {
 		ModelLoader.setCustomModelResourceLocation(helmet, 0, new ModelResourceLocation("narutomod:mangekyosharinganeternalhelmet", "inventory"));
+		//ModelLoader.setCustomModelResourceLocation(helmet, 0, new ModelResourceLocation("narutomod:dojutsu_dynamic", "inventory"));
 
 		//		ModelLoader.setCustomMeshDefinition(myItem, stack -> {
 		//			String tex = stack.hasTagCompound() && stack.getTagCompound().getBoolean("special")

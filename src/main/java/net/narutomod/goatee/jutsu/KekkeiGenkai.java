@@ -138,16 +138,20 @@ public enum KekkeiGenkai {
     ETERNAL_MANGEKYO(ItemMangekyoSharinganEternal.helmet, "narutomod:eternalmangekyoachieved") {
         public ItemStack applyToItemStack(ItemStack original, EntityPlayer player) {
             Item foundMangekyo = null;
+            ItemStack foundStack = null;
             List<ItemStack> playerMangekyos = ProcedureUtils.getAllItems(player, stack -> ItemSharingan.isMangekyo(stack) && ItemDojutsu.isOwner(stack, player));
             for (ItemStack stack : playerMangekyos) {
                 ItemSharingan.Base sharingan = (ItemSharingan.Base) stack.getItem();
-                foundMangekyo = sharingan.getEternalMangekyo(ItemStack.EMPTY, ItemStack.EMPTY).getItem();
+                foundStack = sharingan.getEternalMangekyo(ItemStack.EMPTY, ItemStack.EMPTY);
+                foundMangekyo = foundStack.getItem();
             }
 
-            while (foundMangekyo == null)
-                foundMangekyo = ItemSharingan.getRandomEternal();
+            while (foundMangekyo == null) {
+                foundStack = ItemSharingan.getRandomEternal();
+                foundMangekyo = foundStack.getItem();
+            }
 
-            return createItemStack(foundMangekyo, player);
+            return applyItemStackData(foundStack, player);
         }
 
         public void clearItem(EntityPlayerMP player) {
@@ -218,11 +222,14 @@ public enum KekkeiGenkai {
     }
 
     public static ItemStack createItemStack(Item item, EntityLivingBase player) {
-        ItemStack stack = new ItemStack(item);
+        return applyItemStackData(new ItemStack(item), player);
+    }
 
+    public static ItemStack applyItemStackData(ItemStack stack, EntityLivingBase player) {
         if (!stack.hasTagCompound())
             stack.setTagCompound(new NBTTagCompound());
 
+        Item item = stack.getItem();
         if (item instanceof ItemDojutsu.Base) {
             ((ItemDojutsu.Base) item).setOwner(stack, player);
             player.getEntityData().setLong(NarutomodModVariables.MostRecentWornDojutsuTime, player.world.getTotalWorldTime());
@@ -233,6 +240,7 @@ public enum KekkeiGenkai {
 
         return stack;
     }
+    
     public static void giveItem(Item item, EntityPlayer player) {
         if (!ProcedureUtils.hasItem(player, item)) {
             ItemHandlerHelper.giveItemToPlayer(player, createItemStack(item, player));
