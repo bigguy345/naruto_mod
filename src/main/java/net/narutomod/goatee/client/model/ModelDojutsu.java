@@ -239,7 +239,7 @@ public class ModelDojutsu extends ModelBiped {
         if (isS06P) {
             RenderUtils.disableLightMap();
 
-            if (!rinnesharinganBase) // if tenseigan
+            //if (!rinnesharinganBase) // if tenseigan
                 GlStateManager.depthMask(false);
 
             bindTexture(rinnesharinganTexture);
@@ -290,7 +290,7 @@ public class ModelDojutsu extends ModelBiped {
                 bindTexture(leftBaseTex);
             else
                 bindTexture(leftTexture);
-            
+            if(!isS06P)
             eyeBaseL.render(scale);
             if (hasLeftBase)
                 bindTexture(leftTexture);
@@ -318,8 +318,9 @@ public class ModelDojutsu extends ModelBiped {
                 bindTexture(rightBaseTex);
             else
                 bindTexture(rightTexture);
-            
-            eyeBaseR.render(scale);
+
+          
+                eyeBaseR.render(scale);
             if (hasRightBase)
                 bindTexture(rightTexture);
 

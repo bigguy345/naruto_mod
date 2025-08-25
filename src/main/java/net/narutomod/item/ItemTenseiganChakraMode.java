@@ -101,9 +101,11 @@ public class ItemTenseiganChakraMode extends ElementsNarutomodMod.ModElement {
 			if (!world.isRemote && entity instanceof EntityPlayer) {
 				EntityPlayer livingEntity = (EntityPlayer) entity;
 				if (!livingEntity.getCooldownTracker().hasCooldown(block)) {
-					ItemStack eyestack = ProcedureUtils.getMatchingItemStack(livingEntity, ItemTenseigan.helmet);
+					ItemStack eyestack = ProcedureUtils.getItem(livingEntity, stack -> ItemTenseigan.is(stack));
 					ItemStack stack1 = livingEntity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 					ItemStack stack2 = livingEntity.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
+					ItemStack worn = ItemDojutsu.getWorn(livingEntity);
+					boolean wearingTenseigan = ItemTenseigan.is(worn);
 					if (eyestack == null) {
 						if (stack1.getItem() == ItemTenseigan.body) {
 							stack1.shrink(1);
@@ -115,8 +117,11 @@ public class ItemTenseiganChakraMode extends ElementsNarutomodMod.ModElement {
 						itemstack.shrink(1);
 					} else if (ItemTenseigan.getHeldChakraCloak(livingEntity).equals(itemstack)) {
 						livingEntity.addPotionEffect(new PotionEffect(PotionFlight.potion, 2, 1, false, false));
-						if (!ItemDojutsu.getWorn(livingEntity).equals(eyestack)) {
-							ProcedureUtils.swapItemToSlot(livingEntity, EntityEquipmentSlot.HEAD, eyestack);
+						if (!wearingTenseigan && !worn.equals(eyestack)) {
+							if (ItemRinneganTomoe.isTomoe(worn))
+								ItemRinneganTomoe.setTomoeStatus(worn, ItemRinneganTomoe.TENSEIGAN_ON, (EntityLivingBase) entity);
+							else
+								ProcedureUtils.swapItemToSlot(livingEntity, EntityEquipmentSlot.HEAD, eyestack);
 						}
 						if (stack1.getItem() != ItemTenseigan.body) {
 							ItemStack stack3 = ProcedureUtils.getMatchingItemStack(livingEntity, ItemTenseigan.body);

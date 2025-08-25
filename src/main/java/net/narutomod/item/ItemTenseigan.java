@@ -224,7 +224,7 @@ public class ItemTenseigan extends ElementsNarutomodMod.ModElement {
 	}
 
 	public static boolean is(ItemStack stack) {
-		return stack.getItem() instanceof ItemRinnegan.Base && ((ItemRinnegan.Base) stack.getItem()).isTenseigan();
+		return stack.getItem() instanceof ItemRinnegan.Base && ((ItemRinnegan.Base) stack.getItem()).isTenseigan() || ItemRinneganTomoe.tenseiganOn(stack);
 	}
 
 	public static boolean isWearing(EntityLivingBase player) {

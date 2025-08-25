@@ -358,9 +358,11 @@ public class HUDItemStackWheel extends GuiScreen {
             entity.inventory.offHandInventory.set(0, ItemStack.EMPTY);
 
         int oldTomoeSlot = -1;
+        boolean oldTenseiganStatus =false;
         if (hoveredSlot != -1) {
             if (ItemRinneganTomoe.isTomoe(worn) && ItemRinneganTomoe.get(worn).getCompatibleStatus(worn, selectedItem) != -1 && !ItemRinnegan.isRinnesharinganActivated(worn)) {
                 oldTomoeSlot = ItemRinneganTomoe.getTomoeStatus(worn);
+                oldTenseiganStatus = ItemRinneganTomoe.tenseiganOn(worn);
                 ItemRinneganTomoe.setTomoeStatus(worn, ItemRinneganTomoe.get(worn).getCompatibleStatus(worn, selectedItem));
             } else {
                 entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, selectedItem);
@@ -457,8 +459,10 @@ public class HUDItemStackWheel extends GuiScreen {
             e.printStackTrace();
         }
 
-        if (oldTomoeSlot != -1)
+        if (oldTomoeSlot != -1) {
             ItemRinneganTomoe.setTomoeStatus(worn, oldTomoeSlot);
+            ItemRinneganTomoe.setTenseiganStatus(worn,oldTenseiganStatus);
+        }
 
         entity.inventory.mainInventory.set(entity.inventory.currentItem, oldItem);
         entity.inventory.offHandInventory.set(0, oldOffhand);

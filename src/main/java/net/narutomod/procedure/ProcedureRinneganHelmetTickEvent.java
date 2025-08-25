@@ -204,7 +204,7 @@ public class ProcedureRinneganHelmetTickEvent extends ElementsNarutomodMod.ModEl
 								SoundCategory.NEUTRAL, (float) 1, (float) 1);
 					}
 				} else {
-					if ((((itemstack).getItem() == new ItemStack(ItemTenseigan.helmet, (int) (1)).getItem())
+					if ((ItemTenseigan.is(itemstack)
 							&& (ItemTenseigan.canUseChakraMode(itemstack, (EntityPlayer) entity) && (!((entity instanceof EntityPlayer)
 									? ((EntityPlayer) entity).inventory.hasItemStack(new ItemStack(ItemTenseiganChakraMode.block, (int) (1)))
 									: false))))) {

@@ -42,7 +42,9 @@ import net.narutomod.entity.EntityPretaShield;
 import net.narutomod.entity.EntitySusanooBase;
 import net.narutomod.entity.EntityTenTails;
 import net.narutomod.goatee.client.Sounds;
+import net.narutomod.goatee.client.hud.wheel.HUDItemStackWheel;
 import net.narutomod.goatee.client.model.ModelDojutsu;
+import net.narutomod.goatee.data.DojutsuData;
 import net.narutomod.goatee.data.sidedata.RinneganTomoeSideData;
 import net.narutomod.goatee.data.sidedata.SideData;
 import net.narutomod.gui.GuiNinjaScroll;
@@ -117,7 +119,6 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                 ProcedureWhenPlayerAttcked.setInvulnerable(player, 2);
             }
 
-            
 
 
             int x = (int) player.posX;
@@ -221,12 +222,32 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             ModelDojutsu model = (ModelDojutsu) super.getArmorModel(living, stack, slot, defaultModel);
 
             boolean isS06p = isRinnesharinganActivated(stack);
-            model.isS06P = model.headwearShine = model.onface.showModel = isS06p;
-            model.hornMiddle.showModel = false;
-            model.foreheadHide = !isS06p || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180d;
-            model.rinnesharinganBase = true;
-                
-            model.rightEye.showModel = !isBlinded(stack); //sharingan blindness
+            boolean isRinneSharingan = ItemRinnegan.isRinnesharinganActivated(stack);
+
+            ItemStack item = ItemTenseigan.getHeldChakraCloak(living);
+            boolean inTenseiganCloak = !item.isEmpty();
+
+            //            model.isS06P = model.headwearShine = model.onface.showModel = isS06p;
+            //            model.hornMiddle.showModel = false;
+            //            model.foreheadHide = !isS06p || !(living instanceof EntityPlayer) || PlayerTracker.getNinjaLevel((EntityPlayer) living) < 180d;
+            //            model.rinnesharinganBase = true;
+            //                
+            //            model.rightEye.showModel = !isBlinded(stack); //sharingan blindness
+
+
+            // model.headwearShine = true;
+            model.isS06P = isRinneSharingan || inTenseiganCloak; //|| HUDItemStackWheel.IS_OPEN;
+            model.onface.showModel = inTenseiganCloak;
+            model.foreheadHide = !isRinneSharingan;
+
+            model.headwearHide = !(inTenseiganCloak && !((ItemTenseiganChakraMode.RangedItem) item.getItem()).isOnCooldown(living));//&& isS06p); //|| HUDItemStackWheel.IS_OPEN)
+            model.eyeBaseL.showModel = model.eyeBaseR.showModel = !inTenseiganCloak;
+            model.hornMiddle.showModel = true;
+            model.hornLeft.showModel = model.hornRight.showModel = false;
+            model.rinnesharinganBase = isS06p && !inTenseiganCloak;
+
+            // model.rightEye.showModel = !tenseiganOn(stack) && !isBlinded(stack); //sharingan blindness
+
             return model;
         }
 
@@ -237,7 +258,10 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
                 return "narutomod:textures/sharinganhelmet.png";
             else if (eternalOn(stack))
                 return "narutomod:textures/mangekyosharinganhelmet_eternal.png";
-            
+            else if (tenseiganOn(stack))
+                return "narutomod:textures/tenseiganhelmet.png";
+
+
             //            side.setTextureHD(true);
             //            side.setOffsetX(0.2f);
             //            side.setOffsetY(-0.06f);
@@ -248,10 +272,14 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
         }
 
         public String getLeftEyeTexture(ItemStack stack, Entity entity, SideData side) {
-          return "narutomod:textures/rinnegantomoehelmet.png";
+
+            return "narutomod:textures/rinnegantomoehelmet.png";
         }
 
         public String getRinnesharinganTexture(ItemStack stack, Entity entity) {
+            if (!ItemTenseigan.getHeldChakraCloak((EntityLivingBase) entity).isEmpty())
+                return "narutomod:textures/tenseigan_rinnesharinganhelmet.png";
+            
             return "narutomod:textures/rinnesharingantomoehelmet.png";
         }
 
@@ -310,6 +338,8 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
         }
 
         public SoundEvent getActivationSound(ItemStack eye) {
+            if (tenseiganOn(eye))
+                return Sounds.get("tenseigansfx");
             if (sharinganOff(eye) && !isRinnesharinganActivated(eye))
                 return Sounds.get("rinnegansfx");
 
@@ -495,6 +525,8 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
         }
 
         public int getCompatibleStatus(ItemStack current, ItemStack target) {
+            int currentStatus = getTomoeStatus(current);
+            
             if (isRinnesharinganActivated(target))
                 return -1;
 
@@ -504,12 +536,18 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             if (isTomoe(target))
                 return getTomoeStatus(target);
 
+            if (ItemTenseigan.is(target)) //|| currentStatus == TENSEIGAN_ON && ItemRinnegan.isRinnegan(target)
+                return TENSEIGAN_ON;
+                
+
             if (target.getItem() == ItemSharingan.helmet)
                 return SHARINGAN_ON;
 
 
-            if (ItemSharingan.isMangekyo(target))
+            if (ItemSharingan.isMangekyo(target)) {
+                //  ((RinneganTomoeSideData) data.right(current)).setTexture(ETERNAL_ON,"narutomod:textures/eye/mangekyosharinganeternalhelmet_obito.png");
                 return ETERNAL_ON;
+            }
 
             return -1;
         }
@@ -519,11 +557,11 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
         return stack.hasTagCompound() && stack.getTagCompound().getBoolean("RinneganTomoeActivated");
     }
 
-    public static final int SHARINGAN_OFF = 0, SHARINGAN_ON = 1, ETERNAL_ON = 2;
+    public static final int SHARINGAN_OFF = 0, SHARINGAN_ON = 1, ETERNAL_ON = 2, TENSEIGAN_ON = 3;
 
     public static boolean sharinganOff(ItemStack stack) {
         int status = getTomoeStatus(stack);
-        return status >= 0 && status < SHARINGAN_ON || status > ETERNAL_ON;
+        return status >= 0 && status < SHARINGAN_ON;//|| status > ETERNAL_ON
     }
 
     public static boolean sharinganOn(ItemStack stack) {
@@ -534,6 +572,15 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
         return stack.hasTagCompound() && getTomoeStatus(stack) == ETERNAL_ON;
     }
 
+    public static boolean tenseiganOn(ItemStack stack) {
+        return stack.hasTagCompound() && getTomoeStatus(stack) == TENSEIGAN_ON;
+        //  return stack.hasTagCompound() && stack.getTagCompound().getBoolean("tenseiganStatus");
+    }
+
+    public static void setTenseiganStatus(ItemStack stack, boolean status) {
+        stack.getTagCompound().setBoolean("tenseiganStatus", status);
+    }
+    
     public static int getTomoeStatus(ItemStack stack) {
         if (stack == null || !stack.hasTagCompound() || !stack.getTagCompound().hasKey("tomoeStatus"))
             return -1;
@@ -545,7 +592,15 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
     }
 
     public static void setTomoeStatus(ItemStack stack, int status) {
+        //        if (status == TENSEIGAN_ON) {
+        //            boolean oldTenseiganStatus = tenseiganOn(stack);
+        //            setTenseiganStatus(stack, !oldTenseiganStatus);
+        //        } else
         stack.getTagCompound().setByte("tomoeStatus", (byte) status);
+        // if (status == -1)
+        //  setTenseiganStatus(stack, false);
+        
+       
     }
 
     public static void setTomoeStatus(ItemStack stack, int status, EntityLivingBase entity) {
@@ -553,7 +608,12 @@ public class ItemRinneganTomoe extends ElementsNarutomodMod.ModElement {
             return;
 
         int oldStatus = ItemRinneganTomoe.getTomoeStatus(stack);
+        //        if (status == TENSEIGAN_ON) {
+        //            boolean oldTenseiganStatus = tenseiganOn(stack);
+        //            setTenseiganStatus(stack, !oldTenseiganStatus);
+        //        } else
         ItemRinneganTomoe.setTomoeStatus(stack, status);
+
 
         if (status > oldStatus) {
             ((ItemDojutsu.Base) stack.getItem()).onEquip(stack, entity, false);
